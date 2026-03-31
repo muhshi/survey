@@ -21,9 +21,5 @@ class UserSeeder extends Seeder
             ]
         );
 
-        // Assign super_admin role if Shield is used
-        if (class_exists(\Spatie\Permission\Models\Role::class)) {
-            $admin->assignRole('super_admin');
-        }
     }
 }

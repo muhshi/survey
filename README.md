@@ -51,7 +51,7 @@ Pastikan Anda memiliki PHP 8.4+ dan Composer terinstal.
 5. **Database Setup**:
    ```bash
    # Jalankan migrasi
-   php artisan migrate 
+   php artisan migrate --seed
    ```
 
 6. **Filament Shield Setup**:
@@ -59,10 +59,6 @@ Pastikan Anda memiliki PHP 8.4+ dan Composer terinstal.
    ```bash
    php artisan shield:install
    php artisan shield:super-admin
-   
-   # Jalankan seeder untuk user admin default
-   php artisan db:seed --class=UserSeeder
-   ```
 
 
 7. **Jalankan Aplikasi**:
