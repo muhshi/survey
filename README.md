@@ -49,10 +49,6 @@ Pastikan Anda memiliki PHP 8.4+ dan Composer terinstal.
    ```
 
 5. **Database Setup**:
-   Aplikasi ini menggunakan SQLite. Pastikan file database ada (Laravel akan otomatis membuatnya jika menggunakan `DB_DATABASE=:memory:` atau default `database/database.sqlite`).
-   ```bash
-   # Buat file database jika belum ada
-   touch database/database.sqlite
    
    # Jalankan migrasi dan seeder
    php artisan migrate --seed
