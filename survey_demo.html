@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <title>Demo SurveyJS - Profil Responden</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- SurveyJS Resources -->
+    <link href="https://unpkg.com/survey-core/defaultV2.min.css" type="text/css" rel="stylesheet">
+    <script src="https://unpkg.com/survey-core/survey.core.min.js"></script>
+    <script src="https://unpkg.com/survey-js-ui/survey-js-ui.min.js"></script>
+    
+    <style>
+        body {
+            background-color: #f8fafc;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        #surveyContainer {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            color: #1e293b;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Preview Kuesioner SurveyJS</h1>
+        <p>Demonstrasi Validasi & Logika Kondisional</p>
+    </div>
+    <div id="surveyContainer"></div>
+
+    <script>
+        const surveyJson = {
+            "title": "Kuesioner Profil Responden",
+            "description": "Demonstrasi fitur validasi email, HP, dan logika percabangan (skip logic).",
+            "logoPosition": "right",
+            "showProgressBar": "top",
+            "pages": [
+                {
+                    "name": "page1",
+                    "elements": [
+                        {
+                            "type": "text",
+                            "name": "nama",
+                            "title": "Nama Lengkap",
+                            "isRequired": true,
+                            "minLength": 2,
+                            "placeholder": "Masukkan nama minimal 2 karakter"
+                        },
+                        {
+                            "type": "text",
+                            "name": "email",
+                            "title": "Alamat Email",
+                            "isRequired": true,
+                            "validators": [
+                                { "type": "email", "text": "Format email tidak valid." }
+                            ],
+                            "placeholder": "contoh@bps.go.id"
+                        },
+                        {
+                            "type": "text",
+                            "name": "nomor_hp",
+                            "title": "Nomor HP (WhatsApp)",
+                            "isRequired": true,
+                            "validators": [
+                                {
+                                    "type": "regex",
+                                    "regex": "^\\d{10,13}$",
+                                    "text": "Nomor HP harus berupa angka dengan panjang 10-13 digit."
+                                }
+                            ],
+                            "placeholder": "08xxxxxxxxx"
+                        },
+                        {
+                            "type": "dropdown",
+                            "name": "pendidikan_terakhir",
+                            "title": "Pendidikan Terakhir",
+                            "isRequired": true,
+                            "choices": [
+                                "SD",
+                                "SMP",
+                                "SMA",
+                                "Kuliah"
+                            ],
+                            "placeholder": "Pilih pendidikan terakhir..."
+                        },
+                        {
+                            "type": "text",
+                            "name": "jurusan",
+                            "title": "Jurusan Kuliah",
+                            "visibleIf": "{pendidikan_terakhir} == 'Kuliah'",
+                            "isRequired": true,
+                            "placeholder": "Contoh: Statistika"
+                        },
+                        {
+                            "type": "comment",
+                            "name": "rencana_karir",
+                            "title": "Apa rencana karir atau riset Anda kedepan?",
+                            "description": "Pertanyaan ini akan dilewati jika Anda memilih 'SD'.",
+                            "visibleIf": "{pendidikan_terakhir} notempty and {pendidikan_terakhir} != 'SD'"
+                        },
+                        {
+                            "type": "html",
+                            "name": "penutup",
+                            "html": "<div style='text-align: center; padding: 20px;'><h3 style='color: #059669;'>Terima Kasih!</h3><p>Data Anda telah tervalidasi oleh sistem.</p></div>"
+                        }
+                    ]
+                }
+            ],
+            "showQuestionNumbers": "on"
+        };
+
+        const survey = new Survey.Model(surveyJson);
+        
+        // Survey completion handling
+        survey.onComplete.add((sender) => {
+            console.log("Hasil Survey JSON:", JSON.stringify(sender.data, null, 3));
+        });
+
+        survey.render("surveyContainer");
+    </script>
+</body>
+</html>

@@ -5,12 +5,14 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 ## Fitur Utama
 
 - **SurveyJS Creator**: Form builder visual (drag-and-drop) di panel admin.
+- **Premium UI/UX**: Desain antarmuka elegan berbasis Navy & Sky Blue dengan tipografi modern (Outfit).
+- **Responsive Submissions**: Tampilan jawaban responden berbasis kartu yang bersih dan terstruktur.
 - **Dynamic Categories**: Pengelompokan survei ke dalam kategori yang dinamis.
 - **Flexible Modes**: 
   - `single`: Satu kali isi per user.
   - `editable`: Bisa diedit setelah submit.
   - `multi`: Pengisian berkali-kali (untuk petugas lapangan).
-- **Default Analytics**: Statistik ringkasan responden dan distribusi jawaban.
+- **Insightful Analytics**: Statistik ringkasan responden dan distribusi jawaban secara real-time.
 
 ## Tech Stack
 
@@ -19,7 +21,11 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 - **Authorization**: [Filament Shield](https://github.com/bezhanSalleh/filament-shield)
 - **Form Engine**: [SurveyJS](https://surveyjs.io/)
 - **Database**: SQLite
-- **Styling**: Tailwind CSS v4
+- **Styling**: Tailwind CSS v4 & Heroicons
+
+## Catatan Perubahan
+
+Riwayat pembaruan dan pengembangan proyek dapat dilihat di [CHANGELOG.md](CHANGELOG.md).
 
 ## Instalasi
 
