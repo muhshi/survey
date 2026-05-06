@@ -23,9 +23,14 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 - **Database**: SQLite
 - **Styling**: Tailwind CSS v4 & Heroicons
 
-## Catatan Perubahan
+## Changelog
 
-Riwayat pembaruan dan pengembangan proyek dapat dilihat di [CHANGELOG.md](CHANGELOG.md).
+### 2026-05-06
+- **Fix Dev Environment**: Memperbaiki perintah `composer dev` agar kompatibel dengan Windows (menghapus `php artisan pail` karena ketergantungan pada ekstensi `pcntl`).
+- **Fix Vite**: Menginstal dependensi Node.js (`npm install`) untuk mengatasi error `vite` tidak ditemukan.
+- **Verification**: Berhasil memverifikasi server Laravel dan Vite dev server berjalan normal di Windows.
+
+Riwayat lengkap dapat dilihat di [CHANGELOG.md](CHANGELOG.md).
 
 ## Instalasi
 

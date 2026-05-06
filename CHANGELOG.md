@@ -3,6 +3,14 @@
 Semua perubahan penting dalam proyek ini akan dicatat di file ini.
 Format ini didasarkan pada [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.1.1] - 2026-05-06
+
+### Fixed
+- **Development Environment**: Menghapus `php artisan pail` dari script `composer dev` karena tidak kompatibel dengan Windows (ekstensi `pcntl` hilang).
+- **Dependencies**: Melakukan `npm install` untuk memastikan Vite dan library frontend lainnya tersedia.
+
+---
+
 ## [1.1.0] - 2026-04-16
 
 ### Added
