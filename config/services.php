@@ -35,4 +35,14 @@ return [
         ],
     ],
 
+    'sipetra' => [
+        'client_id'     => env('SIPETRA_CLIENT_ID'),
+        'client_secret' => env('SIPETRA_CLIENT_SECRET'),
+        'redirect'      => env('SIPETRA_REDIRECT_URI'),
+        'base_url'      => env('SIPETRA_BASE_URL'),
+        'api_token'     => env('SIPETRA_API_TOKEN'),
+        // Scope wajib untuk mendapatkan data profil
+        'scopes' => ['identity_pegawai:read', 'employee:read', 'contact:read', 'roles:read'],
+    ],
+
 ];

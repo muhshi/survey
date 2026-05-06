@@ -1,0 +1,409 @@
+openapi: 3.0.3
+
+info:
+  title: Sipetra Master Data API
+  description: |
+    API server-to-server (Machine-to-Machine) untuk sinkronisasi master data
+    pegawai dan mitra BPS Kabupaten Demak ke aplikasi-aplikasi client.
+
+    ## Cara Mendapatkan Token
+    Hubungi administrator Sipetra untuk mendapatkan **Personal Access Token**
+    yang khusus dibuat untuk aplikasi client Anda. Token ini wajib memiliki
+    nama `master-data-api` agar divalidasi oleh middleware.
+
+    ## Strategi Sinkronisasi
+    - **Full Sync** (pertama kali / bulanan): tanpa parameter `updated_after`.
+    - **Incremental Sync** (harian): sertakan `updated_after` = nilai `synced_at` dari response sebelumnya.
+    - **Performance:** Sangat disarankan menjalankan sinkronisasi melalui **Background Job / Queue** di sisi client untuk menghindari *browser timeout* saat data berjumlah besar (ratusan/ribuan record).
+
+    ## Penanganan `is_active: false`
+    Jangan hapus data di sisi client. Tandai saja sebagai tidak aktif.
+    Data historis (peserta rapat, penerima surat, dll) tetap terjaga.
+
+  version: "1.0.0"
+  contact:
+    name: Tim IT BPS Kabupaten Demak
+    email: it@bpsdemak.com
+
+servers:
+  - url: https://bpsdemak.com/api
+    description: Production
+  - url: http://localhost:8000/api
+    description: Local Development
+
+security:
+  - BearerToken: []
+
+tags:
+  - name: Master Users
+    description: Sinkronisasi data master pegawai dan mitra
+
+paths:
+  /master/users:
+    get:
+      summary: Daftar pengguna (pegawai & mitra)
+      description: |
+        Mengembalikan daftar seluruh pegawai dan mitra dengan pagination.
+        Gunakan `updated_after` untuk incremental sync yang efisien.
+      operationId: listMasterUsers
+      tags: [Master Users]
+      parameters:
+        - name: type
+          in: query
+          description: Filter tipe pengguna. Kosongkan untuk semua.
+          schema:
+            type: string
+            enum: [pegawai, mitra, admin]
+          example: pegawai
+
+        - name: period
+          in: query
+          description: Filter periode aktif mitra. Contoh "2026" atau "sensus_ekonomi_2026".
+          schema:
+            type: string
+          example: "2026"
+
+        - name: updated_after
+          in: query
+          description: |
+            Hanya kembalikan record yang diupdate SETELAH waktu ini (ISO 8601).
+            Gunakan nilai `synced_at` dari response sebelumnya.
+          schema:
+            type: string
+            format: date-time
+          example: "2026-05-01T00:00:00+07:00"
+
+        - name: per_page
+          in: query
+          description: Jumlah record per halaman (maks. 500).
+          schema:
+            type: integer
+            default: 100
+            maximum: 500
+
+        - name: page
+          in: query
+          description: Nomor halaman.
+          schema:
+            type: integer
+            default: 1
+
+      responses:
+        "200":
+          description: Berhasil.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MasterUser"
+                  links:
+                    $ref: "#/components/schemas/PaginationLinks"
+                  meta:
+                    $ref: "#/components/schemas/PaginationMeta"
+                  synced_at:
+                    type: string
+                    format: date-time
+                    description: |
+                      Timestamp server saat response dibuat.
+                      **Simpan nilai ini** sebagai `updated_after` untuk incremental sync berikutnya.
+                    example: "2026-05-03T15:00:00+07:00"
+              example:
+                data:
+                  - sipetra_id: "1"
+                    name: "Budi Santoso"
+                    email: "budi.santoso@bps.go.id"
+                    avatar_url: "https://bpsdemak.com/storage/avatars/budi.jpg"
+                    identity_type: "pegawai"
+                    nip: "199001012020011001"
+                    nip_baru: "199001012020011001"
+                    sobat_id: null
+                    nomor_hp: "08123456789"
+                    jabatan: "Statistisi Ahli Pertama"
+                    golongan: "III/a"
+                    unit_kerja: "Seksi Distribusi"
+                    kd_satker: "33210"
+                    gender: "L"
+                    is_active: true
+                    period: null
+                    contract_start: null
+                    contract_end: null
+                    updated_at: "2026-04-15T08:30:00+07:00"
+                  - sipetra_id: "42"
+                    name: "Sari Rahayu"
+                    email: "sari.rahayu@gmail.com"
+                    avatar_url: null
+                    identity_type: "mitra"
+                    nip: null
+                    nip_baru: null
+                    sobat_id: "MTR-2026-042"
+                    nomor_hp: "08567891234"
+                    jabatan: "Mitra Statistik"
+                    golongan: null
+                    unit_kerja: null
+                    kd_satker: "33210"
+                    gender: "P"
+                    is_active: true
+                    period: "2026"
+                    contract_start: "2026-01-02"
+                    contract_end: "2026-12-31"
+                    updated_at: "2026-01-02T09:00:00+07:00"
+                meta:
+                  current_page: 1
+                  last_page: 3
+                  per_page: 100
+                  total: 287
+                  from: 1
+                  to: 100
+                synced_at: "2026-05-03T15:00:00+07:00"
+
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+
+  /master/users/{sipetra_id}:
+    get:
+      summary: Detail satu pengguna
+      description: |
+        Mengambil data terkini satu pengguna berdasarkan `sipetra_id`.
+        Berguna untuk validasi real-time atau refresh data satu user tanpa full sync.
+      operationId: getMasterUser
+      tags: [Master Users]
+      parameters:
+        - name: sipetra_id
+          in: path
+          required: true
+          description: ID numerik pengguna di Sipetra (= `id` di tabel users).
+          schema:
+            type: string
+          example: "42"
+      responses:
+        "200":
+          description: Berhasil.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/MasterUser"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+components:
+  securitySchemes:
+    BearerToken:
+      type: http
+      scheme: bearer
+      description: |
+        **Personal Access Token** yang digenerate administrator Sipetra untuk aplikasi client.
+        - Nama token wajib: `master-data-api`
+        - Satu token per aplikasi client
+        - Simpan di `.env` sebagai `SIPETRA_API_TOKEN`
+        - Jangan commit ke Git
+
+  schemas:
+    MasterUser:
+      type: object
+      description: Data satu pengguna (pegawai atau mitra) di Sipetra.
+      required:
+        - sipetra_id
+        - name
+        - identity_type
+        - is_active
+        - updated_at
+      properties:
+        sipetra_id:
+          type: string
+          description: |
+            ID unik pengguna di Sipetra. Gunakan sebagai foreign key di sisi client.
+            Simpan di kolom `sipetra_id` tabel `users` aplikasi client.
+          example: "42"
+        name:
+          type: string
+          example: "Budi Santoso"
+        email:
+          type: string
+          format: email
+          nullable: true
+          example: "budi.santoso@bps.go.id"
+        avatar_url:
+          type: string
+          format: uri
+          nullable: true
+          description: |
+            URL foto profil — sudah berupa full URL absolut yang dapat langsung di-render.
+            `null` jika pengguna belum mengupload foto.
+            Catatan: URL mengarah ke server Sipetra. Jika server tidak terjangkau,
+            foto tidak akan tampil. Client dapat menyimpan URL ini dan meng-cache foto
+            secara lokal jika diperlukan.
+          example: "https://bpsdemak.com/storage/avatars/budi.jpg"
+        identity_type:
+          type: string
+          enum: [pegawai, mitra, admin]
+          description: Tipe pengguna. Gunakan untuk filter di dropdown.
+          example: "pegawai"
+        nip:
+          type: string
+          nullable: true
+          description: NIP lama. `null` untuk mitra.
+          example: "199001012020011001"
+        nip_baru:
+          type: string
+          nullable: true
+          description: NIP baru. `null` untuk mitra.
+          example: "199001012020011001"
+        sobat_id:
+          type: string
+          nullable: true
+          description: ID mitra di sistem SOBAT BPS. `null` untuk pegawai.
+          example: "MTR-2026-042"
+        nomor_hp:
+          type: string
+          nullable: true
+          example: "08123456789"
+        jabatan:
+          type: string
+          nullable: true
+          example: "Statistisi Ahli Pertama"
+        golongan:
+          type: string
+          nullable: true
+          description: Golongan/pangkat. `null` untuk mitra.
+          example: "III/a"
+        unit_kerja:
+          type: string
+          nullable: true
+          example: "Seksi Distribusi"
+        kd_satker:
+          type: string
+          description: Kode satuan kerja BPS.
+          example: "33210"
+        gender:
+          type: string
+          nullable: true
+          enum: [L, P]
+          description: Jenis kelamin. L = Laki-laki, P = Perempuan.
+          example: "L"
+        is_active:
+          type: boolean
+          description: |
+            Status aktif pengguna.
+            - `true`: Aktif (PNS/PPPK masih aktif, atau kontrak mitra masih berlaku)
+            - `false`: Tidak aktif (pensiun, pindah, atau kontrak habis)
+
+            **Aturan penting untuk client:**
+            Jangan hapus data saat `is_active = false`.
+            Cukup tandai tidak aktif di database lokal dan sembunyikan dari dropdown.
+            Data historis (peserta rapat, dll) tetap utuh.
+          example: true
+        period:
+          type: string
+          nullable: true
+          description: |
+            Periode aktif untuk mitra. `null` untuk pegawai PNS/PPPK.
+            - Mitra reguler: `"2026"` (tahun kontrak)
+            - Mitra adhoc: `"sensus_ekonomi_2026"` (kode kegiatan)
+          example: "2026"
+        contract_start:
+          type: string
+          format: date
+          nullable: true
+          description: Tanggal mulai kontrak mitra. `null` untuk pegawai.
+          example: "2026-01-02"
+        contract_end:
+          type: string
+          format: date
+          nullable: true
+          description: |
+            Tanggal akhir kontrak mitra. `null` untuk pegawai.
+            Client dapat menggunakan ini untuk menampilkan warning saat kontrak hampir habis.
+          example: "2026-12-31"
+        updated_at:
+          type: string
+          format: date-time
+          description: Waktu terakhir data diupdate di Sipetra. Gunakan untuk incremental sync.
+          example: "2026-04-15T08:30:00+07:00"
+
+    PaginationMeta:
+      type: object
+      properties:
+        current_page: { type: integer, example: 1 }
+        last_page:    { type: integer, example: 3 }
+        per_page:     { type: integer, example: 100 }
+        total:        { type: integer, example: 287 }
+        from:         { type: integer, example: 1 }
+        to:           { type: integer, example: 100 }
+
+    PaginationLinks:
+      type: object
+      properties:
+        first: { type: string, format: uri, nullable: true }
+        last:  { type: string, format: uri, nullable: true }
+        prev:  { type: string, format: uri, nullable: true }
+        next:  { type: string, format: uri, nullable: true }
+
+  responses:
+    Unauthorized:
+      description: Token tidak valid atau tidak disertakan.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message: { type: string, example: "Unauthenticated." }
+
+    Forbidden:
+      description: Token valid tapi tidak diizinkan mengakses endpoint ini.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Endpoint ini hanya dapat diakses menggunakan Personal Access Token (M2M)."
+
+    NotFound:
+      description: Data tidak ditemukan.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message: { type: string, example: "No query results for model [App\\Models\\User]." }
+
+    UnprocessableEntity:
+      description: Parameter request tidak valid.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message: { type: string }
+              errors:
+                type: object
+                additionalProperties:
+                  type: array
+                  items: { type: string }
+
+    TooManyRequests:
+      description: Rate limit tercapai (60 req/menit).
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message: { type: string, example: "Too Many Attempts." }

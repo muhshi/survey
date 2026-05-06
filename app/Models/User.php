@@ -11,7 +11,28 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
-#[Fillable(['name', 'email', 'password'])]
+#[Fillable([
+    'name', 
+    'email', 
+    'password',
+    'sipetra_id',
+    'sipetra_token',
+    'sipetra_refresh_token',
+    'nip',
+    'nip_baru',
+    'jabatan',
+    'golongan',
+    'unit_kerja',
+    'kd_satker',
+    'nomor_hp',
+    'jenis_kelamin',
+    'avatar_url',
+    'identity_type',
+    'is_active',
+    'period',
+    'contract_start',
+    'contract_end',
+])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -30,6 +51,25 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_active' => 'boolean',
+            'contract_start' => 'date',
+            'contract_end' => 'date',
         ];
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
+
+    public function scopePegawai($query)
+    {
+        return $query->active()->where('identity_type', 'pegawai');
+    }
+
+    public function scopeMitra($query, ?string $period = null)
+    {
+        $q = $query->active()->where('identity_type', 'mitra');
+        return $period ? $q->where('period', $period) : $q;
     }
 }

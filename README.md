@@ -26,9 +26,12 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 ## Changelog
 
 ### 2026-05-06
-- **Fix Dev Environment**: Memperbaiki perintah `composer dev` agar kompatibel dengan Windows (menghapus `php artisan pail` karena ketergantungan pada ekstensi `pcntl`).
-- **Fix Vite**: Menginstal dependensi Node.js (`npm install`) untuk mengatasi error `vite` tidak ditemukan.
-- **Verification**: Berhasil memverifikasi server Laravel dan Vite dev server berjalan normal di Windows.
+- **Implement SIPETRA SSO**: Integrasi autentikasi OAuth2 menggunakan Laravel Socialite untuk login terpusat.
+- **Implement Master Data Sync**: Penambahan perintah `sync:users` untuk sinkronisasi data pegawai dan mitra dari API Master Sipetra.
+- **Database Update**: Penambahan kolom data profil lengkap pada tabel `users`.
+- **UI Update**: Integrasi tombol "Masuk dengan SIPETRA SSO" di halaman login Filament.
+- **Fix Dev Environment**: Memperbaiki perintah `composer dev` agar kompatibel dengan Windows (menghapus `php artisan pail`).
+- **Fix Vite**: Menginstal dependensi Node.js (`npm install`).
 
 Riwayat lengkap dapat dilihat di [CHANGELOG.md](CHANGELOG.md).
 

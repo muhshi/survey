@@ -5,9 +5,14 @@ Format ini didasarkan pada [Keep a Changelog](https://keepachangelog.com/en/1.0.
 
 ## [1.1.1] - 2026-05-06
 
+### Added
+- **SIPETRA SSO**: Implementasi Single Sign-On menggunakan OAuth2 (Laravel Socialite).
+- **Master Data Sync**: Fitur sinkronisasi otomatis data pegawai dan mitra melalui `php artisan sync:users`.
+- **User Scopes**: Penambahan scope `active()`, `pegawai()`, dan `mitra()` pada model User untuk mempermudah pemfilteran data.
+
 ### Fixed
 - **Development Environment**: Menghapus `php artisan pail` dari script `composer dev` karena tidak kompatibel dengan Windows (ekstensi `pcntl` hilang).
-- **Dependencies**: Melakukan `npm install` untuk memastikan Vite dan library frontend lainnya tersedia.
+- **Dependencies**: Melakukan `npm install` untuk memastikan Vite tersedia.
 
 ---
 

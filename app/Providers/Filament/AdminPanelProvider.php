@@ -61,6 +61,10 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->renderHook(
+                \Filament\View\PanelsRenderHook::AUTH_LOGIN_FORM_AFTER,
+                fn (): string => \Illuminate\Support\Facades\Blade::render('@include("auth.sso-button")'),
+            )
+            ->renderHook(
                 'panels::head.end',
                 fn () => new HtmlString('
                     <!-- SurveyJS Dependencies -->
