@@ -4,7 +4,7 @@
   order cgi-php before file_server
 }
 
-puslah.bpsdemak.com {
+{$SERVER_NAME:localhost} {
     root * /app/public
     encode zstd br gzip
 

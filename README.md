@@ -32,6 +32,7 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 - **UI Update**: Integrasi tombol "Masuk dengan SIPETRA SSO" di halaman login Filament.
 - **Fix Dev Environment**: Memperbaiki perintah `composer dev` agar kompatibel dengan Windows (menghapus `php artisan pail`).
 - **Fix Vite**: Menginstal dependensi Node.js (`npm install`).
+- **Docker Setup**: Penambahan konfigurasi Docker (Dockerfile, docker-compose.yml, Caddyfile) berbasis FrankenPHP 8.4 untuk kemudahan deployment.
 
 Riwayat lengkap dapat dilihat di [CHANGELOG.md](CHANGELOG.md).
 

@@ -1,6 +1,6 @@
 services:
-  puslah-franken:
-    container_name: puslah-franken
+  survey-franken:
+    container_name: survey-franken
     restart: unless-stopped
     environment:
       - PUID=1000
