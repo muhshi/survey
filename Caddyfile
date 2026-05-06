@@ -1,0 +1,19 @@
+{
+  frankenphp
+  # yang benar:
+  order cgi-php before file_server
+}
+
+puslah.bpsdemak.com {
+    root * /app/public
+    encode zstd br gzip
+
+    # Pastikan /livewire/* tidak ditangani sebagai static file
+    @livewire path /livewire/*
+    handle @livewire {
+        rewrite * /index.php?{query}
+    }
+
+    php_server
+    file_server
+}
