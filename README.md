@@ -33,6 +33,7 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 - **Fix Dev Environment**: Memperbaiki perintah `composer dev` agar kompatibel dengan Windows (menghapus `php artisan pail`).
 - **Fix Vite**: Menginstal dependensi Node.js (`npm install`).
 - **Docker Setup**: Penambahan konfigurasi Docker (Dockerfile, docker-compose.yml, Caddyfile) berbasis FrankenPHP 8.4. Dockerfile kini menyertakan Node.js, `composer install`, dan `npm run build` otomatis untuk kemudahan deployment.
+- **Fix SSO UI**: Membersihkan file `sso-button.blade.php` dari sisa simbol diff (`+`) yang tertempel tidak sengaja.
 
 Riwayat lengkap dapat dilihat di [CHANGELOG.md](CHANGELOG.md).
 
