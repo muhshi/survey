@@ -7,6 +7,8 @@ WORKDIR /app
 
 # Sistem deps & ekstensi PHP yang umum dipakai Laravel/Filament
 RUN apt-get update && apt-get install -y \
+    curl \
+    gnupg \
     libicu-dev \
     libzip-dev \
     libpng-dev \
@@ -18,9 +20,19 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-enable intl gd zip pdo_mysql \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# Install Node.js (untuk npm build)
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+    && apt-get install -y nodejs \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
 COPY . /app
 # Composer (buat install deps dari dalam container)
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+# Install dependencies & build assets
+RUN composer install --no-interaction --optimize-autoloader --no-dev \
+    && npm install \
+    && npm run build
 
 # Copy konfigurasi Caddy/FrankenPHP
 COPY Caddyfile /etc/caddy/Caddyfile
