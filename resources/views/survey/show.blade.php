@@ -194,6 +194,12 @@
 
     /* Fixed header to avoid scrolling */
     .navbar { box-shadow: none !important; }
+    
+    /* Hide SurveyJS Watermark */
+    .sv_watermark, .sv-logo, .sd-root-modern__watermark {
+        display: none !important;
+        visibility: hidden !important;
+    }
 
 </style>
 @endsection

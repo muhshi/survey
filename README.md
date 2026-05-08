@@ -25,6 +25,13 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 
 ## Changelog
 
+### 2026-05-08
+- **Fix SSO Integration**: Resolving `BindingResolutionException` by installing missing Socialite dependencies.
+- **Fix SSO Login Flow**: Making `password` column nullable on `users` table and fixing login route name in `SsoController`.
+- **Fix User Roles**: Ensuring `pegawai` role exists during SSO user registration.
+- **Improve SSO UI**: Updating BPS logo to high-quality local asset to prevent broken images.
+- **Clean SurveyJS UI**: Hiding SurveyJS license banners and watermarks in both builder and runner for a cleaner look.
+
 ### 2026-05-06
 - **Implement SIPETRA SSO**: Integrasi autentikasi OAuth2 menggunakan Laravel Socialite untuk login terpusat.
 - **Implement Master Data Sync**: Penambahan perintah `sync:users` untuk sinkronisasi data pegawai dan mitra dari API Master Sipetra.

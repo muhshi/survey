@@ -18,13 +18,13 @@ class SsoController extends Controller
     public function callback(Request $request)
     {
         if ($request->has('error')) {
-            return redirect()->route('login')->with('error', 'Login SSO Dibatalkan');
+            return redirect()->route('filament.admin.auth.login')->with('error', 'Login SSO Dibatalkan');
         }
 
         try {
             $ssoUser = Socialite::driver('sipetra')->user();
         } catch (\Exception $e) {
-            return redirect()->route('login')->with('error', 'Gagal mengambil data user');
+            return redirect()->route('filament.admin.auth.login')->with('error', 'Gagal mengambil data user');
         }
 
         $rawData = $ssoUser->getRaw();

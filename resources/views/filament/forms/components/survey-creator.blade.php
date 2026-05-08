@@ -38,6 +38,19 @@
                 display: none !important;
             }
         @endif
+
+        /* Sembunyikan Banner Lisensi & Watermark SurveyJS */
+        .svc-creator__banner, 
+        .sv-license-banner,
+        .sv_watermark,
+        .sd-root-modern__watermark,
+        .sv-logo {
+            display: none !important;
+            visibility: hidden !important;
+            height: 0 !important;
+            width: 0 !important;
+            overflow: hidden !important;
+        }
     </style>
     <div
         x-data="surveyCreator({

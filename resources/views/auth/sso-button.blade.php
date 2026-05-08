@@ -19,8 +19,8 @@
        onmouseover="this.style.backgroundColor='#f9fafb'; this.style.borderColor='#60a5fa'; this.style.boxShadow='0 4px 6px -1px rgba(0,0,0,0.1)';"
        onmouseout="this.style.backgroundColor='#ffffff'; this.style.borderColor='#d1d5db'; this.style.boxShadow='0 1px 2px 0 rgba(0,0,0,0.05)';">
 
-        {{-- Logo BPS (Using external URL if asset not found, but guide says asset) --}}
-        <img src="https://upload.wikimedia.org/wikipedia/commons/2/28/Lambang_Badan_Pusat_Statistik_%28BPS%29.svg" 
+        {{-- Logo BPS (Local Asset for reliability) --}}
+        <img src="{{ asset('images/logo-bps.png') }}" 
              alt="Logo BPS" 
              style="width: 20px; height: 20px; object-fit: contain; margin-right: 0.75rem; flex-shrink: 0;"
              loading="lazy">
