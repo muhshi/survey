@@ -2,14 +2,15 @@
 
 namespace App\Filament\Resources\JawabanResponden\Tables;
 
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Infolists\Components\KeyValueEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
+
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -36,14 +37,14 @@ class JawabanRespondenTable
                 TextColumn::make('score')
                     ->label('Skor')
                     ->badge()
-                    ->color(fn (float $state): string => match (true) {
+                    ->color(fn(float $state): string => match (true) {
                         $state >= 80 => 'success',
                         $state >= 60 => 'warning',
                         default => 'danger',
                     })
                     ->sortable()
                     ->suffix('%')
-                    ->visible(fn ($record) => true),
+                    ->visible(fn($record) => true),
                 TextColumn::make('submitted_at')
                     ->label('Waktu Submit')
                     ->dateTime('d M Y H:i')
@@ -81,7 +82,7 @@ class JawabanRespondenTable
                                     ->suffix('%')
                                     ->weight('bold')
                                     ->color('primary')
-                                    ->visible(fn ($record) => $record?->survey?->is_quiz || $record?->score !== null),
+                                    ->visible(fn($record) => $record?->survey?->is_quiz || $record?->score !== null),
                                 TextEntry::make('metadata.ip')->label('IP Address'),
                             ])->columns(2),
                         Section::make('Data Jawaban')
