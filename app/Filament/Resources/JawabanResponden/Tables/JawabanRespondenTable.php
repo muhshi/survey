@@ -39,7 +39,7 @@ class JawabanRespondenTable
                     })
                     ->sortable()
                     ->suffix('%')
-                    ->visible(fn ($record) => $record?->survey?->is_quiz),
+                    ->visible(fn ($record) => true),
                 TextColumn::make('submitted_at')
                     ->label('Waktu Submit')
                     ->dateTime('d M Y H:i')

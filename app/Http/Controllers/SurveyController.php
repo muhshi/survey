@@ -270,8 +270,8 @@ class SurveyController extends Controller
      */
     private function calculateScore(Survey $survey, array $payload): float
     {
-        $totalQuestionsWithCorrectAnswer = 0;
-        $correctCount = 0;
+        $totalPoints = 0;
+        $earnedPoints = 0;
 
         $schema = $survey->schema;
         if (! isset($schema['pages']) || ! is_array($schema['pages'])) {
@@ -285,7 +285,10 @@ class SurveyController extends Controller
 
             foreach ($page['elements'] as $element) {
                 if (isset($element['correctAnswer'])) {
-                    $totalQuestionsWithCorrectAnswer++;
+                    // Get points for this question, default to 1 if not set
+                    $points = isset($element['score']) ? (float) $element['score'] : 1;
+                    $totalPoints += $points;
+
                     $questionName = $element['name'];
                     $correctAnswer = $element['correctAnswer'];
 
@@ -295,17 +298,17 @@ class SurveyController extends Controller
 
                         // Handle potential different types (SurveyJS radio is often string)
                         if ($userAnswer == $correctAnswer) {
-                            $correctCount++;
+                            $earnedPoints += $points;
                         }
                     }
                 }
             }
         }
 
-        if ($totalQuestionsWithCorrectAnswer === 0) {
+        if ($totalPoints === 0) {
             return 0;
         }
 
-        return round(($correctCount / $totalQuestionsWithCorrectAnswer) * 100, 2);
+        return round(($earnedPoints / $totalPoints) * 100, 2);
     }
 }

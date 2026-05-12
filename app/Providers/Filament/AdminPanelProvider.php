@@ -11,11 +11,13 @@ use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
@@ -61,8 +63,8 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->renderHook(
-                \Filament\View\PanelsRenderHook::AUTH_LOGIN_FORM_AFTER,
-                fn (): string => \Illuminate\Support\Facades\Blade::render('@include("auth.sso-button")'),
+                PanelsRenderHook::AUTH_LOGIN_FORM_AFTER,
+                fn (): string => Blade::render('@include("auth.sso-button")'),
             )
             ->renderHook(
                 'panels::head.end',
@@ -85,6 +87,24 @@ class AdminPanelProvider extends PanelProvider
                     <script src="https://unpkg.com/survey-core@1.12.61/survey.i18n.min.js"></script>
                     <script src="https://unpkg.com/survey-creator-core@1.12.61/i18n/indonesian.js"></script>
                     <script src="https://unpkg.com/survey-creator-core@1.12.61/survey-creator-core.i18n.min.js"></script>
+
+                    <script>
+                        // Add score property to questions for Quiz Mode
+                        document.addEventListener("DOMContentLoaded", function() {
+                            const checkSurvey = setInterval(() => {
+                                if (typeof Survey !== "undefined" && Survey.Serializer) {
+                                    clearInterval(checkSurvey);
+                                    Survey.Serializer.addProperty("question", {
+                                        name: "score:number",
+                                        displayName: "Nilai/Skor Soal",
+                                        category: "general",
+                                        default: 1
+                                    });
+                                    console.log("[SurveyJS] Score property added to serializer.");
+                                }
+                            }, 500);
+                        });
+                    </script>
                 ')
             );
     }
