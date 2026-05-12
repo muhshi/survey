@@ -38,7 +38,9 @@ class SurveyTable
                     ->copyMessage('Link disalin!')
                     ->icon('heroicon-o-link')
                     ->color('primary')
-                    ->limit(30),
+                    ->extraAttributes([
+                        'style' => 'max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;',
+                    ]),
                 TextColumn::make('mode')
                     ->badge()
                     ->sortable(),
