@@ -40,15 +40,20 @@ class SurveyForm
                             ->placeholder('Deskripsi singkat tentang survei ini...')
                             ->rows(3)
                             ->columnSpanFull(),
-                        Toggle::make('is_active')
-                            ->label('Aktif')
-                            ->default(true)
-                            ->columnSpan(1),
                         DateTimePicker::make('starts_at')
                             ->label('Mulai Pada')
                             ->columnSpan(1),
                         DateTimePicker::make('ends_at')
                             ->label('Berakhir Pada')
+                            ->columnSpan(1),
+                        Toggle::make('is_active')
+                            ->label('Aktif')
+                            ->default(true)
+                            ->columnSpan(1),
+                        Toggle::make('is_quiz')
+                            ->label('Mode Kuis (Uji Kompetensi)')
+                            ->helperText('Jika aktif, sistem akan menghitung skor berdasarkan correctAnswer di schema.')
+                            ->default(false)
                             ->columnSpan(1),
                     ])
                     ->columns(2),

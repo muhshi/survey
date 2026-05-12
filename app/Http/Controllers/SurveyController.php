@@ -152,11 +152,18 @@ class SurveyController extends Controller
             }
         }
 
+        // Calculate score if it's a quiz
+        $score = null;
+        if ($survey->is_quiz && $survey->schema) {
+            $score = $this->calculateScore($survey, $request->payload);
+        }
+
         // Create new submission
         $jawaban = new JawabanResponden;
         $jawaban->survey_id = $survey->id;
         $jawaban->user_id = Auth::id();
         $jawaban->payload = $request->payload;
+        $jawaban->score = $score;
         $jawaban->metadata = [
             'ip' => $request->ip(),
             'user_agent' => $request->userAgent(),
@@ -199,17 +206,30 @@ class SurveyController extends Controller
 
         if ($existing) {
             $existing->payload = $request->payload;
+
+            // Recalculate score if it's a quiz
+            if ($survey->is_quiz && $survey->schema) {
+                $existing->score = $this->calculateScore($survey, $request->payload);
+            }
+
             $existing->metadata = array_merge($existing->metadata ?? [], [
                 'last_edited_at' => now()->toDateTimeString(),
                 'edit_ip' => $request->ip(),
             ]);
             $existing->save();
         } else {
+            // Calculate score if it's a quiz
+            $score = null;
+            if ($survey->is_quiz && $survey->schema) {
+                $score = $this->calculateScore($survey, $request->payload);
+            }
+
             // First submission in editable mode
             $jawaban = new JawabanResponden;
             $jawaban->survey_id = $survey->id;
             $jawaban->user_id = Auth::id();
             $jawaban->payload = $request->payload;
+            $jawaban->score = $score;
             $jawaban->metadata = [
                 'ip' => $request->ip(),
                 'user_agent' => $request->userAgent(),
@@ -243,5 +263,49 @@ class SurveyController extends Controller
         }
 
         return 'Survei tidak tersedia saat ini.';
+    }
+
+    /**
+     * Calculate score based on survey schema and payload.
+     */
+    private function calculateScore(Survey $survey, array $payload): float
+    {
+        $totalQuestionsWithCorrectAnswer = 0;
+        $correctCount = 0;
+
+        $schema = $survey->schema;
+        if (! isset($schema['pages']) || ! is_array($schema['pages'])) {
+            return 0;
+        }
+
+        foreach ($schema['pages'] as $page) {
+            if (! isset($page['elements']) || ! is_array($page['elements'])) {
+                continue;
+            }
+
+            foreach ($page['elements'] as $element) {
+                if (isset($element['correctAnswer'])) {
+                    $totalQuestionsWithCorrectAnswer++;
+                    $questionName = $element['name'];
+                    $correctAnswer = $element['correctAnswer'];
+
+                    // Check if question is answered and matches correct answer
+                    if (isset($payload[$questionName])) {
+                        $userAnswer = $payload[$questionName];
+
+                        // Handle potential different types (SurveyJS radio is often string)
+                        if ($userAnswer == $correctAnswer) {
+                            $correctCount++;
+                        }
+                    }
+                }
+            }
+        }
+
+        if ($totalQuestionsWithCorrectAnswer === 0) {
+            return 0;
+        }
+
+        return round(($correctCount / $totalQuestionsWithCorrectAnswer) * 100, 2);
     }
 }

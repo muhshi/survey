@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['survey_id', 'user_id', 'payload', 'metadata', 'submitted_at'])]
+#[Fillable(['survey_id', 'user_id', 'payload', 'score', 'metadata', 'submitted_at'])]
 class JawabanResponden extends Model
 {
     /** @use HasFactory<JawabanRespondenFactory> */
@@ -25,6 +25,7 @@ class JawabanResponden extends Model
     {
         return [
             'payload' => 'array',
+            'score' => 'float',
             'metadata' => 'array',
             'submitted_at' => 'datetime',
         ];

@@ -26,6 +26,9 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 ## Changelog
 
 ### 2026-05-12
+- **Quiz Mode (Uji Kompetensi)**: Menambahkan dukungan penilaian otomatis (scoring) berdasarkan `correctAnswer` pada schema SurveyJS.
+- **Score Tracking**: Menambahkan kolom skor pada tabel jawaban responden dan tampilan dashboard admin.
+- **Mass User Import**: Membuat Artisan command `survey:import-pendaftar` untuk mengimpor data pendaftar massal (Email sebagai username, Tgl Lahir sebagai password).
 - **Hide Slugs from UI**: Menghapus input slug pada form Kategori dan Survey untuk menyederhanakan antarmuka.
 - **Automatic Slug Generation**: Implementasi pembuatan slug unik otomatis oleh sistem pada model Kategori dan Survey.
 - **Improve Survey Link Sharing**: Menambahkan kolom "Link Survei" yang dapat disalin langsung pada tabel survey dan menghapus tombol salin link yang tidak berfungsi.

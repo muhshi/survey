@@ -29,6 +29,17 @@ class JawabanRespondenTable
                     ->default('Anonim')
                     ->searchable()
                     ->sortable(),
+                TextColumn::make('score')
+                    ->label('Skor')
+                    ->badge()
+                    ->color(fn (float $state): string => match (true) {
+                        $state >= 80 => 'success',
+                        $state >= 60 => 'warning',
+                        default => 'danger',
+                    })
+                    ->sortable()
+                    ->suffix('%')
+                    ->visible(fn ($record) => $record?->survey?->is_quiz),
                 TextColumn::make('submitted_at')
                     ->label('Waktu Submit')
                     ->dateTime('d M Y H:i')
@@ -61,6 +72,12 @@ class JawabanRespondenTable
                                 TextEntry::make('survey.title')->label('Survey'),
                                 TextEntry::make('user.name')->label('Nama')->default('Anonim'),
                                 TextEntry::make('submitted_at')->label('Waktu Submit')->dateTime('d M Y H:i:s'),
+                                TextEntry::make('score')
+                                    ->label('Skor Kuis')
+                                    ->suffix('%')
+                                    ->weight('bold')
+                                    ->color('primary')
+                                    ->visible(fn ($record) => $record?->survey?->is_quiz),
                                 TextEntry::make('metadata.ip')->label('IP Address'),
                             ])->columns(2),
                         Section::make('Data Jawaban')
