@@ -6,6 +6,10 @@ use Filament\Actions\ViewAction;
 use Filament\Infolists\Components\KeyValueEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -77,7 +81,7 @@ class JawabanRespondenTable
                                     ->suffix('%')
                                     ->weight('bold')
                                     ->color('primary')
-                                    ->visible(fn ($record) => $record?->survey?->is_quiz),
+                                    ->visible(fn ($record) => $record?->survey?->is_quiz || $record?->score !== null),
                                 TextEntry::make('metadata.ip')->label('IP Address'),
                             ])->columns(2),
                         Section::make('Data Jawaban')
@@ -90,9 +94,13 @@ class JawabanRespondenTable
                             ])
                             ->collapsed(),
                     ]),
+                EditAction::make(),
+                DeleteAction::make(),
             ])
             ->bulkActions([
-                //
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
             ]);
     }
 }
