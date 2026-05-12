@@ -34,6 +34,7 @@ class SurveyTable
                     ->label('Link Survei')
                     ->state(fn ($record) => $record->getPublicUrl())
                     ->copyable()
+                    ->copyableState(fn ($record) => $record->getPublicUrl())
                     ->copyMessage('Link disalin!')
                     ->icon('heroicon-o-link')
                     ->color('primary')
