@@ -25,6 +25,11 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 
 ## Changelog
 
+### 2026-05-12
+- **Hide Slugs from UI**: Menghapus input slug pada form Kategori dan Survey untuk menyederhanakan antarmuka.
+- **Automatic Slug Generation**: Implementasi pembuatan slug unik otomatis oleh sistem pada model Kategori dan Survey.
+- **Improve Survey Link Sharing**: Menambahkan kolom "Link Survei" yang dapat disalin langsung pada tabel survey dan menghapus tombol salin link yang tidak berfungsi.
+
 ### 2026-05-08
 - **Fix SSO Integration**: Resolving `BindingResolutionException` by installing missing Socialite dependencies.
 - **Fix SSO Login Flow**: Making `password` column nullable on `users` table and fixing login route name in `SsoController`.

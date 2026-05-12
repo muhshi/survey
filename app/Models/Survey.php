@@ -21,9 +21,18 @@ class Survey extends Model
 
     protected static function booted(): void
     {
-        static::creating(function (Survey $survey): void {
+        static::saving(function (Survey $survey): void {
             if (empty($survey->slug)) {
-                $survey->slug = Str::slug($survey->title);
+                $slug = Str::slug($survey->title);
+                $originalSlug = $slug;
+                $count = 1;
+
+                while (static::where('slug', $slug)->where('id', '!=', $survey->id)->exists()) {
+                    $slug = "{$originalSlug}-{$count}";
+                    $count++;
+                }
+
+                $survey->slug = $slug;
             }
         });
     }

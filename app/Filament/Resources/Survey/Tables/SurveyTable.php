@@ -30,6 +30,14 @@ class SurveyTable
                     ->sortable()
                     ->searchable()
                     ->limit(40),
+                TextColumn::make('public_url')
+                    ->label('Link Survei')
+                    ->state(fn ($record) => $record->getPublicUrl())
+                    ->copyable()
+                    ->copyMessage('Link disalin!')
+                    ->icon('heroicon-o-link')
+                    ->color('primary')
+                    ->limit(30),
                 TextColumn::make('mode')
                     ->badge()
                     ->sortable(),
@@ -98,13 +106,6 @@ class SurveyTable
                     ->icon('heroicon-o-eye')
                     ->color('info')
                     ->url(fn ($record) => SurveyResource::getUrl('submissions', ['record' => $record])),
-                Action::make('copyLink')
-                    ->label('Salin Link')
-                    ->icon('heroicon-o-link')
-                    ->color('gray')
-                    ->action(function ($record, $livewire) {
-                        $livewire->js("navigator.clipboard.writeText('".$record->getPublicUrl()."'); \$tooltip('Link disalin!', { timeout: 2000 });");
-                    }),
                 EditAction::make(),
                 DeleteAction::make(),
             ])

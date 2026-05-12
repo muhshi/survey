@@ -19,9 +19,18 @@ class Kategori extends Model
 
     protected static function booted(): void
     {
-        static::creating(function (Kategori $category): void {
+        static::saving(function (Kategori $category): void {
             if (empty($category->slug)) {
-                $category->slug = Str::slug($category->name);
+                $slug = Str::slug($category->name);
+                $originalSlug = $slug;
+                $count = 1;
+
+                while (static::where('slug', $slug)->where('id', '!=', $category->id)->exists()) {
+                    $slug = "{$originalSlug}-{$count}";
+                    $count++;
+                }
+
+                $category->slug = $slug;
             }
         });
     }

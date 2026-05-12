@@ -10,9 +10,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
-use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
 
 class SurveyForm
@@ -31,12 +29,6 @@ class SurveyForm
                         TextInput::make('title')
                             ->label('Judul')
                             ->required()
-                            ->live(onBlur: true)
-                            ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state)))
-                            ->columnSpan(1),
-                        TextInput::make('slug')
-                            ->required()
-                            ->unique(ignoreRecord: true)
                             ->columnSpan(1),
                         Select::make('mode')
                             ->options(SurveyMode::class)

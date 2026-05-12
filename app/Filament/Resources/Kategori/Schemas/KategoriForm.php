@@ -16,10 +16,6 @@ class KategoriForm
                     ->label('Nama Kategori')
                     ->required()
                     ->maxLength(255),
-                TextInput::make('slug')
-                    ->required()
-                    ->unique(ignoreRecord: true)
-                    ->maxLength(255),
                 Textarea::make('description')
                     ->label('Deskripsi')
                     ->nullable()
