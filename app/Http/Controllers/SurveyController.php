@@ -81,7 +81,7 @@ class SurveyController extends Controller
 
         // Access control
         if ($survey->requiresAuth() && ! Auth::check()) {
-            return redirect()->route('filament.admin.auth.login');
+            return redirect()->guest(route('filament.admin.auth.login'));
         }
 
         if ($survey->access_level === 'role') {

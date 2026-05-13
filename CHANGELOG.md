@@ -3,6 +3,11 @@
 Semua perubahan penting dalam proyek ini akan dicatat di file ini.
 Format ini didasarkan pada [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.2.0] - 2026-05-13
+
+### Fixed
+- **Login Redirection**: Menggunakan `redirect()->guest()` pada controller survei agar URL asal disimpan dan dikembalikan setelah login berhasil (intended URL).
+
 ## [1.1.1] - 2026-05-06
 
 ### Added
