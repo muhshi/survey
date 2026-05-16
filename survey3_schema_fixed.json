@@ -1,0 +1,271 @@
+{
+    "pages": [
+        {
+            "name": "identitas_penampilan_page",
+            "title": "Identitas & Penampilan",
+            "elements": [
+                {
+                    "name": "nama_peserta",
+                    "type": "dropdown",
+                    "title": "Nama Peserta",
+                    "isRequired": true,
+                    "searchEnabled": true,
+                    "choicesByUrl": {
+                        "url": "/api/peserta",
+                        "valueName": "value",
+                        "titleName": "text"
+                    }
+                },
+                {
+                    "name": "nomor_urut",
+                    "type": "dropdown",
+                    "title": "Nomor Urut",
+                    "isRequired": true,
+                    "searchEnabled": true,
+                    "choicesByUrl": {
+                        "url": "/api/peserta",
+                        "valueName": "value",
+                        "titleName": "nomor_urut"
+                    }
+                },
+                {
+                    "name": "panel_penampilan",
+                    "type": "panel",
+                    "title": "Penilaian Penampilan Petugas",
+                    "elements": [
+                        {
+                            "name": "skor_kerapihan",
+                            "type": "rating",
+                            "title": "Kerapihan berpakaian",
+                            "rateMax": 10
+                        },
+                        {
+                            "name": "skor_perkenalan",
+                            "type": "rating",
+                            "title": "Cara memperkenalkan diri",
+                            "rateMax": 10
+                        },
+                        {
+                            "name": "skor_menjawab",
+                            "type": "rating",
+                            "title": "Cara menjawab pertanyaan",
+                            "rateMax": 10
+                        },
+                        {
+                            "name": "skor_penampilan_total",
+                            "type": "rating",
+                            "title": "Nilai penampilan keseluruhan",
+                            "rateMax": 10
+                        },
+                        {
+                            "name": "keterangan_penampilan",
+                            "type": "text",
+                            "title": "Keterangan Penampilan"
+                        }
+                    ]
+                },
+                {
+                    "name": "kecamatan_pilihan",
+                    "type": "dropdown",
+                    "title": "Kecamatan Pilihan Tugas",
+                    "isRequired": true,
+                    "choicesByUrl": {
+                        "url": "/api/regions/kecamatan",
+                        "valueName": "value",
+                        "titleName": "text"
+                    }
+                },
+                {
+                    "name": "desa_pilihan",
+                    "type": "dropdown",
+                    "title": "Desa Pilihan Tugas",
+                    "isRequired": true,
+                    "choicesByUrl": {
+                        "url": "/api/regions/desa?kecamatan={kecamatan_pilihan}",
+                        "valueName": "value",
+                        "titleName": "text"
+                    },
+                    "visibleIf": "{kecamatan_pilihan} notempty"
+                },
+                {
+                    "name": "sls_pilihan",
+                    "type": "dropdown",
+                    "title": "SLS Pilihan Tugas",
+                    "choicesByUrl": {
+                        "url": "/api/regions/sls?desa={desa_pilihan}",
+                        "valueName": "value",
+                        "titleName": "text"
+                    },
+                    "visibleIf": "{desa_pilihan} notempty"
+                },
+                {
+                    "name": "kegiatan_sehari_hari",
+                    "rows": 3,
+                    "type": "comment",
+                    "title": "Apa kegiatan/pekerjaan sehari-hari? Berapa waktu yang digunakan untuk pekerjaan tersebut?"
+                },
+                {
+                    "name": "skor_kegiatan",
+                    "type": "rating",
+                    "title": "Skor pertanyaan kegiatan/pekerjaan sehari-hari",
+                    "rateMax": 10,
+                    "rateMin": 1
+                }
+            ]
+        },
+        {
+            "name": "kesanggupan_page",
+            "title": "Penilaian Kesanggupan Petugas",
+            "elements": [
+                {
+                    "name": "pengalaman_bps",
+                    "type": "radiogroup",
+                    "title": "Pengalaman Anda mengikuti kegiatan-kegiatan sensus/survei di BPS",
+                    "choices": [
+                        "Belum Pernah",
+                        "1-2 Kali",
+                        "Lebih dari 2 Kali"
+                    ]
+                },
+                {
+                    "name": "memiliki_hp_android",
+                    "type": "boolean",
+                    "title": "Apakah saudara memiliki/menguasai HP android dengan spesifikasi yang ditentukan?",
+                    "labelTrue": "Ya",
+                    "labelFalse": "Tidak"
+                },
+                {
+                    "name": "bersedia_pelatihan",
+                    "type": "boolean",
+                    "title": "Apakah bersedia mengikuti pelatihan dan menginap selama 3 hari?",
+                    "labelTrue": "Ya",
+                    "labelFalse": "Tidak"
+                },
+                {
+                    "name": "menguasai_motor",
+                    "type": "boolean",
+                    "title": "Apakah saudara menguasai kendaraan bermotor roda dua?",
+                    "labelTrue": "Ya",
+                    "labelFalse": "Tidak"
+                },
+                {
+                    "html": "<div style='padding: 10px; background-color: #f3f4f6; border-radius: 5px;'><strong>Catatan:</strong> Pewawancara memberikan gambaran pelaksanaan lapangan, beban tugas, dan apa saja yang didata.</div>",
+                    "name": "info_lapangan",
+                    "type": "html"
+                },
+                {
+                    "name": "bersedia_target",
+                    "type": "boolean",
+                    "title": "Apakah bersedia menyelesaikan tugas sesuai target/kontrak kerja?",
+                    "labelTrue": "Ya",
+                    "labelFalse": "Tidak"
+                },
+                {
+                    "name": "siap_ganti_rugi",
+                    "type": "boolean",
+                    "title": "Jika mengundurkan diri, apakah siap mengganti rugi biaya pelatihan?",
+                    "labelTrue": "Ya",
+                    "labelFalse": "Tidak"
+                },
+                {
+                    "name": "hadir_pertemuan",
+                    "type": "boolean",
+                    "title": "Apakah bersedia menghadiri pertemuan wajib selama periode pendataan?",
+                    "labelTrue": "Ya",
+                    "labelFalse": "Tidak"
+                },
+                {
+                    "name": "bersedia_lintas_kecamatan",
+                    "type": "radiogroup",
+                    "title": "Apakah bersedia bekerja lintas desa dan kecamatan?",
+                    "choices": [
+                        {
+                            "text": "Iya",
+                            "value": "iya"
+                        },
+                        {
+                            "text": "Siap asal satu kec",
+                            "value": "siap_satu_kec"
+                        },
+                        {
+                            "text": "Tidak",
+                            "value": "tidak"
+                        }
+                    ]
+                },
+                {
+                    "name": "target_tinggi",
+                    "type": "boolean",
+                    "title": "Siap bekerja dengan target tinggi dan pengawasan ketat?",
+                    "labelTrue": "Ya",
+                    "labelFalse": "Tidak"
+                },
+                {
+                    "name": "tanggapan_evaluasi",
+                    "rows": 2,
+                    "type": "comment",
+                    "title": "Bagaimana jika hasil evaluasi pekerjaan masih di bawah target atau banyak anomali?"
+                },
+                {
+                    "name": "tanggapan_bentrok_jadwal",
+                    "rows": 2,
+                    "type": "comment",
+                    "title": "Bagaimana jika ada tuntutan penyelesaian SE dan kerjaan lainnya/kepentingan pribadi di waktu bersamaan?"
+                }
+            ]
+        },
+        {
+            "name": "rekomendasi_page",
+            "title": "Rekomendasi Akhir",
+            "elements": [
+                {
+                    "name": "rekomendasi_akhir",
+                    "type": "radiogroup",
+                    "title": "Apakah calon petugas layak untuk direkomendasikan?",
+                    "choices": [
+                        {
+                            "text": "Lolos",
+                            "value": 1
+                        },
+                        {
+                            "text": "Cadangan",
+                            "value": 2
+                        },
+                        {
+                            "text": "Tidak Lolos",
+                            "value": 3
+                        }
+                    ],
+                    "isRequired": true
+                },
+                {
+                    "name": "catatan_pewawancara",
+                    "rows": 3,
+                    "type": "comment",
+                    "title": "Catatan Tambahan"
+                }
+            ]
+        }
+    ],
+    "title": "Formulir Wawancara Calon Petugas",
+    "width": "800px",
+    "widthMode": "static",
+    "description": "Evaluasi kesanggupan dan penampilan calon petugas lapangan.",
+    "logoPosition": "right",
+    "progressBarType": "pages",
+    "showProgressBar": "top",
+    "triggers": [
+        {
+            "type": "setvalue",
+            "expression": "{nama_peserta} notempty",
+            "setToName": "nomor_urut",
+            "setValueExpression": "{nama_peserta}"
+        },
+        {
+            "type": "setvalue",
+            "expression": "{nomor_urut} notempty",
+            "setToName": "nama_peserta",
+            "setValueExpression": "{nomor_urut}"
+        }
+    ]
+}

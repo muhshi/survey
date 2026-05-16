@@ -25,6 +25,10 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 
 ## Changelog
 
+### 2026-05-16
+- **Participant Search & Auto-fill**: Implementasi dropdown nama peserta yang dapat dicari (searchable) dan pengisian otomatis nomor urut (bidirectional auto-fill) pada form wawancara.
+- **Excel Participant Import**: Menambahkan perintah `app:import-participants` untuk mengimpor data peserta wawancara dari file Excel melalui JSON intermediate.
+
 ### 2026-05-13
 - **Fix Redirect After Login**: Memperbaiki alur redirect sehingga user diarahkan kembali ke link survei asal setelah login (intended URL), alih-alih selalu masuk ke dashboard admin.
 

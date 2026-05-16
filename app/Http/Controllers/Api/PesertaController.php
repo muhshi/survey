@@ -3,20 +3,30 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\JawabanResponden;
 use App\Models\User;
-use Illuminate\Http\Request;
 
 class PesertaController extends Controller
 {
     public function index()
     {
-        $data = User::role('calon_petugas')
-            ->select('id', 'name', 'nomor_urut')
+        // Ambil ID peserta yang sudah pernah di-submit di survei wawancara (ID 3)
+        $submittedIds = JawabanResponden::where('survey_id', 3)
             ->get()
-            ->map(fn($item) => [
+            ->pluck('payload.nama_peserta')
+            ->filter()
+            ->values()
+            ->toArray();
+
+        $data = User::role('calon_petugas')
+            ->whereNotIn('id', $submittedIds)
+            ->select('id', 'name', 'nomor_urut')
+            ->orderBy('name')
+            ->get()
+            ->map(fn ($item) => [
                 'value' => $item->id,
                 'text' => $item->name,
-                'nomor_urut' => $item->nomor_urut
+                'nomor_urut' => $item->nomor_urut,
             ]);
 
         return response()->json($data);

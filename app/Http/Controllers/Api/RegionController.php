@@ -12,12 +12,17 @@ class RegionController extends Controller
     {
         $data = MasterWilayah::select('nmkec', 'kdkec')
             ->distinct()
-            ->orderBy('nmkec')
+            ->orderByRaw('CAST(kdkec AS UNSIGNED) ASC')
             ->get()
-            ->map(fn($item) => [
-                'value' => $item->nmkec,
-                'text' => $item->nmkec
-            ]);
+            ->map(function ($item) {
+                $kode = str_pad($item->kdkec, 3, '0', STR_PAD_LEFT);
+                $nama = ucwords(strtolower($item->nmkec));
+
+                return [
+                    'value' => $item->nmkec, // Tetap menggunakan nmkec sebagai value agar filter desa tidak rusak
+                    'text' => "$kode $nama",
+                ];
+            });
 
         return response()->json($data);
     }
@@ -29,12 +34,17 @@ class RegionController extends Controller
         $data = MasterWilayah::select('nmdesa', 'kddesa')
             ->where('nmkec', $kecamatan)
             ->distinct()
-            ->orderBy('nmdesa')
+            ->orderByRaw('CAST(kddesa AS UNSIGNED) ASC')
             ->get()
-            ->map(fn($item) => [
-                'value' => $item->nmdesa,
-                'text' => $item->nmdesa
-            ]);
+            ->map(function ($item) {
+                $kode = str_pad($item->kddesa, 3, '0', STR_PAD_LEFT);
+                $nama = ucwords(strtolower($item->nmdesa));
+
+                return [
+                    'value' => $item->nmdesa,
+                    'text' => "$kode $nama",
+                ];
+            });
 
         return response()->json($data);
     }
@@ -47,9 +57,9 @@ class RegionController extends Controller
             ->where('nmdesa', $desa)
             ->orderBy('nmsls')
             ->get()
-            ->map(fn($item) => [
+            ->map(fn ($item) => [
                 'value' => $item->idsubsls,
-                'text' => $item->nmsls
+                'text' => $item->nmsls,
             ]);
 
         return response()->json($data);
