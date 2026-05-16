@@ -15,8 +15,8 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
 class UserResource extends Resource
@@ -35,7 +35,7 @@ class UserResource extends Resource
                     ->description('Detail login dan identitas dasar.')
                     ->schema([
                         Grid::make(2)->schema([
-                            TextInput::make('nomor_urut')
+                            TextInput::make('metadata.nomor_urut')
                                 ->label('Nomor Urut')
                                 ->placeholder('Contoh: 0001')
                                 ->maxLength(4),
@@ -48,8 +48,8 @@ class UserResource extends Resource
                                 ->unique(ignoreRecord: true),
                             TextInput::make('password')
                                 ->password()
-                                ->dehydrated(fn($state) => filled($state))
-                                ->required(fn(string $context): bool => $context === 'create'),
+                                ->dehydrated(fn ($state) => filled($state))
+                                ->required(fn (string $context): bool => $context === 'create'),
                             Select::make('roles')
                                 ->relationship('roles', 'name')
                                 ->multiple()
@@ -63,12 +63,12 @@ class UserResource extends Resource
                     ->description('Data penempatan dan identitas kepegawaian.')
                     ->schema([
                         Grid::make(3)->schema([
-                            TextInput::make('kecamatan')->label('Kecamatan'),
-                            TextInput::make('desa')->label('Desa'),
-                            TextInput::make('idsubsls')->label('ID SubSLS'),
-                            TextInput::make('unit_kerja')->label('Unit Kerja'),
-                            TextInput::make('jabatan')->label('Jabatan'),
-                            TextInput::make('nomor_hp')->label('Nomor HP'),
+                            TextInput::make('metadata.kecamatan')->label('Kecamatan'),
+                            TextInput::make('metadata.desa')->label('Desa'),
+                            TextInput::make('metadata.idsubsls')->label('ID SubSLS'),
+                            TextInput::make('metadata.unit_kerja')->label('Unit Kerja'),
+                            TextInput::make('metadata.jabatan')->label('Jabatan'),
+                            TextInput::make('metadata.nomor_hp')->label('Nomor HP'),
                         ]),
                     ]),
 
@@ -85,7 +85,7 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('nomor_urut')
+                TextColumn::make('metadata.nomor_urut')
                     ->label('No. Urut')
                     ->sortable()
                     ->searchable(),
@@ -99,7 +99,7 @@ class UserResource extends Resource
                     ->label('Roles')
                     ->badge()
                     ->color('info'),
-                TextColumn::make('kecamatan')
+                TextColumn::make('metadata.kecamatan')
                     ->label('Kecamatan')
                     ->toggleable(),
                 IconColumn::make('is_active')

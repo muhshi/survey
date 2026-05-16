@@ -20,12 +20,12 @@ class PesertaController extends Controller
 
         $data = User::role('calon_petugas')
             ->whereNotIn('id', $submittedIds)
-            ->select('id', 'name', 'nomor_urut')
+            ->select('id', 'name', 'metadata')
             ->orderBy('name')
             ->get()
             ->map(fn ($item) => [
                 'value' => $item->id,
-                'text' => ($item->nomor_urut ? $item->nomor_urut . '. ' : '') . $item->name,
+                'text' => ($item->nomor_urut ? $item->nomor_urut.'. ' : '').$item->name,
             ]);
 
         return response()->json($data);

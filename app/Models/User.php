@@ -12,30 +12,16 @@ use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
 #[Fillable([
-    'name', 
-    'email', 
+    'name',
+    'email',
     'password',
     'sipetra_id',
     'sipetra_token',
     'sipetra_refresh_token',
-    'nip',
-    'nip_baru',
-    'jabatan',
-    'golongan',
-    'unit_kerja',
-    'kd_satker',
-    'nomor_hp',
-    'jenis_kelamin',
     'avatar_url',
     'identity_type',
     'is_active',
-    'period',
-    'contract_start',
-    'contract_end',
-    'nomor_urut',
-    'kecamatan',
-    'desa',
-    'idsubsls',
+    'metadata',
 ])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
@@ -56,9 +42,62 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_active' => 'boolean',
-            'contract_start' => 'date',
-            'contract_end' => 'date',
+            'metadata' => 'array',
         ];
+    }
+
+    /**
+     * Get an attribute from the model.
+     *
+     * @param  string  $key
+     * @return mixed
+     */
+    public function getAttribute($key)
+    {
+        // Avoid recursive loop or resolving system attributes
+        if ($key === 'metadata' || array_key_exists($key, $this->attributes) || $this->hasGetMutator($key) || $this->isClassCastable($key) || method_exists($this, $key)) {
+            return parent::getAttribute($key);
+        }
+
+        $metadataFields = [
+            'nomor_urut', 'nip', 'nip_baru', 'jabatan', 'golongan', 'unit_kerja',
+            'kecamatan', 'desa', 'idsubsls', 'kd_satker', 'nomor_hp', 'jenis_kelamin',
+            'period', 'contract_start', 'contract_end',
+        ];
+
+        if (in_array($key, $metadataFields)) {
+            $metadata = $this->metadata ?? [];
+
+            return $metadata[$key] ?? null;
+        }
+
+        return parent::getAttribute($key);
+    }
+
+    /**
+     * Set a given attribute on the model.
+     *
+     * @param  string  $key
+     * @param  mixed  $value
+     * @return mixed
+     */
+    public function setAttribute($key, $value)
+    {
+        $metadataFields = [
+            'nomor_urut', 'nip', 'nip_baru', 'jabatan', 'golongan', 'unit_kerja',
+            'kecamatan', 'desa', 'idsubsls', 'kd_satker', 'nomor_hp', 'jenis_kelamin',
+            'period', 'contract_start', 'contract_end',
+        ];
+
+        if (in_array($key, $metadataFields)) {
+            $metadata = $this->metadata ?? [];
+            $metadata[$key] = $value;
+            $this->metadata = $metadata;
+
+            return $this;
+        }
+
+        return parent::setAttribute($key, $value);
     }
 
     public function scopeActive($query)
@@ -74,6 +113,7 @@ class User extends Authenticatable
     public function scopeMitra($query, ?string $period = null)
     {
         $q = $query->active()->where('identity_type', 'mitra');
+
         return $period ? $q->where('period', $period) : $q;
     }
 }

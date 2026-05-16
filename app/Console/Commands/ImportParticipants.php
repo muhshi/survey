@@ -38,20 +38,26 @@ class ImportParticipants extends Command
         foreach ($chunks as $chunk) {
             DB::transaction(function () use ($chunk, $bar) {
                 foreach ($chunk as $p) {
-                    $user = User::updateOrCreate(
-                        ['nip' => $p['nip']],
-                        [
-                            'name' => $p['name'],
-                            'email' => $p['email'] ?? ($p['nip'].'@example.com'),
-                            'password' => Hash::make('Mitra3321'),
-                            'nomor_hp' => $p['nomor_hp'],
-                            'nomor_urut' => $p['nomor_urut'],
-                            'kecamatan' => $p['kecamatan'],
-                            'desa' => $p['desa'],
-                            'identity_type' => 'mitra',
-                            'is_active' => true,
-                        ]
-                    );
+                    $user = User::where('metadata->nip', $p['nip'])->first()
+                        ?? User::where('email', $p['email'] ?? ($p['nip'].'@example.com'))->first();
+
+                    $userData = [
+                        'name' => $p['name'],
+                        'email' => $p['email'] ?? ($p['nip'].'@example.com'),
+                        'password' => Hash::make('Mitra3321'),
+                        'nomor_hp' => $p['nomor_hp'],
+                        'nomor_urut' => $p['nomor_urut'],
+                        'kecamatan' => $p['kecamatan'],
+                        'desa' => $p['desa'],
+                        'identity_type' => 'mitra',
+                        'is_active' => true,
+                    ];
+
+                    if ($user) {
+                        $user->update($userData);
+                    } else {
+                        $user = User::create($userData);
+                    }
 
                     if (! $user->hasRole('calon_petugas')) {
                         $user->assignRole('calon_petugas');
