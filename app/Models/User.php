@@ -32,6 +32,10 @@ use Spatie\Permission\Traits\HasRoles;
     'period',
     'contract_start',
     'contract_end',
+    'nomor_urut',
+    'kecamatan',
+    'desa',
+    'idsubsls',
 ])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
