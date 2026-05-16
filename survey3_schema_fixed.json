@@ -17,18 +17,6 @@
                     }
                 },
                 {
-                    "name": "nomor_urut",
-                    "type": "dropdown",
-                    "title": "Nomor Urut",
-                    "isRequired": true,
-                    "searchEnabled": true,
-                    "choicesByUrl": {
-                        "url": "/api/peserta",
-                        "valueName": "value",
-                        "titleName": "nomor_urut"
-                    }
-                },
-                {
                     "name": "panel_penampilan",
                     "type": "panel",
                     "title": "Penilaian Penampilan Petugas",
@@ -253,19 +241,5 @@
     "description": "Evaluasi kesanggupan dan penampilan calon petugas lapangan.",
     "logoPosition": "right",
     "progressBarType": "pages",
-    "showProgressBar": "top",
-    "triggers": [
-        {
-            "type": "setvalue",
-            "expression": "{nama_peserta} notempty",
-            "setToName": "nomor_urut",
-            "setValueExpression": "{nama_peserta}"
-        },
-        {
-            "type": "setvalue",
-            "expression": "{nomor_urut} notempty",
-            "setToName": "nama_peserta",
-            "setValueExpression": "{nomor_urut}"
-        }
-    ]
+    "showProgressBar": "top"
 }

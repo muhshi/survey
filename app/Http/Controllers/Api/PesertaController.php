@@ -25,8 +25,7 @@ class PesertaController extends Controller
             ->get()
             ->map(fn ($item) => [
                 'value' => $item->id,
-                'text' => $item->name,
-                'nomor_urut' => $item->nomor_urut,
+                'text' => ($item->nomor_urut ? $item->nomor_urut . '. ' : '') . $item->name,
             ]);
 
         return response()->json($data);
