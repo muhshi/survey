@@ -61,6 +61,7 @@ class UserResource extends Resource
 
                 Section::make('Informasi Wilayah & Tugas')
                     ->description('Data penempatan dan identitas kepegawaian.')
+                    ->visible(fn (?User $record) => $record && $record->hasRole('calon_petugas'))
                     ->schema([
                         Grid::make(3)->schema([
                             TextInput::make('metadata.kecamatan')->label('Kecamatan'),
@@ -85,10 +86,6 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('metadata.nomor_urut')
-                    ->label('No. Urut')
-                    ->sortable()
-                    ->searchable(),
                 TextColumn::make('name')
                     ->label('Nama')
                     ->sortable()
