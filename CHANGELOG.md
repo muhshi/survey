@@ -3,6 +3,16 @@
 Semua perubahan penting dalam proyek ini akan dicatat di file ini.
 Format ini didasarkan pada [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.3.0] - 2026-05-16
+
+### Added
+- **Participant Search & Auto-fill**: Dropdown nama peserta searchable dan bidirectional auto-fill nomor urut pada form wawancara.
+- **Excel Participant Import**: Artisan command `app:import-participants` untuk impor data dari Excel.
+
+### Changed
+- **Uji Kompetensi Auto-fill**: Automasi pengisian Nama dan Email dari session login user.
+- **Uji Kompetensi Schema**: Menghapus field Nomor Telepon (WA) dari kuesioner Uji Kompetensi.
+
 ## [1.2.0] - 2026-05-13
 
 ### Fixed

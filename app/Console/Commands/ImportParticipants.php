@@ -7,6 +7,7 @@ use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 #[Signature('app:import-participants')]
 #[Description('Import participants from participants.json into the users table')]
@@ -42,6 +43,7 @@ class ImportParticipants extends Command
                         [
                             'name' => $p['name'],
                             'email' => $p['email'] ?? ($p['nip'].'@example.com'),
+                            'password' => Hash::make('Mitra3321'),
                             'nomor_hp' => $p['nomor_hp'],
                             'nomor_urut' => $p['nomor_urut'],
                             'kecamatan' => $p['kecamatan'],

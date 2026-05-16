@@ -304,6 +304,11 @@
 
             @if(isset($existingSubmission) && $existingSubmission)
                 model.data = {!! json_encode($existingSubmission->payload ?? [], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) !!};
+            @elseif(Auth::check())
+                model.data = {
+                    "nama_lengkap": "{{ Auth::user()->name }}",
+                    "email_peserta": "{{ Auth::user()->email }}"
+                };
             @endif
 
             model.completeText = "Kirim Jawaban";

@@ -76,17 +76,6 @@
                     "visibleIf": "{kecamatan_pilihan} notempty"
                 },
                 {
-                    "name": "sls_pilihan",
-                    "type": "dropdown",
-                    "title": "SLS Pilihan Tugas",
-                    "choicesByUrl": {
-                        "url": "/api/regions/sls?desa={desa_pilihan}",
-                        "valueName": "value",
-                        "titleName": "text"
-                    },
-                    "visibleIf": "{desa_pilihan} notempty"
-                },
-                {
                     "name": "kegiatan_sehari_hari",
                     "rows": 3,
                     "type": "comment",
