@@ -12,6 +12,7 @@ Format ini didasarkan pada [Keep a Changelog](https://keepachangelog.com/en/1.0.
 ### Changed
 - **Uji Kompetensi Auto-fill**: Automasi pengisian Nama dan Email dari session login user.
 - **Uji Kompetensi Schema**: Menghapus field Nomor Telepon (WA) dari kuesioner Uji Kompetensi.
+- **Quiz Randomization**: Implementasi pengacakan urutan soal dan pilihan jawaban secara otomatis untuk semua survei bertipe kuis.
 
 ## [1.2.0] - 2026-05-13
 

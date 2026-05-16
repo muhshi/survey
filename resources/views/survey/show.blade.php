@@ -294,6 +294,17 @@
 
             const model = new Survey.Model(rawData);
             model.locale = "id";
+
+            @if($survey->is_quiz)
+                // Randomize questions order within pages
+                model.questionsOrder = "random";
+                // Randomize choices order for each question
+                model.getAllQuestions().forEach(q => {
+                    if (q.choicesOrder !== undefined) {
+                        q.choicesOrder = "random";
+                    }
+                });
+            @endif
             
             // USE DEFAULT V2 THEME
             model.applyTheme({
