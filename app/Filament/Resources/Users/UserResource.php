@@ -38,7 +38,8 @@ class UserResource extends Resource
                             TextInput::make('metadata.nomor_urut')
                                 ->label('Nomor Urut')
                                 ->placeholder('Contoh: 0001')
-                                ->maxLength(4),
+                                ->maxLength(4)
+                                ->visible(fn (?User $record) => $record && $record->hasRole('calon_petugas')),
                             TextInput::make('name')
                                 ->label('Nama Lengkap')
                                 ->required(),
@@ -96,9 +97,6 @@ class UserResource extends Resource
                     ->label('Roles')
                     ->badge()
                     ->color('info'),
-                TextColumn::make('metadata.kecamatan')
-                    ->label('Kecamatan')
-                    ->toggleable(),
                 IconColumn::make('is_active')
                     ->label('Aktif')
                     ->boolean(),
