@@ -74,9 +74,6 @@ class ManageUsers extends ManageRecords
             'pegawai' => Tab::make('Pegawai')
                 ->badge(User::pegawai()->count())
                 ->modifyQueryUsing(fn ($query) => $query->pegawai()),
-            'mitra' => Tab::make('Mitra')
-                ->badge(User::mitra()->whereDoesntHave('roles', fn ($q) => $q->where('name', 'calon_petugas'))->count())
-                ->modifyQueryUsing(fn ($query) => $query->mitra()->whereDoesntHave('roles', fn ($q) => $q->where('name', 'calon_petugas'))),
             'calon_mitra' => Tab::make('Calon Mitra')
                 ->badge(User::whereHas('roles', fn ($q) => $q->where('name', 'calon_petugas'))->count())
                 ->modifyQueryUsing(fn ($query) => $query->whereHas('roles', fn ($q) => $q->where('name', 'calon_petugas'))),
