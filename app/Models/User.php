@@ -116,4 +116,9 @@ class User extends Authenticatable
 
         return $period ? $q->where('period', $period) : $q;
     }
+
+    public function jawaban_responden()
+    {
+        return $this->hasMany(JawabanResponden::class);
+    }
 }
