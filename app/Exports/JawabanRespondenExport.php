@@ -4,6 +4,7 @@ namespace App\Exports;
 
 use App\Models\JawabanResponden;
 use App\Models\User;
+use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
@@ -16,10 +17,22 @@ class JawabanRespondenExport implements FromQuery, WithHeadings, WithMapping, Wi
 
     protected array $selectedFields;
 
+    protected ?Collection $usersCache = null;
+
     public function __construct(int $surveyId, array $selectedFields)
     {
         $this->surveyId = $surveyId;
         $this->selectedFields = $selectedFields;
+    }
+
+    protected function getUsersCache()
+    {
+        if ($this->usersCache === null) {
+            // Fetch all users once with minimal columns to prevent N+1 and save memory
+            $this->usersCache = User::select('id', 'name', 'email')->get()->keyBy('id');
+        }
+
+        return $this->usersCache;
     }
 
     public function query()
@@ -52,7 +65,7 @@ class JawabanRespondenExport implements FromQuery, WithHeadings, WithMapping, Wi
                     break;
                 case 'nama_peserta':
                     if (isset($payload['nama_peserta']) && is_numeric($payload['nama_peserta'])) {
-                        $peserta = User::find($payload['nama_peserta']);
+                        $peserta = $this->getUsersCache()->get($payload['nama_peserta']);
                         $row[] = $peserta ? $peserta->name : 'Unknown ('.$payload['nama_peserta'].')';
                     } elseif (isset($payload['nama_peserta'])) {
                         $row[] = $payload['nama_peserta'];
@@ -62,7 +75,7 @@ class JawabanRespondenExport implements FromQuery, WithHeadings, WithMapping, Wi
                     break;
                 case 'email_peserta':
                     if (isset($payload['nama_peserta']) && is_numeric($payload['nama_peserta'])) {
-                        $peserta = User::find($payload['nama_peserta']);
+                        $peserta = $this->getUsersCache()->get($payload['nama_peserta']);
                         $row[] = $peserta ? $peserta->email : '-';
                     } else {
                         $row[] = $payload['email_peserta'] ?? '-';
