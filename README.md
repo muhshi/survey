@@ -25,6 +25,10 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 
 ## Changelog
 
+### 2026-05-18
+- **Survey Dropdown Sort**: Mengubah urutan dropdown nama peserta di form wawancara agar diurutkan berdasarkan `nomor_urut` mulai dari terkecil.
+- **Survey Mobile Keyboard Fix**: Memperbaiki isu di mana keyboard virtual tidak muncul saat tap input pencarian dropdown SurveyJS di HP (menghapus atribut readonly).
+
 ### 2026-05-16
 - **Participant Search & Auto-fill**: Implementasi dropdown nama peserta yang dapat dicari (searchable) dan pengisian otomatis nomor urut (bidirectional auto-fill) pada form wawancara.
 - **Excel Participant Import**: Menambahkan perintah `app:import-participants` untuk mengimpor data peserta wawancara dari file Excel melalui JSON intermediate.

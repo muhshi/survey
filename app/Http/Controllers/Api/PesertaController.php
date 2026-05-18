@@ -21,8 +21,9 @@ class PesertaController extends Controller
         $data = User::role('calon_petugas')
             ->whereNotIn('id', $submittedIds)
             ->select('id', 'name', 'metadata')
-            ->orderBy('name')
             ->get()
+            ->sortBy(fn ($item) => (int) $item->nomor_urut)
+            ->values()
             ->map(fn ($item) => [
                 'value' => $item->id,
                 'text' => ($item->nomor_urut ? $item->nomor_urut.'. ' : '').$item->name,

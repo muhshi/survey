@@ -357,6 +357,30 @@
         } catch (e) {
             fatal("Masalah Sistem: " + e.message);
         }
+
+        // Fix for Mobile Keyboard not showing in SurveyJS Dropdown Search
+        // On mobile, SurveyJS sometimes sets readonly="readonly" on the search input inside the popup
+        // which prevents the virtual keyboard from appearing.
+        document.addEventListener('touchstart', function(e) {
+            if (e.target.tagName === 'INPUT' && e.target.type === 'text') {
+                // Check if it's the search filter input inside a popup or dropdown
+                if (e.target.closest('.sv-popup') || e.target.classList.contains('sv-popup__filter') || e.target.classList.contains('sd-dropdown__filter-string-input')) {
+                    e.target.removeAttribute('readonly');
+                }
+            }
+        }, { passive: true });
+
+        document.addEventListener('click', function(e) {
+            setTimeout(() => {
+                const searchInputs = document.querySelectorAll('.sv-popup input[type="text"], .sv-popup__filter, input.sd-dropdown__filter-string-input');
+                searchInputs.forEach(input => {
+                    // Only remove readonly if it's inside a popup (the search bar)
+                    if (input.closest('.sv-popup') && input.hasAttribute('readonly')) {
+                        input.removeAttribute('readonly');
+                    }
+                });
+            }, 100);
+        });
     })();
 </script>
 @endsection
