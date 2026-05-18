@@ -41,17 +41,27 @@ class ListJawabanResponden extends ListRecords
                             }
 
                             $survey = Survey::find($state);
-                            $keys = JawabanResponden::where('survey_id', $state)
-                                ->get()
-                                ->flatMap(fn ($j) => array_keys($j->payload ?? []))
-                                ->unique()
-                                ->values()
-                                ->toArray();
+                            if (! $survey) {
+                                return;
+                            }
 
-                            if ($survey && $survey->is_quiz) {
+                            $parsed = $survey->getParsedSchema();
+                            $schemaFields = array_keys($parsed['fields']);
+
+                            // If schema is empty, fallback to payload keys
+                            if (empty($schemaFields)) {
+                                $schemaFields = JawabanResponden::where('survey_id', $state)
+                                    ->get()
+                                    ->flatMap(fn ($j) => array_keys($j->payload ?? []))
+                                    ->unique()
+                                    ->values()
+                                    ->toArray();
+                            }
+
+                            if ($survey->is_quiz) {
                                 $defaultFields = ['nama_lengkap', 'email_peserta', 'skor_kuis', 'waktu_submit'];
                             } else {
-                                $defaultFields = array_merge(['nama_pewawancara', 'nama_peserta', 'email_peserta', 'waktu_submit'], $keys);
+                                $defaultFields = array_merge(['nama_pewawancara', 'nama_peserta', 'email_peserta', 'waktu_submit'], $schemaFields);
                             }
 
                             $set('fields', $defaultFields);
@@ -64,12 +74,13 @@ class ListJawabanResponden extends ListRecords
                                 return [];
                             }
 
-                            $keys = JawabanResponden::where('survey_id', $surveyId)
-                                ->get()
-                                ->flatMap(fn ($j) => array_keys($j->payload ?? []))
-                                ->unique()
-                                ->values()
-                                ->toArray();
+                            $survey = Survey::find($surveyId);
+                            if (! $survey) {
+                                return [];
+                            }
+
+                            $parsed = $survey->getParsedSchema();
+                            $schemaFields = $parsed['fields'];
 
                             $options = [
                                 'waktu_submit' => 'Waktu Submit',
@@ -79,7 +90,20 @@ class ListJawabanResponden extends ListRecords
                                 'email_peserta' => 'Email Peserta',
                             ];
 
-                            foreach ($keys as $key) {
+                            // Add parsed schema fields in exact order
+                            foreach ($schemaFields as $key => $title) {
+                                $options[$key] = $title;
+                            }
+
+                            // If there are keys in payload that aren't in schema, add them at the end
+                            $payloadKeys = JawabanResponden::where('survey_id', $surveyId)
+                                ->get()
+                                ->flatMap(fn ($j) => array_keys($j->payload ?? []))
+                                ->unique()
+                                ->values()
+                                ->toArray();
+
+                            foreach ($payloadKeys as $key) {
                                 if (! isset($options[$key])) {
                                     $options[$key] = ucwords(str_replace('_', ' ', $key));
                                 }

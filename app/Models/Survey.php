@@ -95,11 +95,75 @@ class Survey extends Model
         return in_array($this->access_level, ['auth', 'role']);
     }
 
-    /**
-     * Get the public URL for the survey.
-     */
     public function getPublicUrl(): string
     {
         return route('survey.show', $this);
+    }
+
+    /**
+     * Parse the SurveyJS schema to extract field titles and choice mappings in order.
+     */
+    public function getParsedSchema(): array
+    {
+        $schema = is_string($this->schema) ? json_decode($this->schema, true) : $this->schema;
+
+        $fields = [];
+        $choicesMap = [];
+
+        if (! isset($schema['pages']) || ! is_array($schema['pages'])) {
+            return ['fields' => [], 'choices' => []];
+        }
+
+        $extractElements = function ($elements) use (&$extractElements, &$fields, &$choicesMap) {
+            if (! is_array($elements)) {
+                return;
+            }
+
+            foreach ($elements as $element) {
+                if (isset($element['type']) && in_array($element['type'], ['panel', 'paneldynamic'])) {
+                    if (isset($element['elements'])) {
+                        $extractElements($element['elements']);
+                    }
+                } elseif (isset($element['name'])) {
+                    $name = $element['name'];
+                    $title = $element['title'] ?? $name;
+
+                    // Handle multi-language object for title if needed (fallback to default string)
+                    if (is_array($title)) {
+                        $title = $title['default'] ?? $title['id'] ?? (is_string(reset($title)) ? reset($title) : $name);
+                    }
+
+                    // Remove HTML tags and decode HTML entities from title
+                    $title = html_entity_decode(strip_tags($title));
+
+                    $fields[$name] = $title;
+
+                    if (isset($element['choices']) && is_array($element['choices'])) {
+                        foreach ($element['choices'] as $choice) {
+                            if (is_array($choice) && isset($choice['value'])) {
+                                $text = $choice['text'] ?? $choice['value'];
+                                if (is_array($text)) {
+                                    $text = $text['default'] ?? $text['id'] ?? (is_string(reset($text)) ? reset($text) : $choice['value']);
+                                }
+                                $choicesMap[$name][$choice['value']] = $text;
+                            } elseif (is_string($choice) || is_numeric($choice)) {
+                                $choicesMap[$name][$choice] = $choice;
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        foreach ($schema['pages'] as $page) {
+            if (isset($page['elements'])) {
+                $extractElements($page['elements']);
+            }
+        }
+
+        return [
+            'fields' => $fields,
+            'choices' => $choicesMap,
+        ];
     }
 }

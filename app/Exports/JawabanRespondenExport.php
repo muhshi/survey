@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Models\JawabanResponden;
+use App\Models\Survey;
 use App\Models\User;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromQuery;
@@ -18,6 +19,8 @@ class JawabanRespondenExport implements FromQuery, WithHeadings, WithMapping, Wi
     protected array $selectedFields;
 
     protected ?Collection $usersCache = null;
+
+    protected ?array $parsedSchema = null;
 
     public function __construct(int $surveyId, array $selectedFields)
     {
@@ -40,10 +43,36 @@ class JawabanRespondenExport implements FromQuery, WithHeadings, WithMapping, Wi
         return JawabanResponden::query()->with('user')->where('survey_id', $this->surveyId);
     }
 
+    protected function getParsedSchema()
+    {
+        if (! isset($this->parsedSchema)) {
+            $survey = Survey::find($this->surveyId);
+            $this->parsedSchema = $survey ? $survey->getParsedSchema() : ['fields' => [], 'choices' => []];
+        }
+
+        return $this->parsedSchema;
+    }
+
     public function headings(): array
     {
-        return array_map(function ($field) {
-            return ucwords(str_replace('_', ' ', $field));
+        $schemaFields = $this->getParsedSchema()['fields'];
+
+        return array_map(function ($field) use ($schemaFields) {
+            // Use standard overrides first
+            $overrides = [
+                'waktu_submit' => 'Waktu Submit',
+                'skor_kuis' => 'Skor Kuis',
+                'nama_pewawancara' => 'Nama Pewawancara',
+                'nama_peserta' => 'Nama Peserta',
+                'email_peserta' => 'Email Peserta',
+            ];
+
+            if (isset($overrides[$field])) {
+                return $overrides[$field];
+            }
+
+            // Fallback to schema title, then raw key
+            return $schemaFields[$field] ?? ucwords(str_replace('_', ' ', $field));
         }, $this->selectedFields);
     }
 
@@ -51,6 +80,7 @@ class JawabanRespondenExport implements FromQuery, WithHeadings, WithMapping, Wi
     {
         $row = [];
         $payload = $jawaban->payload ?? [];
+        $choicesMap = $this->getParsedSchema()['choices'];
 
         foreach ($this->selectedFields as $field) {
             switch ($field) {
@@ -83,12 +113,26 @@ class JawabanRespondenExport implements FromQuery, WithHeadings, WithMapping, Wi
                     break;
                 default:
                     $val = $payload[$field] ?? null;
+
                     if (is_bool($val)) {
                         $row[] = $val ? 'Ya' : 'Tidak';
                     } elseif (is_array($val)) {
-                        $row[] = implode(', ', $val);
+                        // Map each item in the array if there are choices defined
+                        if (isset($choicesMap[$field])) {
+                            $mappedArray = array_map(function ($v) use ($choicesMap, $field) {
+                                return $choicesMap[$field][$v] ?? $v;
+                            }, $val);
+                            $row[] = implode(', ', $mappedArray);
+                        } else {
+                            $row[] = implode(', ', $val);
+                        }
                     } else {
-                        $row[] = $val;
+                        // Map the single value if choice exists
+                        if (isset($choicesMap[$field][$val])) {
+                            $row[] = $choicesMap[$field][$val];
+                        } else {
+                            $row[] = $val;
+                        }
                     }
                     break;
             }
