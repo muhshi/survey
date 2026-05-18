@@ -207,6 +207,11 @@
         z-index: 10000 !important;
     }
 
+    /* Hide navbar when dropdown popup is open (class toggled by JS) */
+    body.sv-popup-open .navbar {
+        display: none !important;
+    }
+
     /* On mobile: make desktop-style dropdown popup fullscreen so it's not clipped */
     @media (max-width: 768px) {
         /* The popup overlay background */
@@ -219,26 +224,27 @@
             width: 100% !important;
             height: 100% !important;
             z-index: 10000 !important;
+            background: rgba(0, 0, 0, 0.5) !important;
         }
         /* The popup container (the white box with content) */
         .sv-popup__container {
             position: fixed !important;
-            top: 8px !important;
-            left: 8px !important;
-            right: 8px !important;
-            bottom: 8px !important;
-            width: auto !important;
-            height: auto !important;
-            max-height: calc(100vh - 16px) !important;
-            max-width: calc(100vw - 16px) !important;
-            border-radius: 12px !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            max-height: 100vh !important;
+            max-width: 100vw !important;
+            border-radius: 0 !important;
             margin: 0 !important;
             display: flex !important;
             flex-direction: column !important;
             overflow: hidden !important;
         }
         .sv-popup__body-content {
-            max-height: calc(100vh - 32px) !important;
+            max-height: 100vh !important;
             height: 100% !important;
             display: flex !important;
             flex-direction: column !important;
@@ -249,22 +255,28 @@
         }
         /* Make the search/filter input prominent and always visible */
         .sv-list__filter {
-            padding: 12px !important;
+            padding: 12px 12px !important;
             background: #fff !important;
-            border-bottom: 1px solid #e2e8f0 !important;
+            border-bottom: 2px solid #e2e8f0 !important;
             flex-shrink: 0 !important;
             display: flex !important;
         }
         .sv-list__filter input,
         .sv-list__input {
             font-size: 16px !important; /* Prevents iOS auto-zoom */
-            padding: 10px 14px !important;
-            border: 1px solid #cbd5e1 !important;
-            border-radius: 8px !important;
+            padding: 12px 16px !important;
+            border: 2px solid #6366f1 !important;
+            border-radius: 10px !important;
             background: #f8fafc !important;
             width: 100% !important;
             -webkit-appearance: none !important;
             appearance: none !important;
+        }
+        .sv-list__filter input:focus,
+        .sv-list__input:focus {
+            outline: none !important;
+            border-color: #4f46e5 !important;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2) !important;
         }
     }
 
@@ -450,55 +462,85 @@
             fatal("Masalah Sistem: " + e.message);
         }
 
-        // === MOBILE KEYBOARD FIX FOR SURVEYJS DROPDOWN SEARCH ===
-        // SurveyJS sets readonly + inputmode="none" on mobile search inputs
-        // to suppress the virtual keyboard. We aggressively undo this.
+        // === MOBILE POPUP FIX: HIDE NAVBAR + UNLOCK KEYBOARD ===
         
         function unlockPopupInputs(root) {
             if (!root || !root.querySelectorAll) return;
-            const inputs = root.querySelectorAll('.sv-popup input[type="text"], .sv-popup input:not([type])');
+            var inputs = root.querySelectorAll('input[type="text"], input:not([type])');
             inputs.forEach(function(input) {
                 input.removeAttribute('readonly');
-                input.removeAttribute('inputmode');
-                input.setAttribute('inputmode', 'text');
+                if (input.getAttribute('inputmode') === 'none') {
+                    input.setAttribute('inputmode', 'text');
+                }
             });
         }
 
-        // Watch for popup creation and attribute changes
-        const observer = new MutationObserver(function(mutations) {
-            for (const mutation of mutations) {
-                // New nodes added (popup opening)
+        function onPopupOpened(popupNode) {
+            // Hide navbar so popup search field is fully visible
+            document.body.classList.add('sv-popup-open');
+            // Unlock inputs and auto-focus the search field
+            unlockPopupInputs(popupNode);
+            setTimeout(function() {
+                unlockPopupInputs(popupNode);
+                var searchInput = popupNode.querySelector('.sv-list__filter input, .sv-list__input, input[type="text"]');
+                if (searchInput) {
+                    searchInput.removeAttribute('readonly');
+                    searchInput.setAttribute('inputmode', 'text');
+                    searchInput.focus();
+                }
+            }, 150);
+        }
+
+        function checkPopupsClosed() {
+            // If no visible popup exists, restore navbar
+            var visiblePopup = document.querySelector('.sv-popup[style*="visibility: visible"], .sv-popup[style*="display: block"], .sv-popup:not([style*="display: none"]):not([style*="visibility: hidden"])');
+            if (!visiblePopup) {
+                document.body.classList.remove('sv-popup-open');
+            }
+        }
+
+        // Watch for popup creation/removal and attribute changes
+        var observer = new MutationObserver(function(mutations) {
+            for (var i = 0; i < mutations.length; i++) {
+                var mutation = mutations[i];
+
                 if (mutation.type === 'childList') {
+                    // Popup added
                     mutation.addedNodes.forEach(function(node) {
                         if (node.nodeType !== 1) return;
-                        // If the added node IS a popup or CONTAINS a popup
                         if (node.classList && node.classList.contains('sv-popup')) {
-                            unlockPopupInputs(node);
-                            // Also schedule a delayed unlock in case SurveyJS re-applies readonly after render
-                            setTimeout(function() { unlockPopupInputs(node); }, 100);
-                            setTimeout(function() { unlockPopupInputs(node); }, 300);
+                            onPopupOpened(node);
                         }
                         if (node.querySelector) {
-                            const popup = node.querySelector('.sv-popup');
-                            if (popup) {
-                                unlockPopupInputs(popup);
-                                setTimeout(function() { unlockPopupInputs(popup); }, 100);
-                                setTimeout(function() { unlockPopupInputs(popup); }, 300);
-                            }
+                            var popup = node.querySelector('.sv-popup');
+                            if (popup) onPopupOpened(popup);
+                        }
+                    });
+                    // Popup removed
+                    mutation.removedNodes.forEach(function(node) {
+                        if (node.nodeType !== 1) return;
+                        if ((node.classList && node.classList.contains('sv-popup')) || (node.querySelector && node.querySelector('.sv-popup'))) {
+                            setTimeout(checkPopupsClosed, 100);
                         }
                     });
                 }
 
-                // Attribute changes (readonly or inputmode being set back)
+                // Style/visibility change on popup (SurveyJS hides via style)
                 if (mutation.type === 'attributes') {
-                    const target = mutation.target;
+                    var target = mutation.target;
+                    // Check if popup visibility changed
+                    if (target.classList && target.classList.contains('sv-popup')) {
+                        var style = target.getAttribute('style') || '';
+                        if (style.indexOf('visible') > -1 || style.indexOf('block') > -1) {
+                            onPopupOpened(target);
+                        } else {
+                            setTimeout(checkPopupsClosed, 100);
+                        }
+                    }
+                    // Unlock readonly/inputmode on search inputs
                     if (target.tagName === 'INPUT' && target.closest('.sv-popup')) {
-                        if (target.hasAttribute('readonly')) {
-                            target.removeAttribute('readonly');
-                        }
-                        if (target.getAttribute('inputmode') === 'none') {
-                            target.setAttribute('inputmode', 'text');
-                        }
+                        if (target.hasAttribute('readonly')) target.removeAttribute('readonly');
+                        if (target.getAttribute('inputmode') === 'none') target.setAttribute('inputmode', 'text');
                     }
                 }
             }
@@ -508,26 +550,32 @@
             childList: true,
             subtree: true,
             attributes: true,
-            attributeFilter: ['readonly', 'inputmode']
+            attributeFilter: ['readonly', 'inputmode', 'style', 'class']
         });
 
-        // Fallback: on any touch inside a popup, unlock the input
+        // Fallback: touch to unlock and focus
         document.addEventListener('touchstart', function(e) {
-            const input = e.target;
+            var input = e.target;
             if (input.tagName === 'INPUT' && input.closest('.sv-popup')) {
                 input.removeAttribute('readonly');
-                input.removeAttribute('inputmode');
                 input.setAttribute('inputmode', 'text');
-                // Small delay then focus to trigger keyboard
                 setTimeout(function() { input.focus(); }, 50);
             }
         }, { passive: true });
 
-        // Fallback: periodic scan while any popup is visible
+        // Fallback: periodic check for popup state
         setInterval(function() {
-            const openPopup = document.querySelector('.sv-popup:not([style*="display: none"])');
-            if (openPopup) {
-                unlockPopupInputs(openPopup);
+            var popup = document.querySelector('.sv-popup');
+            if (popup) {
+                var style = popup.getAttribute('style') || '';
+                if (style.indexOf('hidden') === -1 && style.indexOf('none') === -1) {
+                    document.body.classList.add('sv-popup-open');
+                    unlockPopupInputs(popup);
+                } else {
+                    document.body.classList.remove('sv-popup-open');
+                }
+            } else {
+                document.body.classList.remove('sv-popup-open');
             }
         }, 500);
     })();
