@@ -26,7 +26,12 @@ class ImportParticipants extends Command
             return 1;
         }
 
-        $participants = json_decode(file_get_contents($path), true);
+        $participants = json_decode(ltrim(file_get_contents($path), "\xEF\xBB\xBF"), true);
+        if (json_last_error() !== JSON_ERROR_NONE || ! is_array($participants)) {
+            $this->error('File participants.json tidak bisa dibaca: '.json_last_error_msg());
+
+            return 1;
+        }
         $count = count($participants);
         $this->info("Importing {$count} participants...");
 
