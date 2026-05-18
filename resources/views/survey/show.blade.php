@@ -322,6 +322,16 @@
                 };
             @endif
 
+            @if($survey->mode === App\Enums\SurveyMode::Multi)
+                model.completedHtml = `
+                    <div style="text-align: center; padding: 40px;">
+                        <h3 style="color: #1e1b4b; font-weight: bold; margin-bottom: 20px;">Berhasil Disimpan!</h3>
+                        <p style="color: #64748b; margin-bottom: 30px;">Jawaban responden telah berhasil dikirim ke server.</p>
+                        <button onclick="window.location.reload()" class="sd-btn sd-btn--action" style="background-color: #10b981 !important;">Isi Kuesioner Baru</button>
+                    </div>
+                `;
+            @endif
+
             model.completeText = "Kirim Jawaban";
             model.pageNextText = "Lanjut";
             model.pagePrevText = "Kembali";
@@ -358,29 +368,58 @@
             fatal("Masalah Sistem: " + e.message);
         }
 
-        // Fix for Mobile Keyboard not showing in SurveyJS Dropdown Search
-        // On mobile, SurveyJS sometimes sets readonly="readonly" on the search input inside the popup
-        // which prevents the virtual keyboard from appearing.
-        document.addEventListener('touchstart', function(e) {
-            if (e.target.tagName === 'INPUT' && e.target.type === 'text') {
-                // Check if it's the search filter input inside a popup or dropdown
-                if (e.target.closest('.sv-popup') || e.target.classList.contains('sv-popup__filter') || e.target.classList.contains('sd-dropdown__filter-string-input')) {
-                    e.target.removeAttribute('readonly');
+        // Aggressive Fix for Mobile Keyboard not showing in SurveyJS Dropdown Search
+        // Uses MutationObserver to catch when SurveyJS creates or modifies the popup
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                // If a new node is added (like the popup)
+                if (mutation.type === 'childList') {
+                    mutation.addedNodes.forEach((node) => {
+                        if (node.nodeType === 1) { // Element node
+                            const searchInputs = node.querySelectorAll ? node.querySelectorAll('.sv-popup__filter, input.sd-dropdown__filter-string-input') : [];
+                            
+                            let targetInputs = Array.from(searchInputs);
+                            if (node.tagName === 'INPUT' && (node.classList.contains('sv-popup__filter') || node.classList.contains('sd-dropdown__filter-string-input'))) {
+                                targetInputs.push(node);
+                            }
+                            
+                            targetInputs.forEach(input => {
+                                if (input.closest('.sv-popup')) {
+                                    input.removeAttribute('readonly');
+                                    input.removeAttribute('inputmode');
+                                    // Focus to trigger keyboard immediately on mobile
+                                    setTimeout(() => input.focus(), 50);
+                                }
+                            });
+                        }
+                    });
                 }
+                
+                // If SurveyJS dynamically adds the readonly attribute back
+                if (mutation.type === 'attributes' && mutation.attributeName === 'readonly') {
+                    const target = mutation.target;
+                    if (target.tagName === 'INPUT' && target.closest('.sv-popup')) {
+                        target.removeAttribute('readonly');
+                        target.removeAttribute('inputmode');
+                    }
+                }
+            });
+        });
+
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true,
+            attributes: true,
+            attributeFilter: ['readonly']
+        });
+
+        // Fallback touch event
+        document.addEventListener('touchstart', function(e) {
+            if (e.target.tagName === 'INPUT' && e.target.type === 'text' && e.target.closest('.sv-popup')) {
+                e.target.removeAttribute('readonly');
+                e.target.removeAttribute('inputmode');
             }
         }, { passive: true });
-
-        document.addEventListener('click', function(e) {
-            setTimeout(() => {
-                const searchInputs = document.querySelectorAll('.sv-popup input[type="text"], .sv-popup__filter, input.sd-dropdown__filter-string-input');
-                searchInputs.forEach(input => {
-                    // Only remove readonly if it's inside a popup (the search bar)
-                    if (input.closest('.sv-popup') && input.hasAttribute('readonly')) {
-                        input.removeAttribute('readonly');
-                    }
-                });
-            }, 100);
-        });
     })();
 </script>
 @endsection

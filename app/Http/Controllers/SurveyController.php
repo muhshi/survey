@@ -107,6 +107,11 @@ class SurveyController extends Controller
             if ($existingSubmission && $survey->mode === SurveyMode::Single) {
                 $alreadySubmitted = true;
             }
+
+            // Do not pre-fill form for multi mode so it's always fresh
+            if ($survey->mode === SurveyMode::Multi) {
+                $existingSubmission = null;
+            }
         }
 
         return view('survey.show', compact('survey', 'alreadySubmitted', 'existingSubmission'));
