@@ -29,6 +29,7 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 - **Survey Dropdown Sort**: Mengubah urutan dropdown nama peserta di form wawancara agar diurutkan berdasarkan `nomor_urut` mulai dari terkecil.
 - **Survey Mobile Keyboard Fix**: Memperbarui solusi agresif dengan `MutationObserver` untuk memaksa hapus atribut `readonly` dan `inputmode`, serta otomatis meletakkan fokus kursor agar keyboard HP langsung terbuka saat dropdown di-tap.
 - **Multi-mode Fresh Reset**: Memperbaiki isu pada survei mode *Multi* di mana _refresh_ halaman justru me-load ulang jawaban terakhir, sekarang dipastikan _form_ selalu kosong untuk pengisian baru, dan ditambahkan tombol khusus "Isi Kuesioner Baru" pada halaman penyelesaian.
+- **No-Cache & View Jawaban**: Memperbaiki isu _cache_ pada API Dropdown Peserta sehingga nama yang sudah diwawancarai langsung hilang dari daftar tanpa perlu hard refresh, serta memperjelas tampilan nama Peserta vs Pewawancara di tabel dashboard Filament.
 
 ### 2026-05-16
 - **Participant Search & Auto-fill**: Implementasi dropdown nama peserta yang dapat dicari (searchable) dan pengisian otomatis nomor urut (bidirectional auto-fill) pada form wawancara.

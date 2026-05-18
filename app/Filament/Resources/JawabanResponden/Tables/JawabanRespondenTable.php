@@ -29,11 +29,27 @@ class JawabanRespondenTable
                     ->searchable()
                     ->sortable()
                     ->limit(30),
-                TextColumn::make('user.name')
-                    ->label('Responden')
-                    ->default('Anonim')
-                    ->searchable()
-                    ->sortable(),
+                TextColumn::make('peserta')
+                    ->label('Responden / Peserta')
+                    ->getStateUsing(function ($record) {
+                        // Jika survei wawancara (id 3) dan ada nama_peserta di payload
+                        if ($record->survey_id == 3 && isset($record->payload['nama_peserta'])) {
+                            $pesertaId = $record->payload['nama_peserta'];
+                            $peserta = \App\Models\User::find($pesertaId);
+                            if ($peserta) {
+                                return $peserta->name . ' (Wawancara)';
+                            }
+                        }
+                        return $record->user ? $record->user->name : 'Anonim';
+                    })
+                    ->searchable(query: function ($query, $search) {
+                        $query->whereHas('user', function ($q) use ($search) {
+                            $q->where('name', 'like', "%{$search}%");
+                        });
+                    })
+                    ->sortable(query: function ($query, $direction) {
+                        return $query->orderBy('user_id', $direction);
+                    }),
                 TextColumn::make('score')
                     ->label('Skor')
                     ->badge()
@@ -72,10 +88,19 @@ class JawabanRespondenTable
             ->actions([
                 ViewAction::make()
                     ->infolist([
-                        Section::make('Informasi Responden')
+                        Section::make('Informasi Responden / Wawancara')
                             ->schema([
                                 TextEntry::make('survey.title')->label('Survey'),
-                                TextEntry::make('user.name')->label('Nama')->default('Anonim'),
+                                TextEntry::make('peserta')
+                                    ->label('Peserta / Pewawancara')
+                                    ->getStateUsing(function ($record) {
+                                        if ($record->survey_id == 3 && isset($record->payload['nama_peserta'])) {
+                                            $peserta = \App\Models\User::find($record->payload['nama_peserta']);
+                                            $interviewer = $record->user ? $record->user->name : 'Anonim';
+                                            return ($peserta ? $peserta->name : 'Unknown') . " (Diwawancarai oleh: $interviewer)";
+                                        }
+                                        return $record->user ? $record->user->name : 'Anonim';
+                                    }),
                                 TextEntry::make('submitted_at')->label('Waktu Submit')->dateTime('d M Y H:i:s'),
                                 TextEntry::make('score')
                                     ->label('Skor Kuis')
