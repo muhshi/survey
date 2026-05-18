@@ -207,8 +207,9 @@
         z-index: 10000 !important;
     }
 
-    /* On mobile: make popup full-screen overlay so it's never cut off */
+    /* On mobile: make desktop-style dropdown popup fullscreen so it's not clipped */
     @media (max-width: 768px) {
+        /* The popup overlay background */
         .sv-popup {
             position: fixed !important;
             top: 0 !important;
@@ -219,21 +220,25 @@
             height: 100% !important;
             z-index: 10000 !important;
         }
+        /* The popup container (the white box with content) */
         .sv-popup__container {
             position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100% !important;
-            height: 100% !important;
-            max-height: 100% !important;
-            max-width: 100% !important;
-            border-radius: 0 !important;
+            top: 8px !important;
+            left: 8px !important;
+            right: 8px !important;
+            bottom: 8px !important;
+            width: auto !important;
+            height: auto !important;
+            max-height: calc(100vh - 16px) !important;
+            max-width: calc(100vw - 16px) !important;
+            border-radius: 12px !important;
             margin: 0 !important;
             display: flex !important;
             flex-direction: column !important;
+            overflow: hidden !important;
         }
         .sv-popup__body-content {
-            max-height: 100vh !important;
+            max-height: calc(100vh - 32px) !important;
             height: 100% !important;
             display: flex !important;
             flex-direction: column !important;
@@ -242,23 +247,24 @@
             flex: 1 !important;
             overflow-y: auto !important;
         }
-        /* Make the filter/search bar prominent at the top */
-        .sv-popup__body-header {
-            padding: 16px !important;
+        /* Make the search/filter input prominent and always visible */
+        .sv-list__filter {
+            padding: 12px !important;
             background: #fff !important;
             border-bottom: 1px solid #e2e8f0 !important;
             flex-shrink: 0 !important;
+            display: flex !important;
         }
-        /* Ensure search input is visible and interactable */
-        .sv-list__filter-icon + input,
         .sv-list__filter input,
-        input.sv-list__input {
-            font-size: 16px !important; /* Prevents iOS zoom */
-            padding: 12px 16px !important;
+        .sv-list__input {
+            font-size: 16px !important; /* Prevents iOS auto-zoom */
+            padding: 10px 14px !important;
             border: 1px solid #cbd5e1 !important;
             border-radius: 8px !important;
             background: #f8fafc !important;
             width: 100% !important;
+            -webkit-appearance: none !important;
+            appearance: none !important;
         }
     }
 
@@ -346,6 +352,14 @@
 
             if (typeof Survey === 'undefined') return fatal("Modul integrasi gagal dimuat.");
 
+            // Force SurveyJS to use desktop-style dropdown popup (with search input)
+            // instead of the mobile overlay mode which hides the search field
+            if (typeof Survey.IsTouch !== 'undefined') Survey.IsTouch = false;
+            if (typeof Survey.IsMobile !== 'undefined') Survey.IsMobile = false;
+            if (Survey.settings && Survey.settings.environment) {
+                Survey.settings.environment.isMobile = false;
+            }
+
             // Locale
             if (typeof Survey.localization !== 'undefined') {
                 Survey.localization.currentLocale = "id";
@@ -355,6 +369,13 @@
 
             const model = new Survey.Model(rawData);
             model.locale = "id";
+
+            // Force search enabled on all dropdown questions
+            model.getAllQuestions().forEach(q => {
+                if (q.getType() === 'dropdown' || q.getType() === 'tagbox') {
+                    q.searchEnabled = true;
+                }
+            });
 
             @if($survey->is_quiz)
                 // Randomize questions order within pages
