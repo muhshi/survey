@@ -201,6 +201,67 @@
         visibility: hidden !important;
     }
 
+    /* === MOBILE DROPDOWN POPUP FIX === */
+    /* Force SurveyJS popup ABOVE the sticky navbar (z-index: 100) */
+    .sv-popup {
+        z-index: 10000 !important;
+    }
+
+    /* On mobile: make popup full-screen overlay so it's never cut off */
+    @media (max-width: 768px) {
+        .sv-popup {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            z-index: 10000 !important;
+        }
+        .sv-popup__container {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            max-height: 100% !important;
+            max-width: 100% !important;
+            border-radius: 0 !important;
+            margin: 0 !important;
+            display: flex !important;
+            flex-direction: column !important;
+        }
+        .sv-popup__body-content {
+            max-height: 100vh !important;
+            height: 100% !important;
+            display: flex !important;
+            flex-direction: column !important;
+        }
+        .sv-popup__scrolling-content {
+            flex: 1 !important;
+            overflow-y: auto !important;
+        }
+        /* Make the filter/search bar prominent at the top */
+        .sv-popup__body-header {
+            padding: 16px !important;
+            background: #fff !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+            flex-shrink: 0 !important;
+        }
+        /* Ensure search input is visible and interactable */
+        .sv-list__filter-icon + input,
+        .sv-list__filter input,
+        input.sv-list__input {
+            font-size: 16px !important; /* Prevents iOS zoom */
+            padding: 12px 16px !important;
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 8px !important;
+            background: #f8fafc !important;
+            width: 100% !important;
+        }
+    }
+
 </style>
 @endsection
 
@@ -368,58 +429,86 @@
             fatal("Masalah Sistem: " + e.message);
         }
 
-        // Aggressive Fix for Mobile Keyboard not showing in SurveyJS Dropdown Search
-        // Uses MutationObserver to catch when SurveyJS creates or modifies the popup
-        const observer = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                // If a new node is added (like the popup)
+        // === MOBILE KEYBOARD FIX FOR SURVEYJS DROPDOWN SEARCH ===
+        // SurveyJS sets readonly + inputmode="none" on mobile search inputs
+        // to suppress the virtual keyboard. We aggressively undo this.
+        
+        function unlockPopupInputs(root) {
+            if (!root || !root.querySelectorAll) return;
+            const inputs = root.querySelectorAll('.sv-popup input[type="text"], .sv-popup input:not([type])');
+            inputs.forEach(function(input) {
+                input.removeAttribute('readonly');
+                input.removeAttribute('inputmode');
+                input.setAttribute('inputmode', 'text');
+            });
+        }
+
+        // Watch for popup creation and attribute changes
+        const observer = new MutationObserver(function(mutations) {
+            for (const mutation of mutations) {
+                // New nodes added (popup opening)
                 if (mutation.type === 'childList') {
-                    mutation.addedNodes.forEach((node) => {
-                        if (node.nodeType === 1) { // Element node
-                            const searchInputs = node.querySelectorAll ? node.querySelectorAll('.sv-popup__filter, input.sd-dropdown__filter-string-input') : [];
-                            
-                            let targetInputs = Array.from(searchInputs);
-                            if (node.tagName === 'INPUT' && (node.classList.contains('sv-popup__filter') || node.classList.contains('sd-dropdown__filter-string-input'))) {
-                                targetInputs.push(node);
+                    mutation.addedNodes.forEach(function(node) {
+                        if (node.nodeType !== 1) return;
+                        // If the added node IS a popup or CONTAINS a popup
+                        if (node.classList && node.classList.contains('sv-popup')) {
+                            unlockPopupInputs(node);
+                            // Also schedule a delayed unlock in case SurveyJS re-applies readonly after render
+                            setTimeout(function() { unlockPopupInputs(node); }, 100);
+                            setTimeout(function() { unlockPopupInputs(node); }, 300);
+                        }
+                        if (node.querySelector) {
+                            const popup = node.querySelector('.sv-popup');
+                            if (popup) {
+                                unlockPopupInputs(popup);
+                                setTimeout(function() { unlockPopupInputs(popup); }, 100);
+                                setTimeout(function() { unlockPopupInputs(popup); }, 300);
                             }
-                            
-                            targetInputs.forEach(input => {
-                                if (input.closest('.sv-popup')) {
-                                    input.removeAttribute('readonly');
-                                    input.removeAttribute('inputmode');
-                                    // Focus to trigger keyboard immediately on mobile
-                                    setTimeout(() => input.focus(), 50);
-                                }
-                            });
                         }
                     });
                 }
-                
-                // If SurveyJS dynamically adds the readonly attribute back
-                if (mutation.type === 'attributes' && mutation.attributeName === 'readonly') {
+
+                // Attribute changes (readonly or inputmode being set back)
+                if (mutation.type === 'attributes') {
                     const target = mutation.target;
                     if (target.tagName === 'INPUT' && target.closest('.sv-popup')) {
-                        target.removeAttribute('readonly');
-                        target.removeAttribute('inputmode');
+                        if (target.hasAttribute('readonly')) {
+                            target.removeAttribute('readonly');
+                        }
+                        if (target.getAttribute('inputmode') === 'none') {
+                            target.setAttribute('inputmode', 'text');
+                        }
                     }
                 }
-            });
+            }
         });
 
         observer.observe(document.body, {
             childList: true,
             subtree: true,
             attributes: true,
-            attributeFilter: ['readonly']
+            attributeFilter: ['readonly', 'inputmode']
         });
 
-        // Fallback touch event
+        // Fallback: on any touch inside a popup, unlock the input
         document.addEventListener('touchstart', function(e) {
-            if (e.target.tagName === 'INPUT' && e.target.type === 'text' && e.target.closest('.sv-popup')) {
-                e.target.removeAttribute('readonly');
-                e.target.removeAttribute('inputmode');
+            const input = e.target;
+            if (input.tagName === 'INPUT' && input.closest('.sv-popup')) {
+                input.removeAttribute('readonly');
+                input.removeAttribute('inputmode');
+                input.setAttribute('inputmode', 'text');
+                // Small delay then focus to trigger keyboard
+                setTimeout(function() { input.focus(); }, 50);
             }
         }, { passive: true });
+
+        // Fallback: periodic scan while any popup is visible
+        setInterval(function() {
+            const openPopup = document.querySelector('.sv-popup:not([style*="display: none"])');
+            if (openPopup) {
+                unlockPopupInputs(openPopup);
+            }
+        }, 500);
     })();
 </script>
 @endsection
