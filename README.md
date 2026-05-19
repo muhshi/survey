@@ -26,6 +26,8 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 ## Changelog
 
 ### 2026-05-19
+- **Searchable Respondents**: Membuat kolom Responden/Peserta pada tabel Jawaban Responden dapat dicari (*searchable*), tidak hanya berdasarkan pewawancara, tetapi juga mencari berdasarkan `nama_peserta` di dalam *payload* survei.
+- **Handle Missing Users**: Menangani masalah nama peserta yang tidak muncul atau bernilai `Unknown` dengan menampilkan string nama (atau ID fallback) secara langsung jika data user tidak ditemukan di database.
 - **Dashboard Widget**: Menambahkan grafik garis untuk jumlah inputan jawaban per hari pada dashboard admin Filament, lengkap dengan filter berdasarkan Survei.
 
 ### 2026-05-18
