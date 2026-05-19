@@ -25,6 +25,9 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 
 ## Changelog
 
+### 2026-05-19
+- **Dashboard Widget**: Menambahkan grafik garis untuk jumlah inputan jawaban per hari pada dashboard admin Filament, lengkap dengan filter berdasarkan Survei.
+
 ### 2026-05-18
 - **Survey Dropdown Sort**: Mengubah urutan dropdown nama peserta di form wawancara agar diurutkan berdasarkan `nomor_urut` mulai dari terkecil.
 - **Survey Mobile Keyboard Fix**: Memperbaiki popup dropdown SurveyJS di HP yang tertutup navbar. Popup sekarang dipaksa *full-screen overlay* (`z-index: 10000`) di perangkat mobile, dengan `MutationObserver` + interval berkala untuk memastikan `readonly` dan `inputmode="none"` selalu dihapus sehingga keyboard HP pasti muncul.
