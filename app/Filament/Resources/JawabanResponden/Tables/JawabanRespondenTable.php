@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\JawabanResponden\Tables;
 
+use App\Models\User;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -10,7 +11,6 @@ use Filament\Actions\ViewAction;
 use Filament\Infolists\Components\KeyValueEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
-
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -35,16 +35,26 @@ class JawabanRespondenTable
                         // Jika survei wawancara (id 3) dan ada nama_peserta di payload
                         if ($record->survey_id == 3 && isset($record->payload['nama_peserta'])) {
                             $pesertaId = $record->payload['nama_peserta'];
-                            $peserta = \App\Models\User::find($pesertaId);
+                            $peserta = User::find($pesertaId);
                             if ($peserta) {
-                                return $peserta->name . ' (Wawancara)';
+                                return $peserta->name.' (Wawancara)';
+                            } else {
+                                $name = is_string($pesertaId) ? $pesertaId : 'ID: '.$pesertaId;
+
+                                return $name.' (Wawancara)';
                             }
                         }
+
                         return $record->user ? $record->user->name : 'Anonim';
                     })
                     ->searchable(query: function ($query, $search) {
-                        $query->whereHas('user', function ($q) use ($search) {
-                            $q->where('name', 'like', "%{$search}%");
+                        $query->where(function ($q) use ($search) {
+                            $q->whereHas('user', function ($uq) use ($search) {
+                                $uq->where('name', 'like', "%{$search}%");
+                            })->orWhere(function ($pq) use ($search) {
+                                $pq->where('survey_id', 3)
+                                    ->whereIn('payload->nama_peserta', User::where('name', 'like', "%{$search}%")->pluck('id'));
+                            })->orWhere('payload->nama_lengkap', 'like', "%{$search}%");
                         });
                     })
                     ->sortable(query: function ($query, $direction) {
@@ -53,14 +63,14 @@ class JawabanRespondenTable
                 TextColumn::make('score')
                     ->label('Skor')
                     ->badge()
-                    ->color(fn(float $state): string => match (true) {
+                    ->color(fn (float $state): string => match (true) {
                         $state >= 80 => 'success',
                         $state >= 60 => 'warning',
                         default => 'danger',
                     })
                     ->sortable()
                     ->suffix('%')
-                    ->visible(fn($record) => true),
+                    ->visible(fn ($record) => true),
                 TextColumn::make('submitted_at')
                     ->label('Waktu Submit')
                     ->dateTime('d M Y H:i')
@@ -95,10 +105,14 @@ class JawabanRespondenTable
                                     ->label('Peserta / Pewawancara')
                                     ->getStateUsing(function ($record) {
                                         if ($record->survey_id == 3 && isset($record->payload['nama_peserta'])) {
-                                            $peserta = \App\Models\User::find($record->payload['nama_peserta']);
+                                            $pesertaId = $record->payload['nama_peserta'];
+                                            $peserta = User::find($pesertaId);
+                                            $name = $peserta ? $peserta->name : (is_string($pesertaId) ? $pesertaId : 'ID: '.$pesertaId);
                                             $interviewer = $record->user ? $record->user->name : 'Anonim';
-                                            return ($peserta ? $peserta->name : 'Unknown') . " (Diwawancarai oleh: $interviewer)";
+
+                                            return $name." (Diwawancarai oleh: $interviewer)";
                                         }
+
                                         return $record->user ? $record->user->name : 'Anonim';
                                     }),
                                 TextEntry::make('submitted_at')->label('Waktu Submit')->dateTime('d M Y H:i:s'),
@@ -107,7 +121,7 @@ class JawabanRespondenTable
                                     ->suffix('%')
                                     ->weight('bold')
                                     ->color('primary')
-                                    ->visible(fn($record) => $record?->survey?->is_quiz || $record?->score !== null),
+                                    ->visible(fn ($record) => $record?->survey?->is_quiz || $record?->score !== null),
                                 TextEntry::make('metadata.ip')->label('IP Address'),
                             ])->columns(2),
                         Section::make('Data Jawaban')
