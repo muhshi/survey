@@ -94,18 +94,21 @@ class JawabanRespondenExport implements FromQuery, WithHeadings, WithMapping, Wi
                     $row[] = $jawaban->submitted_at ? $jawaban->submitted_at->format('Y-m-d H:i:s') : '-';
                     break;
                 case 'nama_peserta':
-                    if (isset($payload['nama_peserta']) && is_numeric($payload['nama_peserta'])) {
-                        $peserta = $this->getUsersCache()->get($payload['nama_peserta']);
-                        $row[] = $peserta ? $peserta->name : 'Unknown ('.$payload['nama_peserta'].')';
-                    } elseif (isset($payload['nama_peserta'])) {
-                        $row[] = $payload['nama_peserta'];
+                case 'pilih_peserta':
+                    $pesertaId = $payload['nama_peserta'] ?? $payload['pilih_peserta'] ?? null;
+                    if ($pesertaId && is_numeric($pesertaId)) {
+                        $peserta = $this->getUsersCache()->get($pesertaId);
+                        $row[] = $peserta ? $peserta->name : 'Unknown ('.$pesertaId.')';
+                    } elseif ($pesertaId) {
+                        $row[] = $pesertaId;
                     } else {
                         $row[] = '-';
                     }
                     break;
                 case 'email_peserta':
-                    if (isset($payload['nama_peserta']) && is_numeric($payload['nama_peserta'])) {
-                        $peserta = $this->getUsersCache()->get($payload['nama_peserta']);
+                    $pesertaId = $payload['nama_peserta'] ?? $payload['pilih_peserta'] ?? null;
+                    if ($pesertaId && is_numeric($pesertaId)) {
+                        $peserta = $this->getUsersCache()->get($pesertaId);
                         $row[] = $peserta ? $peserta->email : '-';
                     } else {
                         $row[] = $payload['email_peserta'] ?? '-';
