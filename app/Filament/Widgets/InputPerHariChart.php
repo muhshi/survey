@@ -12,7 +12,7 @@ class InputPerHariChart extends ChartWidget
 {
     protected static ?int $sort = 3;
 
-    protected static ?string $heading = 'Jumlah Inputan per Hari';
+    protected ?string $heading = 'Jumlah Inputan per Hari';
 
     protected function getFilters(): ?array
     {
