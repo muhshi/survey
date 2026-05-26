@@ -26,7 +26,7 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 ## Changelog
 
 ### 2026-05-26
-- **Import Calon Afirmasi Command**: Menambahkan perintah `survey:import-calon-afirmasi` untuk mengimpor calon petugas afirmasi langsung dari file Excel `petugas afirmasi.xlsx`, lengkap dengan pembuatan otomatis role `calon_afirmasi`, alokasi nomor urut berurutan (*auto-increment*), dan parsing cerdas untuk kolom kecamatan dan desa.
+- **Import Calon Afirmasi Command**: Menambahkan perintah `survey:import-calon-afirmasi` untuk mengimpor calon petugas afirmasi langsung dari file Excel `petugas afirmasi.xlsx`, lengkap dengan pembuatan otomatis role `calon_afirmasi`, alokasi nomor urut berurutan (*auto-increment*), default password `Mitra3321`, dan parsing cerdas untuk kolom kecamatan dan desa.
 - **Calon Afirmasi User Tab**: Menambahkan tab filter "Calon Afirmasi" pada halaman manajemen pengguna (ManageUsers) di Filament untuk mempermudah pemantauan dan pencarian data calon petugas afirmasi.
 
 ### 2026-05-19

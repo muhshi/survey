@@ -150,10 +150,8 @@ class ImportCalonAfirmasi extends Command
                 'identity_type' => 'mitra',
             ];
 
-            // Set password default jika user baru
-            if (! $user) {
-                $userData['password'] = Hash::make('password123');
-            }
+            // Set/override password default jadi Mitra3321
+            $userData['password'] = Hash::make('Mitra3321');
 
             $user = User::updateOrCreate(
                 ['email' => $email],
