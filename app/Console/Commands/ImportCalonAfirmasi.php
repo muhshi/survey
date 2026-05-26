@@ -57,6 +57,7 @@ class ImportCalonAfirmasi extends Command
             'email' => -1,
             'kab_kec' => -1,
             'desa' => -1,
+            'nik' => -1,
         ];
 
         foreach ($headers as $index => $header) {
@@ -72,6 +73,8 @@ class ImportCalonAfirmasi extends Command
                 $headerIndices['kab_kec'] = $index;
             } elseif ($headerLower === 'desa') {
                 $headerIndices['desa'] = $index;
+            } elseif ($headerLower === 'nik' || $headerLower === 'nip') {
+                $headerIndices['nik'] = $index;
             }
         }
 
@@ -123,6 +126,10 @@ class ImportCalonAfirmasi extends Command
                 ? trim($rowValues[$headerIndices['desa']])
                 : '';
 
+            $nik = $headerIndices['nik'] !== -1 && isset($rowValues[$headerIndices['nik']])
+                ? trim($rowValues[$headerIndices['nik']])
+                : '';
+
             // Parsing kecamatan: "(21) DEMAK - (010) MRANGGEN" -> "MRANGGEN"
             $parts = explode('-', $kabKecRaw);
             $kecamatanRaw = isset($parts[1]) ? trim($parts[1]) : trim($parts[0]);
@@ -149,6 +156,10 @@ class ImportCalonAfirmasi extends Command
                 'is_active' => true,
                 'identity_type' => 'mitra',
             ];
+
+            if (! empty($nik)) {
+                $userData['nip'] = $nik;
+            }
 
             // Set/override password default jadi Mitra3321
             $userData['password'] = Hash::make('Mitra3321');
