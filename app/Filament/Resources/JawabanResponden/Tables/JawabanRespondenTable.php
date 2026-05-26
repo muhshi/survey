@@ -8,12 +8,15 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\DatePicker;
 use Filament\Infolists\Components\KeyValueEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class JawabanRespondenTable
 {
@@ -94,6 +97,25 @@ class JawabanRespondenTable
                     ->relationship('survey', 'title')
                     ->searchable()
                     ->preload(),
+                Filter::make('submitted_at')
+                    ->label('Filter Tanggal')
+                    ->form([
+                        DatePicker::make('submitted_from')
+                            ->label('Dari Tanggal'),
+                        DatePicker::make('submitted_until')
+                            ->label('Sampai Tanggal'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['submitted_from'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('submitted_at', '>=', $date),
+                            )
+                            ->when(
+                                $data['submitted_until'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('submitted_at', '<=', $date),
+                            );
+                    }),
             ])
             ->actions([
                 ViewAction::make()

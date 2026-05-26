@@ -6,27 +6,28 @@ use App\Filament\Resources\Survey\SurveyResource;
 use App\Models\JawabanResponden;
 use App\Models\Survey;
 use Filament\Actions\Action;
-use Filament\Actions\StaticAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\DatePicker;
 use Filament\Infolists\Components\KeyValueEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\Page;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
-class ViewSubmissions extends Page implements HasTable, HasSchemas
+class ViewSubmissions extends Page implements HasSchemas, HasTable
 {
-    use InteractsWithTable;
     use InteractsWithSchemas;
+    use InteractsWithTable;
 
     protected static string $resource = SurveyResource::class;
 
@@ -50,7 +51,7 @@ class ViewSubmissions extends Page implements HasTable, HasSchemas
                             ->weight(FontWeight::Bold)
                             ->color(Color::Sky)
                             ->icon('heroicon-m-chat-bubble-bottom-center-text'),
-                            
+
                         TextEntry::make('mode')
                             ->label('Mode Sistem')
                             ->badge()
@@ -96,6 +97,27 @@ class ViewSubmissions extends Page implements HasTable, HasSchemas
                     ->color('gray'),
             ])
             ->defaultSort('submitted_at', 'desc')
+            ->filters([
+                Filter::make('submitted_at')
+                    ->label('Filter Tanggal')
+                    ->form([
+                        DatePicker::make('submitted_from')
+                            ->label('Dari Tanggal'),
+                        DatePicker::make('submitted_until')
+                            ->label('Sampai Tanggal'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['submitted_from'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('submitted_at', '>=', $date),
+                            )
+                            ->when(
+                                $data['submitted_until'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('submitted_at', '<=', $date),
+                            );
+                    }),
+            ])
             ->actions([
                 ViewAction::make()
                     ->label('Lihat Jawaban')
