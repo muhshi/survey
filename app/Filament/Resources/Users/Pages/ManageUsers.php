@@ -77,6 +77,9 @@ class ManageUsers extends ManageRecords
             'calon_mitra' => Tab::make('Calon Mitra')
                 ->badge(User::whereHas('roles', fn ($q) => $q->where('name', 'calon_petugas'))->count())
                 ->modifyQueryUsing(fn ($query) => $query->whereHas('roles', fn ($q) => $q->where('name', 'calon_petugas'))),
+            'calon_afirmasi' => Tab::make('Calon Afirmasi')
+                ->badge(User::whereHas('roles', fn ($q) => $q->where('name', 'calon_afirmasi'))->count())
+                ->modifyQueryUsing(fn ($query) => $query->whereHas('roles', fn ($q) => $q->where('name', 'calon_afirmasi'))),
         ];
     }
 }
