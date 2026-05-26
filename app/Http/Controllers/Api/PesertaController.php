@@ -29,6 +29,6 @@ class PesertaController extends Controller
                 'text' => ($item->nomor_urut ? $item->nomor_urut.'. ' : '').$item->name,
             ]);
 
-        return response()->json($data)->header('Cache-Control', 'no-cache, no-store, must-revalidate');
+        return response()->json($data);
     }
 }

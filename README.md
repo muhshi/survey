@@ -25,6 +25,9 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 
 ## Changelog
 
+### 2026-05-26
+- **Import Calon Afirmasi Command**: Menambahkan perintah `survey:import-calon-afirmasi` untuk mengimpor calon petugas afirmasi langsung dari file Excel `petugas afirmasi.xlsx`, lengkap dengan pembuatan otomatis role `calon_afirmasi`, alokasi nomor urut berurutan (*auto-increment*), dan parsing cerdas untuk kolom kecamatan dan desa.
+
 ### 2026-05-19
 - **Searchable Respondents**: Membuat kolom Responden/Peserta pada tabel Jawaban Responden dapat dicari (*searchable*), tidak hanya berdasarkan pewawancara, tetapi juga mencari berdasarkan `nama_peserta` di dalam *payload* survei.
 - **Handle Missing Users**: Menangani masalah nama peserta yang tidak muncul atau bernilai `Unknown` dengan menampilkan string nama (atau ID fallback) secara langsung jika data user tidak ditemukan di database.
