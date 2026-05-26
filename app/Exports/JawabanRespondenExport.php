@@ -18,14 +18,20 @@ class JawabanRespondenExport implements FromQuery, WithHeadings, WithMapping, Wi
 
     protected array $selectedFields;
 
+    protected ?string $submittedFrom = null;
+
+    protected ?string $submittedUntil = null;
+
     protected ?Collection $usersCache = null;
 
     protected ?array $parsedSchema = null;
 
-    public function __construct(int $surveyId, array $selectedFields)
+    public function __construct(int $surveyId, array $selectedFields, ?string $submittedFrom = null, ?string $submittedUntil = null)
     {
         $this->surveyId = $surveyId;
         $this->selectedFields = $selectedFields;
+        $this->submittedFrom = $submittedFrom;
+        $this->submittedUntil = $submittedUntil;
     }
 
     protected function getUsersCache()
@@ -40,7 +46,11 @@ class JawabanRespondenExport implements FromQuery, WithHeadings, WithMapping, Wi
 
     public function query()
     {
-        return JawabanResponden::query()->with('user')->where('survey_id', $this->surveyId);
+        return JawabanResponden::query()
+            ->with('user')
+            ->where('survey_id', $this->surveyId)
+            ->when($this->submittedFrom, fn ($q, $date) => $q->whereDate('submitted_at', '>=', $date))
+            ->when($this->submittedUntil, fn ($q, $date) => $q->whereDate('submitted_at', '<=', $date));
     }
 
     protected function getParsedSchema()

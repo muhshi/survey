@@ -31,6 +31,7 @@ class ListJawabanResponden extends ListRecords
                     Select::make('survey_id')
                         ->label('Pilih Survey')
                         ->options(Survey::pluck('title', 'id'))
+                        ->default(fn () => $this->getTableFilterState()['survey_id']['value'] ?? null)
                         ->required()
                         ->live()
                         ->afterStateUpdated(function (Set $set, $state) {
@@ -111,6 +112,35 @@ class ListJawabanResponden extends ListRecords
 
                             return $options;
                         })
+                        ->default(function (Get $get) {
+                            $surveyId = $get('survey_id');
+                            if (! $surveyId) {
+                                return [];
+                            }
+
+                            $survey = Survey::find($surveyId);
+                            if (! $survey) {
+                                return [];
+                            }
+
+                            $parsed = $survey->getParsedSchema();
+                            $schemaFields = array_keys($parsed['fields']);
+
+                            if (empty($schemaFields)) {
+                                $schemaFields = JawabanResponden::where('survey_id', $surveyId)
+                                    ->get()
+                                    ->flatMap(fn ($j) => array_keys($j->payload ?? []))
+                                    ->unique()
+                                    ->values()
+                                    ->toArray();
+                            }
+
+                            if ($survey->is_quiz) {
+                                return ['nama_lengkap', 'email_peserta', 'skor_kuis', 'waktu_submit'];
+                            } else {
+                                return array_merge(['nama_pewawancara', 'nama_peserta', 'email_peserta', 'waktu_submit'], $schemaFields);
+                            }
+                        })
                         ->columns(3)
                         ->required()
                         ->visible(fn (Get $get) => filled($get('survey_id'))),
@@ -119,8 +149,18 @@ class ListJawabanResponden extends ListRecords
                     $survey = Survey::find($data['survey_id']);
                     $fileName = Str::slug($survey->title).'_'.date('Y-m-d').'.xlsx';
 
+                    // Get active table filter state
+                    $filterState = $this->getTableFilterState();
+                    $submittedFrom = $filterState['submitted_at']['submitted_from'] ?? null;
+                    $submittedUntil = $filterState['submitted_at']['submitted_until'] ?? null;
+
                     return Excel::download(
-                        new JawabanRespondenExport($data['survey_id'], $data['fields']),
+                        new JawabanRespondenExport(
+                            $data['survey_id'],
+                            $data['fields'],
+                            $submittedFrom,
+                            $submittedUntil
+                        ),
                         $fileName
                     );
                 }),
