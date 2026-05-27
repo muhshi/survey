@@ -31,7 +31,7 @@ class ListJawabanResponden extends ListRecords
                     Select::make('survey_id')
                         ->label('Pilih Survey')
                         ->options(Survey::pluck('title', 'id'))
-                        ->default(fn () => $this->getTableFilterState()['survey_id']['value'] ?? null)
+                        ->default(fn () => $this->getTableFilterState('survey_id')['value'] ?? null)
                         ->required()
                         ->live()
                         ->afterStateUpdated(function (Set $set, $state) {
@@ -150,9 +150,8 @@ class ListJawabanResponden extends ListRecords
                     $fileName = Str::slug($survey->title).'_'.date('Y-m-d').'.xlsx';
 
                     // Get active table filter state
-                    $filterState = $this->getTableFilterState();
-                    $submittedFrom = $filterState['submitted_at']['submitted_from'] ?? null;
-                    $submittedUntil = $filterState['submitted_at']['submitted_until'] ?? null;
+                    $submittedFrom = $this->getTableFilterState('submitted_at')['submitted_from'] ?? null;
+                    $submittedUntil = $this->getTableFilterState('submitted_at')['submitted_until'] ?? null;
 
                     return Excel::download(
                         new JawabanRespondenExport(

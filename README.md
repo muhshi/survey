@@ -25,6 +25,9 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 
 ## Changelog
 
+### 2026-05-27
+- **Fix Export Error in ListJawabanResponden**: Memperbaiki `ArgumentCountError` pada fungsi `getTableFilterState()` saat melakukan export data Jawaban Responden dengan memberikan argumen nama filter spesifik (`survey_id` & `submitted_at`) yang dibutuhkan oleh Filament v5.
+
 ### 2026-05-26
 - **Import Calon Afirmasi Command**: Menambahkan perintah `survey:import-calon-afirmasi` untuk mengimpor calon petugas afirmasi langsung dari file Excel `petugas afirmasi.xlsx`, lengkap dengan pembuatan otomatis role `calon_afirmasi`, alokasi nomor urut berurutan (*auto-increment*), default password `Mitra3321`, dan parsing cerdas untuk kolom kecamatan dan desa.
 - **Calon Afirmasi User Tab**: Menambahkan tab filter "Calon Afirmasi" pada halaman manajemen pengguna (ManageUsers) di Filament untuk mempermudah pemantauan dan pencarian data calon petugas afirmasi.
