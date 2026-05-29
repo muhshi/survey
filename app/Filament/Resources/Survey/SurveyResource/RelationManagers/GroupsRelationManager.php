@@ -103,28 +103,60 @@ class GroupsRelationManager extends RelationManager
                         Excel::import($import, $filePath);
 
                         $rows = $import->data;
-                        $importedCount = 0;
-
+                        $validRows = [];
+                        $emails = [];
                         foreach ($rows as $row) {
                             $email = $row['email'] ?? null;
                             $name = $row['name'] ?? $row['nama'] ?? null;
+                            if ($email) {
+                                $emails[] = $email;
+                                $validRows[$email] = $name ?? 'User';
+                            }
+                        }
 
-                            if (! $email) {
-                                continue;
+                        $emails = array_unique($emails);
+
+                        if (empty($emails)) {
+                            Notification::make()
+                                ->title('Tidak ada data user yang valid untuk diimpor.')
+                                ->warning()
+                                ->send();
+
+                            return;
+                        }
+
+                        $existingUsers = User::whereIn('email', $emails)->get(['id', 'email']);
+                        $existingEmails = $existingUsers->pluck('email')->toArray();
+
+                        $newEmails = array_diff($emails, $existingEmails);
+
+                        if (! empty($newEmails)) {
+                            $defaultPassword = Hash::make('Mitra3321');
+                            $now = now();
+                            $newUsers = [];
+
+                            foreach ($newEmails as $email) {
+                                $newUsers[] = [
+                                    'email' => $email,
+                                    'name' => $validRows[$email],
+                                    'password' => $defaultPassword,
+                                    'is_active' => true,
+                                    'created_at' => $now,
+                                    'updated_at' => $now,
+                                ];
                             }
 
-                            $user = User::firstOrCreate(
-                                ['email' => $email],
-                                [
-                                    'name' => $name ?? 'User',
-                                    'password' => Hash::make('Mitra3321'),
-                                    'is_active' => true,
-                                ]
-                            );
+                            foreach (array_chunk($newUsers, 500) as $chunk) {
+                                User::insert($chunk);
+                            }
 
-                            $record->users()->syncWithoutDetaching([$user->id]);
-                            $importedCount++;
+                            $existingUsers = User::whereIn('email', $emails)->get(['id']);
                         }
+
+                        $userIds = $existingUsers->pluck('id')->toArray();
+                        $record->users()->syncWithoutDetaching($userIds);
+
+                        $importedCount = count($userIds);
 
                         Notification::make()
                             ->title("Berhasil mengimpor $importedCount user ke kelompok {$record->name}.")
