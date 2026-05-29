@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Survey\SurveyResource\RelationManagers;
 
 use App\Models\Group;
-use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Actions\AssociateAction;
 use Filament\Actions\BulkActionGroup;
@@ -20,6 +19,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Concerns\ToArray;
@@ -87,16 +87,14 @@ class GroupsRelationManager extends RelationManager
                             ->acceptedFileTypes(['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel'])
                             ->required(),
                     ])
-                    ->action(function (Group $record, array $data) {
-                        set_time_limit(0);
-
+                    ->action(function (Group $record, array $data): void {
                         $filePath = Storage::disk('local')->path($data['file']);
 
                         $import = new class implements ToArray, WithHeadingRow
                         {
                             public $data = [];
 
-                            public function array(array $array)
+                            public function array(array $array): void
                             {
                                 $this->data = $array;
                             }
@@ -104,15 +102,13 @@ class GroupsRelationManager extends RelationManager
 
                         Excel::import($import, $filePath);
 
-                        $rows = $import->data;
-                        $validRows = [];
                         $emails = [];
-                        foreach ($rows as $row) {
+                        $validRows = [];
+                        foreach ($import->data as $row) {
                             $email = isset($row['email']) ? strtolower(trim($row['email'])) : null;
-                            $name = $row['name'] ?? $row['nama'] ?? null;
                             if ($email) {
                                 $emails[] = $email;
-                                $validRows[$email] = $name ?? 'User';
+                                $validRows[$email] = $row['name'] ?? $row['nama'] ?? 'User';
                             }
                         }
 
@@ -127,8 +123,11 @@ class GroupsRelationManager extends RelationManager
                             return;
                         }
 
-                        $existingUsers = User::whereIn('email', $emails)->get(['id', 'email']);
-                        $existingEmails = $existingUsers->pluck('email')->map(fn ($email) => strtolower($email))->toArray();
+                        $existingEmails = DB::table('users')
+                            ->whereIn('email', $emails)
+                            ->pluck('email')
+                            ->map(fn ($e) => strtolower($e))
+                            ->all();
 
                         $newEmails = array_diff($emails, $existingEmails);
 
@@ -148,17 +147,15 @@ class GroupsRelationManager extends RelationManager
                                 ];
                             }
 
-                            foreach (array_chunk($newUsers, 500) as $chunk) {
-                                User::insertOrIgnore($chunk);
-                            }
-
-                            $existingUsers = User::whereIn('email', $emails)->get(['id']);
+                            DB::table('users')->insertOrIgnore($newUsers);
                         }
 
-                        $userIds = $existingUsers->pluck('id')->toArray();
-                        foreach (array_chunk($userIds, 500) as $chunk) {
-                            $record->users()->syncWithoutDetaching($chunk);
-                        }
+                        $userIds = DB::table('users')
+                            ->whereIn('email', $emails)
+                            ->pluck('id')
+                            ->all();
+
+                        $record->users()->syncWithoutDetaching($userIds);
 
                         $importedCount = count($userIds);
 
