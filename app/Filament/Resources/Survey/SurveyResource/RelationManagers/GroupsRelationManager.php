@@ -88,15 +88,17 @@ class GroupsRelationManager extends RelationManager
                             ->required(),
                     ])
                     ->action(function (Group $record, array $data) {
+                        set_time_limit(0);
+
                         $filePath = Storage::disk('local')->path($data['file']);
 
                         $import = new class implements ToArray, WithHeadingRow
                         {
-                            public array $data = [];
+                            public $data = [];
 
                             public function array(array $array)
                             {
-                                $this->data = array_merge($this->data, $array);
+                                $this->data = $array;
                             }
                         };
 
@@ -154,7 +156,9 @@ class GroupsRelationManager extends RelationManager
                         }
 
                         $userIds = $existingUsers->pluck('id')->toArray();
-                        $record->users()->syncWithoutDetaching($userIds);
+                        foreach (array_chunk($userIds, 500) as $chunk) {
+                            $record->users()->syncWithoutDetaching($chunk);
+                        }
 
                         $importedCount = count($userIds);
 
