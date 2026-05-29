@@ -67,8 +67,14 @@ class Survey extends Model
         return $this->hasMany(JawabanResponden::class);
     }
 
+    /** @return HasMany<Group, $this> */
+    public function groups(): HasMany
+    {
+        return $this->hasMany(Group::class);
+    }
+
     /**
-     * Check if the survey is currently available for filling.
+     * Check if the survey is currently available for filling globally.
      */
     public function isAvailable(): bool
     {
@@ -85,6 +91,44 @@ class Survey extends Model
         }
 
         return true;
+    }
+
+    /**
+     * Check if the user has active group access for this survey.
+     */
+    public function hasActiveGroupAccess(?User $user): bool
+    {
+        if (! $user || ! $this->is_active) {
+            return false;
+        }
+
+        return $this->groups()
+            ->whereHas('users', function ($q) use ($user) {
+                $q->where('users.id', $user->id);
+            })
+            ->where(function ($q) {
+                $q->whereNull('starts_at')->orWhere('starts_at', '<=', now());
+            })
+            ->where(function ($q) {
+                $q->whereNull('ends_at')->orWhere('ends_at', '>=', now());
+            })
+            ->exists();
+    }
+
+    /**
+     * Check if the survey is available for a specific user (global or via group).
+     */
+    public function isAvailableForUser(?User $user = null): bool
+    {
+        if (! $this->is_active) {
+            return false;
+        }
+
+        if ($this->isAvailable()) {
+            return true;
+        }
+
+        return $this->hasActiveGroupAccess($user);
     }
 
     /**

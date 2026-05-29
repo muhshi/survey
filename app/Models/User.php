@@ -121,4 +121,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(JawabanResponden::class);
     }
+
+    public function surveyGroups()
+    {
+        return $this->belongsToMany(Group::class);
+    }
 }

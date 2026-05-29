@@ -8,6 +8,7 @@ use App\Filament\Resources\Survey\Pages\EditSurvey;
 use App\Filament\Resources\Survey\Pages\ListSurvey;
 use App\Filament\Resources\Survey\Pages\ViewSubmissions;
 use App\Filament\Resources\Survey\Schemas\SurveyForm;
+use App\Filament\Resources\Survey\SurveyResource\RelationManagers\GroupsRelationManager;
 use App\Filament\Resources\Survey\Tables\SurveyTable;
 use App\Models\Survey;
 use BackedEnum;
@@ -41,7 +42,7 @@ class SurveyResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            GroupsRelationManager::class,
         ];
     }
 

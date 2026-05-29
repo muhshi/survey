@@ -2,11 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Models\User;
 use App\Services\ImportPesertaService;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Hash;
-use Spatie\Permission\Models\Role;
 
 class ImportPendaftar extends Command
 {
@@ -32,6 +29,7 @@ class ImportPendaftar extends Command
         $file = $this->argument('file');
         if (! file_exists($file)) {
             $this->error("File tidak ditemukan: {$file}");
+
             return;
         }
 
@@ -40,6 +38,7 @@ class ImportPendaftar extends Command
 
         if (! $data) {
             $this->error('Format JSON tidak valid.');
+
             return;
         }
 

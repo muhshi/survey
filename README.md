@@ -25,6 +25,10 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 
 ## Changelog
 
+### 2026-05-29
+- **Survey Groups (Cohorts)**: Mengimplementasikan sistem Kelompok Survei/Gelombang yang memungkinkan akses survei dibatasi pada waktu tertentu untuk sekelompok pengguna spesifik tanpa perlu membuat role global baru.
+- **Excel User Import to Group**: Menambahkan tombol *Import Users* pada Filament *GroupsRelationManager* untuk mengimpor dan mendaftarkan user massal dari file Excel secara langsung ke dalam suatu Kelompok Survei, dengan pembuatan akun otomatis untuk user yang belum terdaftar (password default `Mitra3321`).
+
 ### 2026-05-27
 - **Fix Export Error in ListJawabanResponden**: Memperbaiki `ArgumentCountError` pada fungsi `getTableFilterState()` saat melakukan export data Jawaban Responden dengan memberikan argumen nama filter spesifik (`survey_id` & `submitted_at`) yang dibutuhkan oleh Filament v5.
 

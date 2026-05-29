@@ -72,7 +72,7 @@ class SurveyController extends Controller
     public function show(Survey $survey): View|RedirectResponse
     {
         // Check if survey is available
-        if (! $survey->isAvailable()) {
+        if (! $survey->isAvailableForUser(Auth::user())) {
             return view('survey.closed', [
                 'title' => 'Survei Tidak Tersedia',
                 'message' => $this->getUnavailableMessage($survey),
@@ -86,7 +86,7 @@ class SurveyController extends Controller
 
         if ($survey->access_level === 'role') {
             $allowedRoles = $survey->allowed_roles ?? [];
-            if (! Auth::user()->hasAnyRole($allowedRoles)) {
+            if (! Auth::user()->hasAnyRole($allowedRoles) && ! $survey->hasActiveGroupAccess(Auth::user())) {
                 return view('survey.closed', [
                     'title' => 'Akses Ditolak',
                     'message' => 'Anda tidak memiliki izin untuk mengisi survei ini.',
@@ -123,7 +123,7 @@ class SurveyController extends Controller
     public function submit(Request $request, Survey $survey): JsonResponse
     {
         // Availability check
-        if (! $survey->isAvailable()) {
+        if (! $survey->isAvailableForUser(Auth::user())) {
             return response()->json(['success' => false, 'message' => 'Survei tidak tersedia.'], 403);
         }
 
@@ -134,7 +134,7 @@ class SurveyController extends Controller
 
         if ($survey->access_level === 'role') {
             $allowedRoles = $survey->allowed_roles ?? [];
-            if (! Auth::user()->hasAnyRole($allowedRoles)) {
+            if (! Auth::user()->hasAnyRole($allowedRoles) && ! $survey->hasActiveGroupAccess(Auth::user())) {
                 return response()->json(['success' => false, 'message' => 'Anda tidak memiliki akses.'], 403);
             }
         }
@@ -188,7 +188,7 @@ class SurveyController extends Controller
      */
     public function updateSubmission(Request $request, Survey $survey): JsonResponse
     {
-        if (! $survey->isAvailable()) {
+        if (! $survey->isAvailableForUser(Auth::user())) {
             return response()->json(['success' => false, 'message' => 'Survei tidak tersedia.'], 403);
         }
 

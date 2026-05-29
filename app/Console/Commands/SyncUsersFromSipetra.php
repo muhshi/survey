@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 class SyncUsersFromSipetra extends Command
 {
     protected $signature = 'sync:users {--full : Abaikan timestamp, sync semua data}';
+
     protected $description = 'Sinkronisasi master data pengguna dari Sipetra';
 
     public function handle(): int
@@ -36,6 +37,7 @@ class SyncUsersFromSipetra extends Command
             if ($response->failed()) {
                 $this->error("Gagal: HTTP {$response->status()}");
                 Log::error('sync:users failed', ['status' => $response->status(), 'body' => $response->body()]);
+
                 return self::FAILURE;
             }
 
@@ -70,7 +72,6 @@ class SyncUsersFromSipetra extends Command
             }
 
             $this->line("  Halaman {$page}/{$lastPage} selesai.");
-            $page;
 
         } while ($page <= $lastPage);
 
@@ -81,4 +82,3 @@ class SyncUsersFromSipetra extends Command
         return self::SUCCESS;
     }
 }
-

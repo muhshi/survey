@@ -12,7 +12,7 @@ class AdminRoleSeeder extends Seeder
     {
         // Create super_admin role
         $superAdmin = Role::firstOrCreate(['name' => 'super_admin', 'guard_name' => 'web']);
-        
+
         // Create pegawai role for SSO users
         Role::firstOrCreate(['name' => 'pegawai', 'guard_name' => 'web']);
 

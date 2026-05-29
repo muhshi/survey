@@ -13,23 +13,23 @@ class SipetraSocialiteProvider extends AbstractProvider implements ProviderInter
     protected function getAuthUrl($state)
     {
         return $this->buildAuthUrlFromBase(
-            config('services.sipetra.base_url') . '/oauth/authorize',
+            config('services.sipetra.base_url').'/oauth/authorize',
             $state
         );
     }
 
     protected function getTokenUrl()
     {
-        return config('services.sipetra.base_url') . '/oauth/token';
+        return config('services.sipetra.base_url').'/oauth/token';
     }
 
     protected function getUserByToken($token)
     {
         $response = $this->getHttpClient()->get(
-            config('services.sipetra.base_url') . '/api/user',
+            config('services.sipetra.base_url').'/api/user',
             [
                 'headers' => [
-                    'Authorization' => 'Bearer ' . $token,
+                    'Authorization' => 'Bearer '.$token,
                     'Accept' => 'application/json',
                 ],
             ]
@@ -52,6 +52,7 @@ class SipetraSocialiteProvider extends AbstractProvider implements ProviderInter
     {
         $fields = parent::getTokenFields($code);
         $fields['grant_type'] = 'authorization_code';
+
         return $fields;
     }
 
@@ -60,4 +61,3 @@ class SipetraSocialiteProvider extends AbstractProvider implements ProviderInter
         return config('services.sipetra.scopes', []);
     }
 }
-

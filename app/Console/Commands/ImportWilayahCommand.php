@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\MasterWilayah;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
@@ -17,21 +18,23 @@ class ImportWilayahCommand extends Command
     {
         $path = storage_path('app/wilayah.json');
 
-        if (!file_exists($path)) {
+        if (! file_exists($path)) {
             $this->error("File not found at $path");
+
             return;
         }
 
-        $this->info("Reading JSON data...");
+        $this->info('Reading JSON data...');
         $json = file_get_contents($path);
         $data = json_decode($json, true);
-        
+
         if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
-            $this->error("JSON Decode Error: " . json_last_error_msg());
+            $this->error('JSON Decode Error: '.json_last_error_msg());
+
             return;
         }
 
-        $this->info("Importing " . count($data) . " records...");
+        $this->info('Importing '.count($data).' records...');
 
         $bar = $this->output->createProgressBar(count($data));
         $bar->start();
@@ -55,7 +58,7 @@ class ImportWilayahCommand extends Command
                 ];
             }, $chunk);
 
-            \App\Models\MasterWilayah::upsert(
+            MasterWilayah::upsert(
                 $insertData,
                 ['idsubsls'],
                 ['nmsls', 'nama_ketua', 'nmkec', 'kdkec', 'nmdesa', 'kddesa', 'kdsls', 'kdsubsls', 'updated_at']
@@ -66,6 +69,6 @@ class ImportWilayahCommand extends Command
 
         $bar->finish();
         $this->newLine();
-        $this->info("Import completed successfully!");
+        $this->info('Import completed successfully!');
     }
 }
