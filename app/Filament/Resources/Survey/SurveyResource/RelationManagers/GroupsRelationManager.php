@@ -41,6 +41,17 @@ class GroupsRelationManager extends RelationManager
             ]);
     }
 
+    public function removeMember(int $user, int $group): void
+    {
+        $group = Group::findOrFail($group);
+        $group->users()->detach($user);
+
+        Notification::make()
+            ->title('Anggota berhasil dihapus dari kelompok.')
+            ->success()
+            ->send();
+    }
+
     public function table(Table $table): Table
     {
         return $table
@@ -48,6 +59,11 @@ class GroupsRelationManager extends RelationManager
             ->columns([
                 TextColumn::make('name')
                     ->searchable(),
+                TextColumn::make('users_count')
+                    ->counts('users')
+                    ->label('Anggota')
+                    ->sortable()
+                    ->badge(),
                 TextColumn::make('starts_at')
                     ->dateTime()
                     ->sortable(),
@@ -77,6 +93,23 @@ class GroupsRelationManager extends RelationManager
                     ->openUrlInNewTab(),
             ])
             ->recordActions([
+                Action::make('viewMembers')
+                    ->label('Anggota')
+                    ->icon('heroicon-o-user-group')
+                    ->color('info')
+                    ->modalHeading(fn (Group $record): string => "Anggota Kelompok: {$record->name}")
+                    ->modalContent(function (Group $record) {
+                        $users = $record->users()
+                            ->select(['users.id', 'users.name', 'users.email'])
+                            ->orderBy('users.name')
+                            ->get();
+
+                        return view('filament.modals.group-members', [
+                            'users' => $users,
+                            'group' => $record,
+                        ]);
+                    })
+                    ->modalSubmitAction(false),
                 Action::make('importUsers')
                     ->label('Import Users')
                     ->icon('heroicon-o-arrow-up-tray')
