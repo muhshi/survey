@@ -35,4 +35,4 @@ Route::get('/survey-groups/template-import-user', function () {
         },
         'template_import_user.xlsx'
     );
-})->name('survey.groups.template-import-user');
+})->middleware(['auth'])->name('survey.groups.template-import-user');
