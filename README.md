@@ -26,6 +26,7 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 ## Changelog
 
 ### 2026-05-29
+- **Excel Import Template Download**: Menambahkan tombol *Unduh Template* pada header tabel relasi Groups untuk mengunduh contoh file Excel (format `.xlsx` dengan kolom header `email` dan `name`) yang kompatibel untuk proses impor user.
 - **Survey Groups (Cohorts)**: Mengimplementasikan sistem Kelompok Survei/Gelombang yang memungkinkan akses survei dibatasi pada waktu tertentu untuk sekelompok pengguna spesifik tanpa perlu membuat role global baru.
 - **Excel User Import to Group**: Menambahkan tombol *Import Users* pada Filament *GroupsRelationManager* untuk mengimpor dan mendaftarkan user massal dari file Excel secara langsung ke dalam suatu Kelompok Survei, dengan pembuatan akun otomatis untuk user yang belum terdaftar (password default `Mitra3321`).
 

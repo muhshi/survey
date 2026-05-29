@@ -21,6 +21,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Hash;
+use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\ToArray;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Facades\Excel;
@@ -68,6 +69,24 @@ class GroupsRelationManager extends RelationManager
             ->headerActions([
                 CreateAction::make(),
                 AssociateAction::make(),
+                Action::make('downloadTemplate')
+                    ->label('Unduh Template')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->color('info')
+                    ->action(fn () => Excel::download(
+                        new class implements FromArray
+                        {
+                            public function array(): array
+                            {
+                                return [
+                                    ['email', 'name'],
+                                    ['mitra1@example.com', 'Mitra Satu'],
+                                    ['mitra2@example.com', 'Mitra Dua'],
+                                ];
+                            }
+                        },
+                        'template_import_user.xlsx'
+                    )),
             ])
             ->recordActions([
                 Action::make('importUsers')
@@ -80,9 +99,10 @@ class GroupsRelationManager extends RelationManager
                             ->required(),
                     ])
                     ->action(function (Group $record, array $data, Notification $notification) {
-                        $filePath = storage_path('app/public/' . $data['file']);
+                        $filePath = storage_path('app/public/'.$data['file']);
 
-                        $import = new class implements ToArray, WithHeadingRow {
+                        $import = new class implements ToArray, WithHeadingRow
+                        {
                             public array $data = [];
 
                             public function array(array $array)
@@ -100,7 +120,7 @@ class GroupsRelationManager extends RelationManager
                             $email = $row['email'] ?? null;
                             $name = $row['name'] ?? $row['nama'] ?? null;
 
-                            if (!$email) {
+                            if (! $email) {
                                 continue;
                             }
 
