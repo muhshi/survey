@@ -106,7 +106,7 @@ class GroupsRelationManager extends RelationManager
                         $validRows = [];
                         $emails = [];
                         foreach ($rows as $row) {
-                            $email = $row['email'] ?? null;
+                            $email = isset($row['email']) ? strtolower(trim($row['email'])) : null;
                             $name = $row['name'] ?? $row['nama'] ?? null;
                             if ($email) {
                                 $emails[] = $email;
@@ -126,7 +126,7 @@ class GroupsRelationManager extends RelationManager
                         }
 
                         $existingUsers = User::whereIn('email', $emails)->get(['id', 'email']);
-                        $existingEmails = $existingUsers->pluck('email')->toArray();
+                        $existingEmails = $existingUsers->pluck('email')->map(fn ($email) => strtolower($email))->toArray();
 
                         $newEmails = array_diff($emails, $existingEmails);
 
@@ -147,7 +147,7 @@ class GroupsRelationManager extends RelationManager
                             }
 
                             foreach (array_chunk($newUsers, 500) as $chunk) {
-                                User::insert($chunk);
+                                User::insertOrIgnore($chunk);
                             }
 
                             $existingUsers = User::whereIn('email', $emails)->get(['id']);
