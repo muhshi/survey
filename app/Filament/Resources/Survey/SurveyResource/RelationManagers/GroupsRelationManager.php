@@ -21,7 +21,6 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Hash;
-use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\ToArray;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Facades\Excel;
@@ -73,20 +72,8 @@ class GroupsRelationManager extends RelationManager
                     ->label('Unduh Template')
                     ->icon('heroicon-o-document-arrow-down')
                     ->color('info')
-                    ->action(fn () => Excel::download(
-                        new class implements FromArray
-                        {
-                            public function array(): array
-                            {
-                                return [
-                                    ['email', 'name'],
-                                    ['mitra1@example.com', 'Mitra Satu'],
-                                    ['mitra2@example.com', 'Mitra Dua'],
-                                ];
-                            }
-                        },
-                        'template_import_user.xlsx'
-                    )),
+                    ->url(fn () => route('survey.groups.template-import-user'))
+                    ->openUrlInNewTab(),
             ])
             ->recordActions([
                 Action::make('importUsers')
