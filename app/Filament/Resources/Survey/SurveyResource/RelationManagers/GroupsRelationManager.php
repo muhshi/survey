@@ -85,7 +85,7 @@ class GroupsRelationManager extends RelationManager
                             ->acceptedFileTypes(['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel'])
                             ->required(),
                     ])
-                    ->action(function (Group $record, array $data, Notification $notification) {
+                    ->action(function (Group $record, array $data) {
                         $filePath = storage_path('app/public/'.$data['file']);
 
                         $import = new class implements ToArray, WithHeadingRow
@@ -124,7 +124,8 @@ class GroupsRelationManager extends RelationManager
                             $importedCount++;
                         }
 
-                        $notification->title("Berhasil mengimpor $importedCount user ke kelompok {$record->name}.")
+                        Notification::make()
+                            ->title("Berhasil mengimpor $importedCount user ke kelompok {$record->name}.")
                             ->success()
                             ->send();
                     }),
