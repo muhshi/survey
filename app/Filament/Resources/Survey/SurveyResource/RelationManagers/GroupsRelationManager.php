@@ -21,6 +21,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Concerns\ToArray;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Facades\Excel;
@@ -82,11 +83,12 @@ class GroupsRelationManager extends RelationManager
                     ->form([
                         FileUpload::make('file')
                             ->label('File Excel')
+                            ->disk('local')
                             ->acceptedFileTypes(['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel'])
                             ->required(),
                     ])
                     ->action(function (Group $record, array $data) {
-                        $filePath = storage_path('app/public/'.$data['file']);
+                        $filePath = Storage::disk('local')->path($data['file']);
 
                         $import = new class implements ToArray, WithHeadingRow
                         {
