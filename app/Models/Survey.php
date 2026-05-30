@@ -72,7 +72,7 @@ class Survey extends Model
     /** @return BelongsToMany<Group, $this> */
     public function groups(): BelongsToMany
     {
-        return $this->belongsToMany(Group::class)->withTimestamps();
+        return $this->belongsToMany(Group::class)->withPivot(['starts_at', 'ends_at'])->withTimestamps();
     }
 
     /**
@@ -116,10 +116,14 @@ class Survey extends Model
                         $userQuery->where('users.id', $user->id);
                     })
                         ->where(function ($tq) {
-                            $tq->whereNull('starts_at')->orWhere('starts_at', '<=', now());
-                        })
-                        ->where(function ($tq) {
-                            $tq->whereNull('ends_at')->orWhere('ends_at', '>=', now());
+                            $tq->where(function ($sq) {
+                                $sq->whereRaw('coalesce(group_survey.starts_at, groups.starts_at) is null')
+                                    ->orWhereRaw('coalesce(group_survey.starts_at, groups.starts_at) <= ?', [now()]);
+                            })
+                                ->where(function ($sq) {
+                                    $sq->whereRaw('coalesce(group_survey.ends_at, groups.ends_at) is null')
+                                        ->orWhereRaw('coalesce(group_survey.ends_at, groups.ends_at) >= ?', [now()]);
+                                });
                         });
                 });
             }
@@ -140,10 +144,14 @@ class Survey extends Model
                 $q->where('users.id', $user->id);
             })
             ->where(function ($q) {
-                $q->whereNull('starts_at')->orWhere('starts_at', '<=', now());
-            })
-            ->where(function ($q) {
-                $q->whereNull('ends_at')->orWhere('ends_at', '>=', now());
+                $q->where(function ($sq) {
+                    $sq->whereRaw('coalesce(group_survey.starts_at, groups.starts_at) is null')
+                        ->orWhereRaw('coalesce(group_survey.starts_at, groups.starts_at) <= ?', [now()]);
+                })
+                    ->where(function ($sq) {
+                        $sq->whereRaw('coalesce(group_survey.ends_at, groups.ends_at) is null')
+                            ->orWhereRaw('coalesce(group_survey.ends_at, groups.ends_at) >= ?', [now()]);
+                    });
             })
             ->exists();
     }

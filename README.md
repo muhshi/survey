@@ -27,9 +27,10 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 
 ### 2026-05-30
 - **Group-Survey Many-to-Many Relationship**: Migrasi relasi antara Kelompok Survei (Group) dan Survei dari One-to-Many menjadi Many-to-Many dengan tabel pivot `group_survey`. Memungkinkan satu kelompok (misal Gelombang I) terdaftar di beberapa kuesioner sekaligus (Pretest dan Pendalaman).
-- **Survey Access Control Fix**: Memperbaiki celah keamanan di mana semua user yang login dapat mengakses survei terproteksi kelompok. Sekarang, akses survei yang memiliki kelompok dibatasi secara ketat hanya untuk anggota kelompok tersebut.
+- **Survey Access Control & Detailed Warnings**: Mengubah logika pengecekan ketersediaan survei dan otorisasi kelompok menjadi lebih deskriptif. Jika pengguna tidak memiliki akses kelompok, belum masuk ke waktu aktif, atau waktu aktif telah berakhir, sistem akan mengembalikan pesan error yang spesifik (misal: "Akses Belum Dibuka" atau "Akun Anda tidak terdaftar dalam kelompok...").
+- **Group Pivot Timeframe Overrides**: Menambahkan kolom `starts_at` dan `ends_at` pada tabel pivot `group_survey` yang memungkinkan penentuan rentang waktu berlaku kelompok yang berbeda untuk masing-masing kuesioner, di mana sistem akan menggunakan waktu pivot ini dan melakukan fallback ke waktu default kelompok jika tidak didefinisikan.
+- **Enhanced Filament GroupsRelationManager**: Menambahkan aksi "Buat Kelompok Baru", kemampuan mengisi dan mengubah rentang waktu khusus survei (pivot) pada aksi Attach dan Edit, serta menambahkan tombol eksternal "Buka Kelompok" untuk memudahkan pengelolaan anggota kelompok survei.
 - **Quiz JSON Generation**: Membuat script pembuat kuesioner otomatis `generate_survey.py` dan men-generate `prepost.json` (15 soal campuran mudah, sedang, sulit) serta `pendalaman.json` (seluruh soal) dari Excel Bank Soal Petugas.
-- **Filament UI for Many-to-Many Group**: Menyesuaikan form dan tabel Group pada panel admin Filament (GroupResource & GroupsRelationManager) menggunakan aksi Attach/Detach untuk mendukung manajemen relasi Many-to-Many secara intuitif.
 
 ### 2026-05-29
 - **Excel Import Template Download**: Menambahkan tombol *Unduh Template* pada header tabel relasi Groups untuk mengunduh contoh file Excel (format `.xlsx` dengan kolom header `email` dan `name`) yang kompatibel untuk proses impor user.

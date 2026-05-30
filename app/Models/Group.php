@@ -24,7 +24,7 @@ class Group extends Model
     /** @return BelongsToMany<Survey, $this> */
     public function surveys(): BelongsToMany
     {
-        return $this->belongsToMany(Survey::class)->withTimestamps();
+        return $this->belongsToMany(Survey::class)->withPivot(['starts_at', 'ends_at'])->withTimestamps();
     }
 
     /** @return BelongsToMany<User, $this> */
