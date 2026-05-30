@@ -30,6 +30,7 @@ class SurveyController extends Controller
                 $query->whereNull('ends_at')
                     ->orWhere('ends_at', '>=', now());
             })
+            ->accessibleBy(Auth::user())
             ->orderByDesc('created_at')
             ->get();
 
@@ -59,6 +60,7 @@ class SurveyController extends Controller
                 $query->whereNull('ends_at')
                     ->orWhere('ends_at', '>=', now());
             })
+            ->accessibleBy(Auth::user())
             ->orderByDesc('created_at')
             ->limit(3)
             ->get();
@@ -71,17 +73,17 @@ class SurveyController extends Controller
      */
     public function show(Survey $survey): View|RedirectResponse
     {
-        // Check if survey is available
-        if (! $survey->isAvailableForUser(Auth::user())) {
-            return view('survey.closed', [
-                'title' => 'Survei Tidak Tersedia',
-                'message' => $this->getUnavailableMessage($survey),
-            ]);
-        }
-
         // Access control
         if ($survey->requiresAuth() && ! Auth::check()) {
             return redirect()->guest(route('filament.admin.auth.login'));
+        }
+
+        // Check if survey is available
+        if (! $survey->isAvailableForUser(Auth::user())) {
+            return view('survey.closed', [
+                'title' => 'Survei Tidak Tersedia / Akses Ditolak',
+                'message' => $this->getUnavailableMessage($survey),
+            ]);
         }
 
         if ($survey->access_level === 'role') {
@@ -122,14 +124,14 @@ class SurveyController extends Controller
      */
     public function submit(Request $request, Survey $survey): JsonResponse
     {
-        // Availability check
-        if (! $survey->isAvailableForUser(Auth::user())) {
-            return response()->json(['success' => false, 'message' => 'Survei tidak tersedia.'], 403);
-        }
-
         // Access control
         if ($survey->requiresAuth() && ! Auth::check()) {
             return response()->json(['success' => false, 'message' => 'Harus login terlebih dahulu.'], 401);
+        }
+
+        // Availability check
+        if (! $survey->isAvailableForUser(Auth::user())) {
+            return response()->json(['success' => false, 'message' => 'Survei tidak tersedia atau akses ditolak.'], 403);
         }
 
         if ($survey->access_level === 'role') {
@@ -188,12 +190,12 @@ class SurveyController extends Controller
      */
     public function updateSubmission(Request $request, Survey $survey): JsonResponse
     {
-        if (! $survey->isAvailableForUser(Auth::user())) {
-            return response()->json(['success' => false, 'message' => 'Survei tidak tersedia.'], 403);
-        }
-
         if (! Auth::check()) {
             return response()->json(['success' => false, 'message' => 'Harus login.'], 401);
+        }
+
+        if (! $survey->isAvailableForUser(Auth::user())) {
+            return response()->json(['success' => false, 'message' => 'Survei tidak tersedia atau akses ditolak.'], 403);
         }
 
         if ($survey->mode !== SurveyMode::Editable) {

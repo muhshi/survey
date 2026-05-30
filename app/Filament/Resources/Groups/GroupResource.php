@@ -38,9 +38,9 @@ class GroupResource extends Resource
     {
         return $schema
             ->components([
-                Select::make('survey_id')
-                    ->relationship('survey', 'title')
-                    ->required()
+                Select::make('surveys')
+                    ->relationship('surveys', 'title')
+                    ->multiple()
                     ->searchable()
                     ->preload()
                     ->label('Survei'),
@@ -58,7 +58,7 @@ class GroupResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('survey.title')
+                TextColumn::make('surveys.title')
                     ->label('Survei')
                     ->sortable()
                     ->searchable()

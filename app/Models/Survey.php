@@ -5,9 +5,11 @@ namespace App\Models;
 use App\Enums\SurveyMode;
 use Database\Factories\SurveyFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
@@ -67,10 +69,10 @@ class Survey extends Model
         return $this->hasMany(JawabanResponden::class);
     }
 
-    /** @return HasMany<Group, $this> */
-    public function groups(): HasMany
+    /** @return BelongsToMany<Group, $this> */
+    public function groups(): BelongsToMany
     {
-        return $this->hasMany(Group::class);
+        return $this->belongsToMany(Group::class)->withTimestamps();
     }
 
     /**
@@ -91,6 +93,37 @@ class Survey extends Model
         }
 
         return true;
+    }
+
+    /**
+     * Scope to filter surveys accessible by a given user.
+     *
+     * Surveys without groups: shown normally (public/auth/role logic applies).
+     * Surveys with groups: only shown if the user is a member of an active group.
+     *
+     * @param  Builder<Survey>  $query
+     */
+    public function scopeAccessibleBy(Builder $query, ?User $user): void
+    {
+        $query->where(function (Builder $q) use ($user) {
+            // Surveys without any groups — shown normally
+            $q->whereDoesntHave('groups');
+
+            // OR surveys where the user belongs to an active group
+            if ($user) {
+                $q->orWhereHas('groups', function (Builder $groupQuery) use ($user) {
+                    $groupQuery->whereHas('users', function (Builder $userQuery) use ($user) {
+                        $userQuery->where('users.id', $user->id);
+                    })
+                        ->where(function ($tq) {
+                            $tq->whereNull('starts_at')->orWhere('starts_at', '<=', now());
+                        })
+                        ->where(function ($tq) {
+                            $tq->whereNull('ends_at')->orWhere('ends_at', '>=', now());
+                        });
+                });
+            }
+        });
     }
 
     /**
@@ -124,11 +157,23 @@ class Survey extends Model
             return false;
         }
 
-        if ($this->isAvailable()) {
-            return true;
+        if ($this->groups()->exists()) {
+            if ($this->hasActiveGroupAccess($user)) {
+                return true;
+            }
+
+            // If they don't have group access but they have role access, allow them.
+            if ($user && $this->access_level === 'role' && ! empty($this->allowed_roles)) {
+                if ($user->hasAnyRole($this->allowed_roles)) {
+                    // Check if it's globally available for the role
+                    return $this->isAvailable();
+                }
+            }
+
+            return false;
         }
 
-        return $this->hasActiveGroupAccess($user);
+        return $this->isAvailable();
     }
 
     /**
@@ -136,7 +181,7 @@ class Survey extends Model
      */
     public function requiresAuth(): bool
     {
-        return in_array($this->access_level, ['auth', 'role']);
+        return in_array($this->access_level, ['auth', 'role']) || $this->groups()->exists();
     }
 
     public function getPublicUrl(): string

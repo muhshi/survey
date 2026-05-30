@@ -3,13 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Group extends Model
 {
     protected $fillable = [
-        'survey_id',
         'name',
         'starts_at',
         'ends_at',
@@ -23,10 +21,10 @@ class Group extends Model
         ];
     }
 
-    /** @return BelongsTo<Survey, $this> */
-    public function survey(): BelongsTo
+    /** @return BelongsToMany<Survey, $this> */
+    public function surveys(): BelongsToMany
     {
-        return $this->belongsTo(Survey::class);
+        return $this->belongsToMany(Survey::class)->withTimestamps();
     }
 
     /** @return BelongsToMany<User, $this> */
