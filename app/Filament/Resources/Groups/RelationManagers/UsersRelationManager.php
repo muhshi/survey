@@ -121,10 +121,8 @@ class UsersRelationManager extends RelationManager
             ->headerActions([
                 AttachAction::make()
                     ->preloadRecordSelect()
-                    ->recordSelect(fn (Select $select) => $select->multiple())
-                    ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereDoesntHave('groups', fn (Builder $q) => $q->where('groups.id', $this->getOwnerRecord()->id)
-                    )
-                    )
+                    ->multiple()
+                    ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereDoesntHave('groups', fn (Builder $q) => $q->where('groups.id', $this->getOwnerRecord()->id)))
                     ->label('Tambah Anggota'),
                 Action::make('importUsers')
                     ->label('Import dari Excel')
