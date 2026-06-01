@@ -37,6 +37,20 @@ class GroupsRelationManager extends RelationManager
                     ->sortable()
                     ->badge()
                     ->url(fn ($record) => GroupResource::getUrl('edit', ['record' => $record])),
+                TextColumn::make('belum_mengerjakan_count')
+                    ->label('Belum Mengerjakan')
+                    ->getStateUsing(function ($record) {
+                        $surveyId = $this->getOwnerRecord()->id;
+                        $totalUsers = $record->users()->count();
+                        $submittedUsers = $record->users()
+                            ->whereHas('jawaban_responden', fn ($q) => $q->where('survey_id', $surveyId))
+                            ->count();
+                        $notSubmitted = $totalUsers - $submittedUsers;
+
+                        return $notSubmitted.' / '.$totalUsers.' orang';
+                    })
+                    ->badge()
+                    ->color(fn ($state) => str_starts_with($state, '0 ') ? 'success' : 'warning'),
                 TextColumn::make('starts_at')
                     ->label('Mulai (Default Kelompok)')
                     ->dateTime()

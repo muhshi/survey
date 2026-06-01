@@ -26,6 +26,7 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 ## Changelog
 
 ### 2026-06-01
+- **Survey Cohort Completion Monitoring**: Menambahkan kolom *Belum Mengerjakan* pada tabel Kelompok Survei di halaman detail Survei untuk memantau jumlah peserta di masing-masing kelompok yang belum menyelesaikan survei/kuis tersebut secara real-time.
 - **Multi-Select & Exclude Existing Members in Group**: Memperbarui aksi `AttachAction` pada `UsersRelationManager` kelompok survei agar mendukung pemilihan banyak user sekaligus (multi-select) serta menyaring daftar pilihan untuk mengecualikan user yang sudah terdaftar di kelompok tersebut.
 - **Pretest & Pendalaman Monitoring Columns**: Menambahkan kolom status pengerjaan pretest (ID 4) dan pendalaman (ID 5) beserta skor peserta secara langsung di tabel anggota kelompok survei dengan dukungan eager loading agar terhindar dari N+1 query.
 - **Pretest & Pendalaman Status Filters**: Menambahkan filter seleksi status pengerjaan pretest dan pendalaman untuk mempermudah admin memilah siapa saja peserta kelompok yang belum atau sudah menyelesaikan ujian.
