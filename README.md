@@ -26,6 +26,9 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 ## Changelog
 
 ### 2026-06-01
+- **Multi-Select & Exclude Existing Members in Group**: Memperbarui aksi `AttachAction` pada `UsersRelationManager` kelompok survei agar mendukung pemilihan banyak user sekaligus (multi-select) serta menyaring daftar pilihan untuk mengecualikan user yang sudah terdaftar di kelompok tersebut.
+- **Pretest & Pendalaman Monitoring Columns**: Menambahkan kolom status pengerjaan pretest (ID 4) dan pendalaman (ID 5) beserta skor peserta secara langsung di tabel anggota kelompok survei dengan dukungan eager loading agar terhindar dari N+1 query.
+- **Pretest & Pendalaman Status Filters**: Menambahkan filter seleksi status pengerjaan pretest dan pendalaman untuk mempermudah admin memilah siapa saja peserta kelompok yang belum atau sudah menyelesaikan ujian.
 - **Fix Group Member Addition Error**: Memperbaiki `BadMethodCallException` dengan mendefinisikan relasi `groups()` pada model `User` sebagai relasi `BelongsToMany` dengan model `Group`. Ini memecahkan kegagalan penautan anggota baru kelompok survei di admin panel Filament.
 - **Fix Kuis Pretest Soal Sudah Terjawab**: Memperbaiki bug di mana peserta yang membuka kuis pretest mendapati sebagian soal sudah terjawab. Penyebabnya adalah `$existingSubmission` (jawaban lama) tidak di-null-kan untuk mode `single` maupun kuis (`is_quiz`), sehingga SurveyJS memuat ulang payload jawaban sebelumnya ke dalam form baru.
 

@@ -9,12 +9,15 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DetachAction;
 use Filament\Actions\DetachBulkAction;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -44,6 +47,7 @@ class UsersRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn (Builder $query) => $query->with(['jawaban_responden']))
             ->recordTitleAttribute('name')
             ->columns([
                 TextColumn::make('name')
@@ -53,13 +57,74 @@ class UsersRelationManager extends RelationManager
                 TextColumn::make('email')
                     ->searchable()
                     ->sortable(),
+                TextColumn::make('pretest_status')
+                    ->label('Pretest')
+                    ->badge()
+                    ->getStateUsing(function ($record) {
+                        $submission = $record->jawaban_responden
+                            ->firstWhere('survey_id', 4);
+                        if ($submission) {
+                            return 'Selesai'.($submission->score !== null ? ' ('.$submission->score.'%)' : '');
+                        }
+
+                        return 'Belum';
+                    })
+                    ->color(fn ($state) => str_contains($state, 'Selesai') ? 'success' : 'danger'),
+                TextColumn::make('pendalaman_status')
+                    ->label('Pendalaman')
+                    ->badge()
+                    ->getStateUsing(function ($record) {
+                        $submission = $record->jawaban_responden
+                            ->firstWhere('survey_id', 5);
+                        if ($submission) {
+                            return 'Selesai'.($submission->score !== null ? ' ('.$submission->score.'%)' : '');
+                        }
+
+                        return 'Belum';
+                    })
+                    ->color(fn ($state) => str_contains($state, 'Selesai') ? 'success' : 'danger'),
             ])
             ->filters([
-                //
+                SelectFilter::make('pretest_status')
+                    ->label('Filter Pretest')
+                    ->options([
+                        'sudah' => 'Sudah Mengerjakan',
+                        'belum' => 'Belum Mengerjakan',
+                    ])
+                    ->query(function (Builder $query, array $data) {
+                        if ($data['value'] === 'sudah') {
+                            return $query->whereHas('jawaban_responden', fn ($q) => $q->where('survey_id', 4));
+                        }
+                        if ($data['value'] === 'belum') {
+                            return $query->whereDoesntHave('jawaban_responden', fn ($q) => $q->where('survey_id', 4));
+                        }
+
+                        return $query;
+                    }),
+                SelectFilter::make('pendalaman_status')
+                    ->label('Filter Pendalaman')
+                    ->options([
+                        'sudah' => 'Sudah Mengerjakan',
+                        'belum' => 'Belum Mengerjakan',
+                    ])
+                    ->query(function (Builder $query, array $data) {
+                        if ($data['value'] === 'sudah') {
+                            return $query->whereHas('jawaban_responden', fn ($q) => $q->where('survey_id', 5));
+                        }
+                        if ($data['value'] === 'belum') {
+                            return $query->whereDoesntHave('jawaban_responden', fn ($q) => $q->where('survey_id', 5));
+                        }
+
+                        return $query;
+                    }),
             ])
             ->headerActions([
                 AttachAction::make()
                     ->preloadRecordSelect()
+                    ->recordSelect(fn (Select $select) => $select->multiple())
+                    ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereDoesntHave('groups', fn (Builder $q) => $q->where('groups.id', $this->getOwnerRecord()->id)
+                    )
+                    )
                     ->label('Tambah Anggota'),
                 Action::make('importUsers')
                     ->label('Import dari Excel')
