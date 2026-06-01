@@ -13,13 +13,14 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\DB;
 
 class SurveyTable
 {
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn ($query) => $query->withCount('jawabanRespondens'))
+            ->modifyQueryUsing(fn ($query) => $query->withCount('jawabanRespondens')->with(['groups']))
             ->columns([
                 TextColumn::make('kategori.name')
                     ->label('Kategori')
@@ -65,7 +66,35 @@ class SurveyTable
                     }),
                 TextColumn::make('jawaban_respondens_count')
                     ->label('Jawaban')
-                    ->counts('jawabanRespondens')
+                    ->getStateUsing(function ($record) {
+                        $groups = $record->groups;
+
+                        if ($groups->isEmpty()) {
+                            return $record->jawaban_respondens_count;
+                        }
+
+                        $groupIds = $groups->pluck('id')->all();
+
+                        $totalGroupUsers = DB::table('group_user')
+                            ->whereIn('group_id', $groupIds)
+                            ->distinct('user_id')
+                            ->count('user_id');
+
+                        if ($totalGroupUsers === 0) {
+                            return $record->jawaban_respondens_count;
+                        }
+
+                        $submittedGroupUsers = $record->jawabanRespondens()
+                            ->whereIn('user_id', function ($query) use ($groupIds) {
+                                $query->select('user_id')
+                                    ->from('group_user')
+                                    ->whereIn('group_id', $groupIds);
+                            })
+                            ->distinct('user_id')
+                            ->count('user_id');
+
+                        return "{$submittedGroupUsers} / {$totalGroupUsers}";
+                    })
                     ->sortable()
                     ->badge()
                     ->color('info'),

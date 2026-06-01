@@ -1,12 +1,14 @@
 <?php
 
-use App\Filament\Resources\Survey\SurveyResource\RelationManagers\GroupsRelationManager;
 use App\Filament\Resources\Survey\Pages\EditSurvey;
-use App\Models\Survey;
+use App\Filament\Resources\Survey\Pages\ListSurvey;
+use App\Filament\Resources\Survey\SurveyResource\RelationManagers\GroupsRelationManager;
 use App\Models\Group;
-use App\Models\User;
 use App\Models\JawabanResponden;
+use App\Models\Survey;
+use App\Models\User;
 use Livewire\Livewire;
+use Spatie\Permission\Models\Permission;
 
 test('groups relation manager can be rendered and calculates not submitted count correctly', function () {
     // Create survey
@@ -49,8 +51,43 @@ test('groups relation manager can be rendered and calculates not submitted count
         'ownerRecord' => $survey,
         'pageClass' => EditSurvey::class,
     ])
-    ->assertSuccessful()
-    ->assertSee('Gelombang I')
+        ->assertSuccessful()
+        ->assertSee('Gelombang I')
     // Out of 3 members, 1 submitted, so 2 / 3 orang should be displayed
-    ->assertSee('2 / 3 orang');
+        ->assertSee('2 / 3 orang');
+});
+
+test('survey list page calculates group completion ratio correctly', function () {
+    // Create survey
+    $survey = Survey::factory()->create([
+        'title' => 'Pretest Pelatihan',
+    ]);
+
+    // Create group and users
+    $group = Group::create(['name' => 'Gelombang I']);
+    $survey->groups()->attach($group);
+
+    $user1 = User::factory()->create();
+    $user2 = User::factory()->create();
+    $group->users()->attach([$user1->id, $user2->id]);
+
+    // user1 has submitted
+    JawabanResponden::create([
+        'survey_id' => $survey->id,
+        'user_id' => $user1->id,
+        'payload' => [],
+        'submitted_at' => now(),
+    ]);
+
+    $admin = User::factory()->create(['is_active' => true]);
+
+    Permission::create(['name' => 'ViewAny:Survey']);
+    $admin->givePermissionTo('ViewAny:Survey');
+
+    $this->actingAs($admin);
+
+    // Render the ListSurvey page
+    Livewire::test(ListSurvey::class)
+        ->assertSuccessful()
+        ->assertSee('1 / 2');
 });
