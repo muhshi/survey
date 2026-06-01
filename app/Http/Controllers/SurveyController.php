@@ -100,10 +100,17 @@ class SurveyController extends Controller
 
             if ($existingSubmission && $survey->mode === SurveyMode::Single) {
                 $alreadySubmitted = true;
+                // Do not pre-fill answers for single mode — user cannot edit anyway
+                $existingSubmission = null;
             }
 
             // Do not pre-fill form for multi mode so it's always fresh
             if ($survey->mode === SurveyMode::Multi) {
+                $existingSubmission = null;
+            }
+
+            // Never pre-fill answers for quizzes — each attempt must start fresh
+            if ($survey->is_quiz) {
                 $existingSubmission = null;
             }
         }

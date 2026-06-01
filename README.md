@@ -27,6 +27,7 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 
 ### 2026-06-01
 - **Fix Group Member Addition Error**: Memperbaiki `BadMethodCallException` dengan mendefinisikan relasi `groups()` pada model `User` sebagai relasi `BelongsToMany` dengan model `Group`. Ini memecahkan kegagalan penautan anggota baru kelompok survei di admin panel Filament.
+- **Fix Kuis Pretest Soal Sudah Terjawab**: Memperbaiki bug di mana peserta yang membuka kuis pretest mendapati sebagian soal sudah terjawab. Penyebabnya adalah `$existingSubmission` (jawaban lama) tidak di-null-kan untuk mode `single` maupun kuis (`is_quiz`), sehingga SurveyJS memuat ulang payload jawaban sebelumnya ke dalam form baru.
 
 ### 2026-05-30
 - **Group-Survey Many-to-Many Relationship**: Migrasi relasi antara Kelompok Survei (Group) dan Survei dari One-to-Many menjadi Many-to-Many dengan tabel pivot `group_survey`. Memungkinkan satu kelompok (misal Gelombang I) terdaftar di beberapa kuesioner sekaligus (Pretest dan Pendalaman).
