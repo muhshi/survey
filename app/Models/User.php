@@ -7,6 +7,8 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
@@ -117,12 +119,12 @@ class User extends Authenticatable
         return $period ? $q->where('period', $period) : $q;
     }
 
-    public function jawaban_responden()
+    public function jawaban_responden(): HasMany
     {
         return $this->hasMany(JawabanResponden::class);
     }
 
-    public function surveyGroups()
+    public function groups(): BelongsToMany
     {
         return $this->belongsToMany(Group::class);
     }

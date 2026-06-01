@@ -25,6 +25,9 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 
 ## Changelog
 
+### 2026-06-01
+- **Fix Group Member Addition Error**: Memperbaiki `BadMethodCallException` dengan mendefinisikan relasi `groups()` pada model `User` sebagai relasi `BelongsToMany` dengan model `Group`. Ini memecahkan kegagalan penautan anggota baru kelompok survei di admin panel Filament.
+
 ### 2026-05-30
 - **Group-Survey Many-to-Many Relationship**: Migrasi relasi antara Kelompok Survei (Group) dan Survei dari One-to-Many menjadi Many-to-Many dengan tabel pivot `group_survey`. Memungkinkan satu kelompok (misal Gelombang I) terdaftar di beberapa kuesioner sekaligus (Pretest dan Pendalaman).
 - **Survey Access Control & Detailed Warnings**: Mengubah logika pengecekan ketersediaan survei dan otorisasi kelompok menjadi lebih deskriptif. Jika pengguna tidak memiliki akses kelompok, belum masuk ke waktu aktif, atau waktu aktif telah berakhir, sistem akan mengembalikan pesan error yang spesifik (misal: "Akses Belum Dibuka" atau "Akun Anda tidak terdaftar dalam kelompok...").
