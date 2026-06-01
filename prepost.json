@@ -40,7 +40,7 @@
       "title": "Bagian 1: Kuis Prepost",
       "elements": [
         {
-          "name": "soal_2",
+          "name": "soal_1",
           "type": "radiogroup",
           "title": "Berikut yang termasuk pendapatan usaha konstruksi (nilai produksi), kecuali …",
           "choices": [
@@ -65,7 +65,7 @@
           "correctAnswer": "d"
         },
         {
-          "name": "soal_3",
+          "name": "soal_2",
           "type": "radiogroup",
           "title": "Manakah dari praktik berikut yang mencerminkan penerapan ekonomi sirkular dalam sebuah perusahaan?",
           "choices": [
@@ -90,7 +90,7 @@
           "correctAnswer": "a"
         },
         {
-          "name": "soal_1",
+          "name": "soal_3",
           "type": "radiogroup",
           "title": "Dalam Sensus Ekonomi, usaha konstruksi adalah usaha yang salah satu kegiatannya sebagai berikut …",
           "choices": [
@@ -115,7 +115,7 @@
           "correctAnswer": "a"
         },
         {
-          "name": "soal_3",
+          "name": "soal_4",
           "type": "radiogroup",
           "title": "Manakah transaksi berikut yang BUKAN termasuk impor jasa?",
           "choices": [
@@ -140,7 +140,7 @@
           "correctAnswer": "b"
         },
         {
-          "name": "soal_2",
+          "name": "soal_5",
           "type": "radiogroup",
           "title": "Even Organizer di Indonesia menyediakan konsumsi untuk acara perusahaan asing yang memiliki kantor cabang dan berdomisili di Indonesia. Pembayaran dilakukan oleh kantor cabang di Indonesia.\n\nTransaksi tersebut dikategorikan sebagai:",
           "choices": [
@@ -165,7 +165,7 @@
           "correctAnswer": "d"
         },
         {
-          "name": "soal_2",
+          "name": "soal_6",
           "type": "radiogroup",
           "title": "Pak Joni tinggal di Jakarta mempunyai kebun kopi di Garut. Kebun dirawat oleh adiknya pak Jajang. Pak Joni hanya tahu kalau panennya sebanyak 100 kwintal. Siapakah yang menjadi pengusaha?",
           "choices": [
@@ -190,7 +190,7 @@
           "correctAnswer": "a"
         },
         {
-          "name": "soal_1",
+          "name": "soal_7",
           "type": "radiogroup",
           "title": "Nomor izin edar pada kemasan produk menunjukkan bahwa produk tersebut …",
           "choices": [
@@ -215,7 +215,7 @@
           "correctAnswer": "b"
         },
         {
-          "name": "soal_2",
+          "name": "soal_8",
           "type": "radiogroup",
           "title": "Kondisi : Pak Ranu menempati rumah yang baru saja dibeli secara angsuran melalui kredit bank dan tenornya selama 15 tahun lagi, maka pengisian kuesioner untuk status kepemilikan bangunan tempat tinggal yang ditempati keluarga tersebut adalah",
           "choices": [
@@ -265,7 +265,7 @@
           "correctAnswer": "c"
         },
         {
-          "name": "soal_1",
+          "name": "soal_10",
           "type": "radiogroup",
           "title": "Tujuan utama penggunaan daftar SE2026-P dalam kegiatan pemutakhiran adalah untuk …",
           "choices": [
@@ -290,7 +290,7 @@
           "correctAnswer": "c"
         },
         {
-          "name": "soal_2",
+          "name": "soal_11",
           "type": "radiogroup",
           "title": "Keterangan dan informasi yang dikumpulkan pada Pendataan SE2026 salah satunya adalah;",
           "choices": [
@@ -315,7 +315,7 @@
           "correctAnswer": "b"
         },
         {
-          "name": "soal_3",
+          "name": "soal_12",
           "type": "radiogroup",
           "title": "Responden berusaha sebagai sopir gocar sudah 2 tahun terakhir. Saat ini, responden sering dimintai tolong tetangganya yang seorang kepala SPPG, untuk mengantar bekerja ke lokasi dapur SPPG. Pada pertanyaan rincian 22, apakah usaha terlibat dalam program MBG?",
           "choices": [
@@ -340,7 +340,7 @@
           "correctAnswer": "b"
         },
         {
-          "name": "soal_3",
+          "name": "soal_13",
           "type": "radiogroup",
           "title": "Karakteristik data yang dikumpulkan dalam SE2026, kecuali …",
           "choices": [
@@ -365,7 +365,7 @@
           "correctAnswer": "d"
         },
         {
-          "name": "soal_7",
+          "name": "soal_14",
           "type": "radiogroup",
           "title": "Apa saja jenis lapangan usaha yang tidak termasuk dalam cakupan Sensus Ekonomi 2026?",
           "choices": [
@@ -390,7 +390,7 @@
           "correctAnswer": "a"
         },
         {
-          "name": "soal_2",
+          "name": "soal_15",
           "type": "radiogroup",
           "title": "Produk berikut yang wajib memiliki izin edar sebelum dipasarkan adalah …",
           "choices": [

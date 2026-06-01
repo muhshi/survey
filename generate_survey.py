@@ -30,7 +30,7 @@ def generate_survey(df, tipe, limit=None):
             # fallback: just sample limit
             filtered_df = filtered_df.sample(n=limit, random_state=42)
             
-    for idx, row in filtered_df.iterrows():
+    for seq_num, (idx, row) in enumerate(filtered_df.iterrows(), start=1):
         if pd.isna(row['Pertanyaan']):
             continue
             
@@ -60,18 +60,9 @@ def generate_survey(df, tipe, limit=None):
             if opt == jawaban_benar:
                 correct_val = val
                 
-        no_soal = str(row['NoSoal'])
-        if no_soal == 'nan':
-            no_soal = str(row['No'])
-            
-        # parse it as float then int if possible
-        try:
-            no_soal = str(int(float(no_soal)))
-        except:
-            pass
-            
+        # Always use sequential number to guarantee unique names across the survey
         elements.append({
-            "name": f"soal_{no_soal}",
+            "name": f"soal_{seq_num}",
             "type": "radiogroup",
             "title": pertanyaan,
             "choices": choices,
