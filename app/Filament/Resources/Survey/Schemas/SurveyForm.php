@@ -8,6 +8,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
@@ -61,26 +62,28 @@ class SurveyForm
 
                 Section::make('Pengaturan Kuis')
                     ->schema([
-                        TextInput::make('settings.passing_score')
-                            ->label('Nilai Standar Kelulusan (Passing Score)')
-                            ->numeric()
-                            ->minValue(0)
-                            ->maxValue(100)
-                            ->helperText('Skor minimal untuk lulus (0-100)'),
-                        Toggle::make('settings.allow_retake')
-                            ->label('Boleh Mengulang Kuis?')
-                            ->live()
-                            ->helperText('Jika aktif, peserta yang nilainya di bawah standar kelulusan diizinkan untuk mencoba lagi.'),
-                        TextInput::make('settings.max_retakes')
-                            ->label('Maksimal Percobaan')
-                            ->numeric()
-                            ->minValue(1)
-                            ->visible(fn (Get $get) => $get('settings.allow_retake'))
-                            ->required(fn (Get $get) => $get('settings.allow_retake'))
-                            ->helperText('Berapa kali peserta diizinkan mengulang? (Contoh: 2 berarti total percobaan bisa 2 kali)'),
+                        Group::make()->statePath('settings')->schema([
+                            TextInput::make('passing_score')
+                                ->label('Nilai Standar Kelulusan (Passing Score)')
+                                ->numeric()
+                                ->minValue(0)
+                                ->maxValue(100)
+                                ->helperText('Skor minimal untuk lulus (0-100)'),
+                            Toggle::make('allow_retake')
+                                ->label('Boleh Mengulang Kuis?')
+                                ->live()
+                                ->helperText('Jika aktif, peserta yang nilainya di bawah standar kelulusan diizinkan untuk mencoba lagi.'),
+                            TextInput::make('max_retakes')
+                                ->label('Maksimal Percobaan')
+                                ->numeric()
+                                ->minValue(1)
+                                ->visible(fn(Get $get) => (bool) $get('allow_retake'))
+                                ->required(fn(Get $get) => (bool) $get('allow_retake'))
+                                ->helperText('Berapa kali peserta diizinkan mengulang? (Contoh: 2 berarti total percobaan bisa 2 kali)'),
+                        ])->columns(2),
                     ])
-                    ->visible(fn (Get $get) => $get('is_quiz'))
-                    ->columns(2),
+                    ->visible(fn(Get $get) => (bool) $get('is_quiz'))
+                    ->columns(1),
 
                 Section::make('Akses Kontrol')
                     ->schema([
@@ -97,10 +100,10 @@ class SurveyForm
                             ->columnSpan(1),
                         Select::make('allowed_roles')
                             ->label('Role yang Diizinkan')
-                            ->options(fn () => Role::pluck('name', 'name')->toArray())
+                            ->options(fn() => Role::pluck('name', 'name')->toArray())
                             ->multiple()
-                            ->visible(fn (Get $get) => $get('access_level') === 'role')
-                            ->required(fn (Get $get) => $get('access_level') === 'role')
+                            ->visible(fn(Get $get) => $get('access_level') === 'role')
+                            ->required(fn(Get $get) => $get('access_level') === 'role')
                             ->columnSpan(1),
                     ])
                     ->columns(2),
