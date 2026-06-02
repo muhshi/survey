@@ -146,7 +146,7 @@ class SurveyTable
                 EditAction::make(),
                 ReplicateAction::make()
                     ->label('Duplikat')
-                    ->excludeAttributes(['slug', 'created_at', 'updated_at', 'jawaban_respondens_count'])
+                    ->excludeAttributes(['slug', 'created_at', 'updated_at'])
                     ->form([
                         TextInput::make('title')
                             ->label('Judul Survei/Kuis Baru')
@@ -162,6 +162,9 @@ class SurveyTable
                         $data['title'] = $data['title'].' (Copy)';
 
                         return $data;
+                    })
+                    ->beforeReplicaSaved(function (Model $replica): void {
+                        $replica->offsetUnset('jawaban_respondens_count');
                     })
                     ->successRedirectUrl(fn (Model $replica): string => SurveyResource::getUrl('edit', ['record' => $replica])),
                 DeleteAction::make(),
