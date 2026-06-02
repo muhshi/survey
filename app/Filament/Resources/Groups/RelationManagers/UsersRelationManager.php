@@ -9,7 +9,6 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DetachAction;
 use Filament\Actions\DetachBulkAction;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -123,6 +122,7 @@ class UsersRelationManager extends RelationManager
                     ->preloadRecordSelect()
                     ->multiple()
                     ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereDoesntHave('groups', fn (Builder $q) => $q->where('groups.id', $this->getOwnerRecord()->id)))
+                    ->recordSelectSearchColumns(['name', 'email'])
                     ->label('Tambah Anggota'),
                 Action::make('importUsers')
                     ->label('Import dari Excel')
