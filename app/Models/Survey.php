@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
-#[Fillable(['kategori_id', 'title', 'description', 'slug', 'schema', 'mode', 'is_quiz', 'is_active', 'starts_at', 'ends_at', 'access_level', 'allowed_roles'])]
+#[Fillable(['kategori_id', 'title', 'description', 'slug', 'schema', 'mode', 'is_quiz', 'is_active', 'settings', 'starts_at', 'ends_at', 'access_level', 'allowed_roles'])]
 class Survey extends Model
 {
     /** @use HasFactory<SurveyFactory> */
@@ -51,6 +51,7 @@ class Survey extends Model
             'mode' => SurveyMode::class,
             'is_quiz' => 'boolean',
             'is_active' => 'boolean',
+            'settings' => 'array',
             'starts_at' => 'datetime',
             'ends_at' => 'datetime',
             'allowed_roles' => 'array',

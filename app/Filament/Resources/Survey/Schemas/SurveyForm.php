@@ -54,8 +54,32 @@ class SurveyForm
                             ->label('Mode Kuis (Uji Kompetensi)')
                             ->helperText('Jika aktif, sistem akan menghitung skor berdasarkan correctAnswer di schema.')
                             ->default(false)
+                            ->live()
                             ->columnSpan(1),
                     ])
+                    ->columns(2),
+
+                Section::make('Pengaturan Kuis')
+                    ->schema([
+                        TextInput::make('settings.passing_score')
+                            ->label('Nilai Standar Kelulusan (Passing Score)')
+                            ->numeric()
+                            ->minValue(0)
+                            ->maxValue(100)
+                            ->helperText('Skor minimal untuk lulus (0-100)'),
+                        Toggle::make('settings.allow_retake')
+                            ->label('Boleh Mengulang Kuis?')
+                            ->live()
+                            ->helperText('Jika aktif, peserta yang nilainya di bawah standar kelulusan diizinkan untuk mencoba lagi.'),
+                        TextInput::make('settings.max_retakes')
+                            ->label('Maksimal Percobaan')
+                            ->numeric()
+                            ->minValue(1)
+                            ->visible(fn (Get $get) => $get('settings.allow_retake'))
+                            ->required(fn (Get $get) => $get('settings.allow_retake'))
+                            ->helperText('Berapa kali peserta diizinkan mengulang? (Contoh: 2 berarti total percobaan bisa 2 kali)'),
+                    ])
+                    ->visible(fn (Get $get) => $get('is_quiz'))
                     ->columns(2),
 
                 Section::make('Akses Kontrol')

@@ -99,8 +99,35 @@ class SurveyController extends Controller
                 ->first();
 
             if ($existingSubmission && $survey->mode === SurveyMode::Single) {
-                $alreadySubmitted = true;
-                // Do not pre-fill answers for single mode — user cannot edit anyway
+                if ($survey->is_quiz) {
+                    $settings = $survey->settings ?? [];
+                    $passingScore = floatval($settings['passing_score'] ?? 0);
+                    $allowRetake = filter_var($settings['allow_retake'] ?? false, FILTER_VALIDATE_BOOLEAN);
+                    $maxRetakes = intval($settings['max_retakes'] ?? 1);
+
+                    $attempts = JawabanResponden::where('survey_id', $survey->id)
+                        ->where('user_id', Auth::id())
+                        ->count();
+
+                    $highestScore = JawabanResponden::where('survey_id', $survey->id)
+                        ->where('user_id', Auth::id())
+                        ->max('score');
+                    $highestScore = $highestScore !== null ? floatval($highestScore) : 0;
+
+                    if ($highestScore >= $passingScore && $passingScore > 0) {
+                        $alreadySubmitted = true;
+                    } elseif (! $allowRetake) {
+                        $alreadySubmitted = true;
+                    } elseif ($attempts >= $maxRetakes) {
+                        $alreadySubmitted = true;
+                    } else {
+                        $alreadySubmitted = false;
+                    }
+                } else {
+                    $alreadySubmitted = true;
+                }
+
+                // Do not pre-fill answers for single mode — user cannot edit anyway or starting fresh
                 $existingSubmission = null;
             }
 
@@ -145,10 +172,43 @@ class SurveyController extends Controller
                 ->exists();
 
             if ($existing) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Anda sudah mengisi survei ini. Mode sekali isi tidak mengizinkan pengisian ulang.',
-                ], 403);
+                if ($survey->is_quiz) {
+                    $settings = $survey->settings ?? [];
+                    $passingScore = floatval($settings['passing_score'] ?? 0);
+                    $allowRetake = filter_var($settings['allow_retake'] ?? false, FILTER_VALIDATE_BOOLEAN);
+                    $maxRetakes = intval($settings['max_retakes'] ?? 1);
+
+                    $attempts = JawabanResponden::where('survey_id', $survey->id)
+                        ->where('user_id', Auth::id())
+                        ->count();
+
+                    $highestScore = JawabanResponden::where('survey_id', $survey->id)
+                        ->where('user_id', Auth::id())
+                        ->max('score');
+                    $highestScore = $highestScore !== null ? floatval($highestScore) : 0;
+
+                    if ($highestScore >= $passingScore && $passingScore > 0) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Anda sudah lulus kuis ini dengan nilai memenuhi standar.',
+                        ], 403);
+                    } elseif (! $allowRetake) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Anda sudah mengisi kuis ini dan tidak diizinkan untuk mengulang.',
+                        ], 403);
+                    } elseif ($attempts >= $maxRetakes) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Batas maksimal pengulangan kuis ('.$maxRetakes.' kali percobaan) telah habis.',
+                        ], 403);
+                    }
+                } else {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Anda sudah mengisi survei ini. Mode sekali isi tidak mengizinkan pengisian ulang.',
+                    ], 403);
+                }
             }
         }
 
