@@ -32,6 +32,41 @@
               "type": "email"
             }
           ]
+        },
+        {
+          "name": "gelombang",
+          "type": "dropdown",
+          "title": "Gelombang",
+          "isRequired": true,
+          "choices": [
+            "1",
+            "2",
+            "3"
+          ]
+        },
+        {
+          "name": "tc_hotel",
+          "type": "dropdown",
+          "title": "TC Hotel",
+          "isRequired": true,
+          "choices": [
+            "Amantis",
+            "Horison",
+            "Quest Prime"
+          ]
+        },
+        {
+          "name": "kelas",
+          "type": "dropdown",
+          "title": "Kelas",
+          "isRequired": true,
+          "choices": [
+            "A",
+            "B",
+            "C",
+            "D",
+            "E"
+          ]
         }
       ]
     },

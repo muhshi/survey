@@ -8,11 +8,13 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Tables\Actions\ReplicateAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 class SurveyTable
@@ -139,6 +141,12 @@ class SurveyTable
                     ->color('info')
                     ->url(fn ($record) => SurveyResource::getUrl('submissions', ['record' => $record])),
                 EditAction::make(),
+                ReplicateAction::make()
+                    ->label('Duplikat')
+                    ->excludeAttributes(['slug', 'created_at', 'updated_at'])
+                    ->beforeReplicaSaved(function (Model $replica): void {
+                        $replica->title = $replica->title.' (Copy)';
+                    }),
                 DeleteAction::make(),
             ])
             ->toolbarActions([
