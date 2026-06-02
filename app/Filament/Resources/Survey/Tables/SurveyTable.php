@@ -146,7 +146,7 @@ class SurveyTable
                 EditAction::make(),
                 ReplicateAction::make()
                     ->label('Duplikat')
-                    ->excludeAttributes(['slug', 'created_at', 'updated_at'])
+                    ->excludeAttributes(['slug', 'created_at', 'updated_at', 'jawaban_respondens_count'])
                     ->form([
                         TextInput::make('title')
                             ->label('Judul Survei/Kuis Baru')
