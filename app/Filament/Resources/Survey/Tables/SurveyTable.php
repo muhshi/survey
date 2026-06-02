@@ -8,7 +8,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Tables\Actions\ReplicateAction;
+use Filament\Actions\ReplicateAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -22,7 +22,7 @@ class SurveyTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn ($query) => $query->withCount('jawabanRespondens')->with(['groups']))
+            ->modifyQueryUsing(fn($query) => $query->withCount('jawabanRespondens')->with(['groups']))
             ->columns([
                 TextColumn::make('kategori.name')
                     ->label('Kategori')
@@ -35,9 +35,9 @@ class SurveyTable
                     ->limit(40),
                 TextColumn::make('public_url')
                     ->label('Link Survei')
-                    ->state(fn ($record) => $record->getPublicUrl())
+                    ->state(fn($record) => $record->getPublicUrl())
                     ->copyable()
-                    ->copyableState(fn ($record) => $record->getPublicUrl())
+                    ->copyableState(fn($record) => $record->getPublicUrl())
                     ->copyMessage('Link disalin!')
                     ->icon('heroicon-o-link')
                     ->color('primary')
@@ -54,13 +54,13 @@ class SurveyTable
                 TextColumn::make('access_level')
                     ->label('Akses')
                     ->badge()
-                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                    ->formatStateUsing(fn(string $state): string => match ($state) {
                         'public' => 'Umum',
                         'auth' => 'Login',
                         'role' => 'Role',
                         default => $state,
                     })
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn(string $state): string => match ($state) {
                         'public' => 'success',
                         'auth' => 'warning',
                         'role' => 'danger',
@@ -134,18 +134,18 @@ class SurveyTable
                     ->label('Desain')
                     ->icon('heroicon-o-pencil-square')
                     ->color('warning')
-                    ->url(fn ($record) => SurveyResource::getUrl('design', ['record' => $record])),
+                    ->url(fn($record) => SurveyResource::getUrl('design', ['record' => $record])),
                 Action::make('viewSubmissions')
                     ->label('Jawaban')
                     ->icon('heroicon-o-eye')
                     ->color('info')
-                    ->url(fn ($record) => SurveyResource::getUrl('submissions', ['record' => $record])),
+                    ->url(fn($record) => SurveyResource::getUrl('submissions', ['record' => $record])),
                 EditAction::make(),
                 ReplicateAction::make()
                     ->label('Duplikat')
                     ->excludeAttributes(['slug', 'created_at', 'updated_at'])
                     ->beforeReplicaSaved(function (Model $replica): void {
-                        $replica->title = $replica->title.' (Copy)';
+                        $replica->title = $replica->title . ' (Copy)';
                     }),
                 DeleteAction::make(),
             ])
