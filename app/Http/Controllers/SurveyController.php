@@ -324,6 +324,13 @@ class SurveyController extends Controller
                 $effectiveStart = $group->pivot->starts_at ?? $group->starts_at;
                 $effectiveEnd = $group->pivot->ends_at ?? $group->ends_at;
 
+                if (is_string($effectiveStart)) {
+                    $effectiveStart = \Carbon\Carbon::parse($effectiveStart);
+                }
+                if (is_string($effectiveEnd)) {
+                    $effectiveEnd = \Carbon\Carbon::parse($effectiveEnd);
+                }
+
                 $startOk = ! $effectiveStart || $effectiveStart->isPast();
                 $endOk = ! $effectiveEnd || $effectiveEnd->isFuture();
 
