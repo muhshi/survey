@@ -95,7 +95,7 @@ class JawabanRespondenExport implements FromQuery, WithHeadings, WithMapping, Wi
         foreach ($this->selectedFields as $field) {
             switch ($field) {
                 case 'nama_pewawancara':
-                    $row[] = $jawaban->user ? $jawaban->user->name : 'Anonim';
+                    $row[] = $jawaban->user ? html_entity_decode($jawaban->user->name, ENT_QUOTES | ENT_HTML5, 'UTF-8') : 'Anonim';
                     break;
                 case 'skor_kuis':
                     $row[] = $jawaban->score !== null ? $jawaban->score : '-';
@@ -108,9 +108,9 @@ class JawabanRespondenExport implements FromQuery, WithHeadings, WithMapping, Wi
                     $pesertaId = $payload['nama_peserta'] ?? $payload['pilih_peserta'] ?? null;
                     if ($pesertaId && is_numeric($pesertaId)) {
                         $peserta = $this->getUsersCache()->get($pesertaId);
-                        $row[] = $peserta ? $peserta->name : 'Unknown ('.$pesertaId.')';
+                        $row[] = $peserta ? html_entity_decode($peserta->name, ENT_QUOTES | ENT_HTML5, 'UTF-8') : 'Unknown ('.$pesertaId.')';
                     } elseif ($pesertaId) {
-                        $row[] = $pesertaId;
+                        $row[] = html_entity_decode((string) $pesertaId, ENT_QUOTES | ENT_HTML5, 'UTF-8');
                     } else {
                         $row[] = '-';
                     }
@@ -133,18 +133,21 @@ class JawabanRespondenExport implements FromQuery, WithHeadings, WithMapping, Wi
                         // Map each item in the array if there are choices defined
                         if (isset($choicesMap[$field])) {
                             $mappedArray = array_map(function ($v) use ($choicesMap, $field) {
-                                return $choicesMap[$field][$v] ?? $v;
+                                $mapped = $choicesMap[$field][$v] ?? $v;
+
+                                return is_string($mapped) ? html_entity_decode($mapped, ENT_QUOTES | ENT_HTML5, 'UTF-8') : $mapped;
                             }, $val);
                             $row[] = implode(', ', $mappedArray);
                         } else {
-                            $row[] = implode(', ', $val);
+                            $row[] = implode(', ', array_map(fn ($v) => is_string($v) ? html_entity_decode($v, ENT_QUOTES | ENT_HTML5, 'UTF-8') : $v, $val));
                         }
                     } else {
                         // Map the single value if choice exists
                         if (isset($choicesMap[$field][$val])) {
-                            $row[] = $choicesMap[$field][$val];
+                            $mapped = $choicesMap[$field][$val];
+                            $row[] = is_string($mapped) ? html_entity_decode($mapped, ENT_QUOTES | ENT_HTML5, 'UTF-8') : $mapped;
                         } else {
-                            $row[] = $val;
+                            $row[] = is_string($val) ? html_entity_decode($val, ENT_QUOTES | ENT_HTML5, 'UTF-8') : $val;
                         }
                     }
                     break;
