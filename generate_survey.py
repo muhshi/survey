@@ -104,6 +104,41 @@ def generate_survey(df, tipe, limit=None):
                   "type": "email"
                 }
               ]
+            },
+            {
+              "name": "gelombang",
+              "type": "dropdown",
+              "title": "Gelombang",
+              "isRequired": True,
+              "choices": [
+                "1",
+                "2",
+                "3"
+              ]
+            },
+            {
+              "name": "tc_hotel",
+              "type": "dropdown",
+              "title": "TC Hotel",
+              "isRequired": True,
+              "choices": [
+                "Amantis",
+                "Horison",
+                "Quest Prime"
+              ]
+            },
+            {
+              "name": "kelas",
+              "type": "dropdown",
+              "title": "Kelas",
+              "isRequired": True,
+              "choices": [
+                "A",
+                "B",
+                "C",
+                "D",
+                "E"
+              ]
             }
           ]
         },

@@ -25,6 +25,10 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 
 ## Changelog
 
+### 2026-06-03
+- **Fix JSON Generation Duplicate Names**: Memperbaiki bug pada file kuesioner `pendalaman.json` yang memiliki duplikasi atribut `name` (misal `soal_4` muncul berulang kali) akibat manipulasi manual sebelumnya, yang menyebabkan jawaban saling tertimpa saat dipilih. Script `generate_survey.py` telah disesuaikan untuk mempertahankan field identitas khusus (gelombang, tc_hotel, kelas) dan dijalankan ulang untuk mengenerate ID soal yang unik (sequensial) di seluruh kuesioner.
+
+
 ### 2026-06-01
 - **Survey Cohort Completion Monitoring**: Menambahkan kolom *Belum Mengerjakan* pada tabel Kelompok Survei di halaman detail Survei untuk memantau jumlah peserta di masing-masing kelompok yang belum menyelesaikan survei/kuis tersebut secara real-time.
 - **Multi-Select & Exclude Existing Members in Group**: Memperbarui aksi `AttachAction` pada `UsersRelationManager` kelompok survei agar mendukung pemilihan banyak user sekaligus (multi-select) serta menyaring daftar pilihan untuk mengecualikan user yang sudah terdaftar di kelompok tersebut.

@@ -75,7 +75,7 @@
       "title": "Bagian 1: Kuis Pendalaman",
       "elements": [
         {
-          "name": "soal_6",
+          "name": "soal_1",
           "type": "radiogroup",
           "title": "Dokumen yang akan digunakan oleh petugas SE2026 meliputi;",
           "choices": [
@@ -100,7 +100,7 @@
           "correctAnswer": "b"
         },
         {
-          "name": "soal_4",
+          "name": "soal_2",
           "type": "radiogroup",
           "title": "Usaha penyewaan alat diving di Indonesia menyewakan peralatan kepada wisatawan asing, dan pembayaran dilakukan langsung oleh wisatawan di lokasi usaha.\n\nTransaksi tersebut termasuk:",
           "choices": [
@@ -125,7 +125,7 @@
           "correctAnswer": "b"
         },
         {
-          "name": "soal_4",
+          "name": "soal_3",
           "type": "radiogroup",
           "title": "Sebuah usaha kuliner menggunakan daun pisang sebagai pembungkus makanan untuk menggantikan plastik. Aktivitas ini dikategorikan sebagai...",
           "choices": [
@@ -150,7 +150,7 @@
           "correctAnswer": "d"
         },
         {
-          "name": "soal_5",
+          "name": "soal_4",
           "type": "radiogroup",
           "title": "Di bawah ini yang merupakan kriteria aktivitas ekonomi hijau, kecuali:",
           "choices": [
@@ -175,7 +175,7 @@
           "correctAnswer": "c"
         },
         {
-          "name": "soal_6",
+          "name": "soal_5",
           "type": "radiogroup",
           "title": "Diantara produk berikut ini manakah yang bukan termasuk produk yang ramah lingkungan?",
           "choices": [
@@ -200,7 +200,7 @@
           "correctAnswer": "a"
         },
         {
-          "name": "soal_4",
+          "name": "soal_6",
           "type": "radiogroup",
           "title": "Sebuah usaha menerima pekerjaan membangun rumah tinggal milik orang lain dengan sistem borongan. Kegiatan utama usaha tersebut termasuk dalam sektor …",
           "choices": [
@@ -225,7 +225,7 @@
           "correctAnswer": "a"
         },
         {
-          "name": "soal_5",
+          "name": "soal_7",
           "type": "radiogroup",
           "title": "Kondisi : Keluarga Ani memilki 3 tabung gas 3 kg. 1 dipakai untuk masak keluarga di rumah, 1 dipakai untuk usaha gorengan yang jualannya di halaman rumah beliau, dan 1 lagi kadang dipakai untuk memasak keluarga, namun kadang dipakai untuk memasak gorengan untuk jualan ketika ramai. Maka pengisian kuesioner Blok IV tentang jumlah tabung gas adalah",
           "choices": [
@@ -250,7 +250,7 @@
           "correctAnswer": "c"
         },
         {
-          "name": "soal_4",
+          "name": "soal_8",
           "type": "radiogroup",
           "title": "Pada wilayah KEK-KI, yang berperan sebagai PPL-UB adalah",
           "choices": [
@@ -275,7 +275,7 @@
           "correctAnswer": "a"
         },
         {
-          "name": "soal_6",
+          "name": "soal_9",
           "type": "radiogroup",
           "title": "PPL door-to-door menemukan bangunan yang tidak ada di prelist dan terdapat usaha di dalamnya. Tindakan yang benar adalah",
           "choices": [
@@ -300,7 +300,7 @@
           "correctAnswer": "a"
         },
         {
-          "name": "soal_4",
+          "name": "soal_10",
           "type": "radiogroup",
           "title": "Petugas menemukan satu keluarga yang sudah lama tinggal di SLS, tetapi belum tercetak dalam daftar SE2026-P karena baru memiliki Kartu Keluarga tahun ini.",
           "choices": [
@@ -325,7 +325,7 @@
           "correctAnswer": "b"
         },
         {
-          "name": "soal_12",
+          "name": "soal_11",
           "type": "radiogroup",
           "title": "Pada saat pendataan lapangan, Surti mendapati sebuah kasus yang sangat membingungkan. Dia menjumpai sebuah lembaga usaha yang memiliki aktivitas pelatihan personel internal lembaga tersebut. Di dalamnnya terdapat berbagai macam materi pelatihan terkait bisnis dan manajemen, seperti manajemen, akuntansi, dan pengelolaan sumber daya manusia. Lebih lanjut, lembaga ini bekerja sama dengan pihak ketiga untuk mengeluarkan sertifikat yang diakui secara nasional, dengan mekanisme semua peserta pelatihan akan diuji di lembaga sertifikasi tersebut. \nSebagai pengawas pendataan yang dikerjakan Surti, apa yang bisa Anda rekomendasikan terkait kode KBLI yang sesuai?",
           "choices": [
@@ -350,7 +350,7 @@
           "correctAnswer": "c"
         },
         {
-          "name": "soal_4",
+          "name": "soal_12",
           "type": "radiogroup",
           "title": "Apabila pemilik usaha menerima upah dan tunjangan lainnya dari perusahaan, maka pemilik usaha dikategorikan sebagai?",
           "choices": [
@@ -375,7 +375,7 @@
           "correctAnswer": "a"
         },
         {
-          "name": "soal_5",
+          "name": "soal_13",
           "type": "radiogroup",
           "title": "Bagaimana cara pengisian jumlah pekerja jika perusahaan baru beroperasi di tahun 2026?",
           "choices": [
@@ -400,7 +400,7 @@
           "correctAnswer": "d"
         },
         {
-          "name": "soal_6",
+          "name": "soal_14",
           "type": "radiogroup",
           "title": "Berikut ini merupakan pernyataan yang paling tepat terkait pekerja outsourcing yaitu…",
           "choices": [
@@ -425,7 +425,7 @@
           "correctAnswer": "d"
         },
         {
-          "name": "soal_5",
+          "name": "soal_15",
           "type": "radiogroup",
           "title": "Usaha kecil memproduksi pestisida nabati sederhana dan telah memiliki izin edar dari Kementerian Pertanian. Berdasarkan konsep izin edar pada Rincian 20 Blok I, klasifikasi yang paling tepat adalah …",
           "choices": [
@@ -450,7 +450,7 @@
           "correctAnswer": "b"
         },
         {
-          "name": "soal_5",
+          "name": "soal_16",
           "type": "radiogroup",
           "title": "Di sebuah rumah terdapat 3 orang anggota keluarga yang sudah menetap lebih dari satu tahun, yaitu Pak Bagus, Bu Ayu, dan Rendi. Pak Bagus adalah seorang guru SMA dan membuka les privat di rumahnya. Bu Ayu mempunyai usaha jahit pakaian dengan memanfaatkan bagian dalam rumahnya dan Rendi memiliki usaha jual beli sepatu secara online. Berapakah jumlah usaha yang berada di bangunan tempat tinggal Pak Bagus?",
           "choices": [
@@ -475,7 +475,7 @@
           "correctAnswer": "c"
         },
         {
-          "name": "soal_6",
+          "name": "soal_17",
           "type": "radiogroup",
           "title": "Bu Ria memiliki usaha menjual sembako. Setiap hari Bu Ria dibantu oleh ke-3 anaknya, yaitu Tio, Rima, dan Fitri. Tio merupakan anak pertama Bu Ria dan belum bekerja. Tio membantu menjaga warung tersebut setiap malam dan diberi upah setiap minggu oleh Bu Ria. Sedangkan Rima dan Fitri sesekali membantu menjaga usaha kelontong Bu Ria sepulang sekolah. Setiap hari Rima dan Fitri diberikan uang jajan untuk sekolah. Berapakah jumlah pekerja yang tidak dibayar pada usaha sembako Bu Ria?",
           "choices": [
@@ -500,7 +500,7 @@
           "correctAnswer": "d"
         },
         {
-          "name": "soal_4",
+          "name": "soal_18",
           "type": "radiogroup",
           "title": "BUM Desa Ayo Maju mendirikan PT. Maju Sejahtera sebagai salah satu kegiatan usahanya. Jika PT. Mandiri Sejahtera menjadi responden SE2026, maka isian rincian 11a adalah ..",
           "choices": [
@@ -525,7 +525,7 @@
           "correctAnswer": "a"
         },
         {
-          "name": "soal_5",
+          "name": "soal_19",
           "type": "radiogroup",
           "title": "Cakupan produk yang dikonsumsi masyarakat seperti apakah  yang wajib bersertifikat halal, kecuali secara jelas dinyatakan haram",
           "choices": [
@@ -550,7 +550,7 @@
           "correctAnswer": "b"
         },
         {
-          "name": "soal_6",
+          "name": "soal_20",
           "type": "radiogroup",
           "title": "3. Pernyataan berikut yang benar adalah, kecuali :",
           "choices": [
@@ -575,7 +575,7 @@
           "correctAnswer": "d"
         },
         {
-          "name": "soal_4",
+          "name": "soal_21",
           "type": "radiogroup",
           "title": "Seorang pengrajin batik di Yogyakarta, melakukan usaha membuat kain batik dan juga memberikan kursus bagi wisatawan/pembeli yang ingin belajar membatik. Produk utama usaha tersebut yaitu:",
           "choices": [
@@ -600,7 +600,7 @@
           "correctAnswer": "c"
         },
         {
-          "name": "soal_4",
+          "name": "soal_22",
           "type": "radiogroup",
           "title": "Berdasarkan tata cara pengisian SE2026, produk ekonomi kreatif mencakup lima kategori utama. Manakah di bawah ini yang BUKAN termasuk dalam kategori produk ekonomi kreatif pada rincian ini?",
           "choices": [
@@ -625,7 +625,7 @@
           "correctAnswer": "c"
         },
         {
-          "name": "soal_4",
+          "name": "soal_23",
           "type": "radiogroup",
           "title": "Usaha “Sinar Jaya” mulai memproduksi roti untuk dijual ke pasar pada tahun 2018. Pada tahun 2017 usaha tersebut hanya melakukan uji coba produksi dan belum menjual produknya. Hingga saat ini kegiatan usaha tidak mengalami perubahan badan usaha maupun jenis kegiatan utama. Tahun mulai beroperasi secara komersial usaha “Sinar Jaya” adalah ...",
           "choices": [
@@ -650,7 +650,7 @@
           "correctAnswer": "d"
         },
         {
-          "name": "soal_5",
+          "name": "soal_24",
           "type": "radiogroup",
           "title": "Perusahaan CV Maju Bersama membuka kantor cabang di Kota Parepare pada tahun 2021, sedangkan kantor pusat telah beroperasi sejak tahun 2010. Tahun mulai beroperasi secara komersial yang dicatat untuk kantor cabang adalah …",
           "choices": [
@@ -675,7 +675,7 @@
           "correctAnswer": "d"
         },
         {
-          "name": "soal_6",
+          "name": "soal_25",
           "type": "radiogroup",
           "title": "Bapak Andi memiliki tiga usaha: Usaha warung makan (mulai 2012), Usaha laundry (mulai 2016), Usaha katering (mulai 2020). Pada pendataan Sensus Ekonomi 2026, usaha katering ditetapkan sebagai usaha utama karena kontribusi pendapatan terbesar.\nTahun mulai beroperasi secara komersial yang dicatat adalah …",
           "choices": [
@@ -700,7 +700,7 @@
           "correctAnswer": "d"
         },
         {
-          "name": "soal_4",
+          "name": "soal_26",
           "type": "radiogroup",
           "title": "Kapan posisi waktu yang digunakan sebagai acuan untuk mencatat nilai total aset dalam Rincian 28 Kuesioner Sensus Ekonomi 2026 Pendataan Lengkap Usaha/Perusahaan (SE2026-L)?",
           "choices": [
@@ -725,7 +725,7 @@
           "correctAnswer": "c"
         },
         {
-          "name": "soal_6",
+          "name": "soal_27",
           "type": "radiogroup",
           "title": "Industri Pengolahan (Produk Setengah Jadi) Sebuah usaha pembuatan furnitur selama tahun 2025 menghasilkan produk sebagai berikut:\n• 20 daun pintu yang sudah jadi 100% dengan harga Rp300.000/unit.\n• 20 daun pintu yang baru selesai 90% (setengah jadi) dengan harga pasar Rp300.000/unit.\n• 10 set kusen yang baru selesai 50% (setengah jadi) dengan harga pasar Rp700.000/set.\nBerapakah total nilai produksi yang harus dicatat dalam rincian 27 Kuesioner Sensus Ekonomi 2026 Pendataan Lengkap Usaha/Perusahaan (SE2026-L)?",
           "choices": [
@@ -750,7 +750,7 @@
           "correctAnswer": "b"
         },
         {
-          "name": "soal_4",
+          "name": "soal_28",
           "type": "radiogroup",
           "title": "Pernyataan yang tepat mengenai aset tetap adalah",
           "choices": [
@@ -775,7 +775,7 @@
           "correctAnswer": "c"
         },
         {
-          "name": "soal_5",
+          "name": "soal_29",
           "type": "radiogroup",
           "title": "Sebuah perusahaan memiliki aset berupa gedung dengan nilai perolehan Rp 1.000.000.000 dan akumulasi penyusutan pada saat pendataan sebesar Rp 10 persen. Berapakah nilai  aset perusahaan tersebut?",
           "choices": [
@@ -800,7 +800,7 @@
           "correctAnswer": "a"
         },
         {
-          "name": "soal_4",
+          "name": "soal_30",
           "type": "radiogroup",
           "title": "Pak Joni tinggal di Jakarta sebulan sekali dia melihat kebun kopinya di Garut untuk melihat keperluan kebun apa saja yang mesti dibawa pada saat kunjungan ke Garut lagi. Kebun dirawat oleh adiknya pak Jajang.  Pada saat pak Jajang didatangi petugas sensus, apa yang harus ditulis petugas pada kuesioner P dan L untuk isian pertanian?",
           "choices": [
@@ -825,7 +825,7 @@
           "correctAnswer": "d"
         },
         {
-          "name": "soal_6",
+          "name": "soal_31",
           "type": "radiogroup",
           "title": "Pak Irwan punya tanah di depan rumah yang ditanami pohon jati yang masih tersisa 10 pohon karena bulan desember sudah ditebang 3 dan dijual 7 juta per pohon yang pada januari tahun 2025 ditawar 5 Juta, maka pada isian nilai produksi adalah sebagai berikut :",
           "choices": [
