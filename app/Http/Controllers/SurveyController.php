@@ -114,13 +114,14 @@ class SurveyController extends Controller
                         ->max('score');
                     $highestScore = $highestScore !== null ? floatval($highestScore) : 0;
 
-                    if ($highestScore >= $passingScore && $passingScore > 0) {
-                        $alreadySubmitted = true;
-                    } elseif (! $allowRetake) {
+                    // If allow_retake is off, block immediately
+                    if (! $allowRetake) {
                         $alreadySubmitted = true;
                     } elseif ($attempts >= $maxRetakes) {
+                        // Used up all allowed attempts
                         $alreadySubmitted = true;
                     } else {
+                        // Still has retake quota — always allow, even if already passed
                         $alreadySubmitted = false;
                     }
                 } else {
@@ -187,12 +188,7 @@ class SurveyController extends Controller
                         ->max('score');
                     $highestScore = $highestScore !== null ? floatval($highestScore) : 0;
 
-                    if ($highestScore >= $passingScore && $passingScore > 0) {
-                        return response()->json([
-                            'success' => false,
-                            'message' => 'Anda sudah lulus kuis ini dengan nilai memenuhi standar.',
-                        ], 403);
-                    } elseif (! $allowRetake) {
+                    if (! $allowRetake) {
                         return response()->json([
                             'success' => false,
                             'message' => 'Anda sudah mengisi kuis ini dan tidak diizinkan untuk mengulang.',
@@ -249,7 +245,9 @@ class SurveyController extends Controller
                 ->count();
 
             $passed = $passingScore > 0 && $score >= $passingScore;
-            $canRetake = ! $passed && $allowRetake && $attempts < $maxRetakes;
+            // can_retake: always allowed if allow_retake is on and quota remains,
+            // regardless of whether user already passed (they may want a higher score)
+            $canRetake = $allowRetake && $attempts < $maxRetakes;
 
             $responseData['quiz'] = [
                 'score' => $score,

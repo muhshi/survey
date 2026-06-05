@@ -613,6 +613,14 @@
 
                 if (quiz.can_retake) {
                     btnRetake.style.display = 'block';
+                    // Adjust button text: if already passed, offer to improve score
+                    if (passed) {
+                        btnRetake.innerHTML = '🚀 Coba Lagi (Tingkatkan Nilai)';
+                        btnRetake.style.background = 'linear-gradient(135deg, #0ea5e9, #0284c7)';
+                    } else {
+                        btnRetake.innerHTML = '🔄 Ulangi Kuis';
+                        btnRetake.style.background = 'linear-gradient(135deg, #6366f1, #4f46e5)';
+                    }
                 } else {
                     btnRetake.style.display = 'none';
                 }

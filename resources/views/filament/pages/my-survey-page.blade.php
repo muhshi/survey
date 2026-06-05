@@ -173,11 +173,21 @@
                             </span>
                             <div class="flex items-center gap-2">
                                 @if($canRetake && $survey)
-                                    <a href="{{ route('survey.show', $survey) }}"
-                                       class="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-bold text-white shadow-sm hover:bg-indigo-700 transition">
-                                        <x-heroicon-o-arrow-path class="h-3.5 w-3.5" />
-                                        Ulangi Kuis
-                                    </a>
+                                    @if($passed)
+                                        {{-- Already passed but can still try for a higher score --}}
+                                        <a href="{{ route('survey.show', $survey) }}"
+                                           class="inline-flex items-center gap-1.5 rounded-lg bg-sky-600 px-3 py-1.5 text-xs font-bold text-white shadow-sm hover:bg-sky-700 transition">
+                                            <x-heroicon-o-arrow-trending-up class="h-3.5 w-3.5" />
+                                            Coba Lagi (Tingkatkan Nilai)
+                                        </a>
+                                    @else
+                                        {{-- Not yet passed — retake to pass --}}
+                                        <a href="{{ route('survey.show', $survey) }}"
+                                           class="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-bold text-white shadow-sm hover:bg-indigo-700 transition">
+                                            <x-heroicon-o-arrow-path class="h-3.5 w-3.5" />
+                                            Ulangi Kuis
+                                        </a>
+                                    @endif
                                 @elseif(!$isQuiz && $survey && $survey->mode?->value === 'editable')
                                     <a href="{{ route('survey.show', $survey) }}"
                                        class="inline-flex items-center gap-1.5 rounded-lg bg-sky-600 px-3 py-1.5 text-xs font-bold text-white shadow-sm hover:bg-sky-700 transition">

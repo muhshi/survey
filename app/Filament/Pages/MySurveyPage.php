@@ -48,8 +48,10 @@ class MySurveyPage extends Page
 
                 if ($isQuiz && $score !== null && $passingScore > 0) {
                     $passed = $score >= $passingScore;
-                    $canRetake = ! $passed && $allowRetake;
                 }
+
+                // can_retake will be resolved at group level (needs total attempts)
+                $canRetake = $allowRetake;
 
                 return [
                     'id' => $jawaban->id,
@@ -89,7 +91,8 @@ class MySurveyPage extends Page
                     'is_quiz' => $latest['is_quiz'],
                     'passing_score' => $latest['passing_score'],
                     'passed' => $hasPassed,
-                    'can_retake' => $latest['can_retake'],
+                    // allow retake if enabled AND quota not exhausted (regardless of pass status)
+                    'can_retake' => $latest['allow_retake'] && $totalAttempts < $latest['max_retakes'],
                     'allow_retake' => $latest['allow_retake'],
                     'max_retakes' => $latest['max_retakes'],
                     'total_attempts' => $totalAttempts,
