@@ -3,7 +3,18 @@
 Semua perubahan penting dalam proyek ini akan dicatat di file ini.
 Format ini didasarkan pada [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.4.0] - 2026-06-05
+
+### Added
+- **My Survey Page**: Halaman dashboard peserta di panel admin (`/admin/my-survey-page`) yang menampilkan semua survey yang pernah diisi oleh user login, lengkap dengan skor terbaik, status lulus/belum lulus, progress bar menuju kelulusan, riwayat semua percobaan (collapsible), dan tombol aksi (Ulangi Kuis / Edit Jawaban / Lihat Survey).
+- **Notifikasi Hasil Kuis**: Setelah submit kuis, sistem menampilkan modal interaktif berisi skor akhir, status lulus/tidak lulus, nilai standar kelulusan, dan tombol "Ulangi Kuis" jika masih diizinkan mengulang — tanpa perlu reload halaman.
+- **Tombol Refresh Tabel Jawaban Responden**: Menambahkan tombol refresh di header tabel Jawaban Responden pada panel admin, untuk me-refresh data tabel secara Livewire tanpa reload halaman penuh.
+
+### Changed
+- **SurveyController `submit()`**: Response JSON submit kuis kini mengembalikan data tambahan (`quiz.score`, `quiz.passing_score`, `quiz.passed`, `quiz.can_retake`) untuk keperluan notifikasi frontend.
+
 ## [1.3.0] - 2026-05-16
+
 
 ### Added
 - **Participant Search & Auto-fill**: Dropdown nama peserta searchable dan bidirectional auto-fill nomor urut pada form wawancara.

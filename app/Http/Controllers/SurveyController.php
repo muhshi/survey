@@ -232,10 +232,36 @@ class SurveyController extends Controller
         $jawaban->submitted_at = Carbon::now();
         $jawaban->save();
 
-        return response()->json([
+        // Build quiz result data for frontend notification
+        $responseData = [
             'success' => true,
             'message' => 'Jawaban Anda telah berhasil disimpan.',
-        ]);
+        ];
+
+        if ($survey->is_quiz && $score !== null) {
+            $settings = $survey->settings ?? [];
+            $passingScore = floatval($settings['passing_score'] ?? 0);
+            $allowRetake = filter_var($settings['allow_retake'] ?? false, FILTER_VALIDATE_BOOLEAN);
+            $maxRetakes = intval($settings['max_retakes'] ?? 1);
+
+            $attempts = JawabanResponden::where('survey_id', $survey->id)
+                ->where('user_id', Auth::id())
+                ->count();
+
+            $passed = $passingScore > 0 && $score >= $passingScore;
+            $canRetake = ! $passed && $allowRetake && $attempts < $maxRetakes;
+
+            $responseData['quiz'] = [
+                'score' => $score,
+                'passing_score' => $passingScore,
+                'passed' => $passed,
+                'can_retake' => $canRetake,
+                'attempts' => $attempts,
+                'max_retakes' => $maxRetakes,
+            ];
+        }
+
+        return response()->json($responseData);
     }
 
     /**

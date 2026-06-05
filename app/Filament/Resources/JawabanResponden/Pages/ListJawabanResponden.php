@@ -23,6 +23,11 @@ class ListJawabanResponden extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('refresh')
+                ->label('Refresh')
+                ->icon('heroicon-o-arrow-path')
+                ->color('gray')
+                ->action(fn () => $this->resetTable()),
             Action::make('export')
                 ->label('Export Excel')
                 ->icon('heroicon-o-document-arrow-down')

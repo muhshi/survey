@@ -201,6 +201,113 @@
         visibility: hidden !important;
     }
 
+    /* === QUIZ RESULT MODAL === */
+    #quiz-result-modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: rgba(15, 23, 42, 0.65);
+        backdrop-filter: blur(6px);
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+    #quiz-result-modal.show {
+        display: flex;
+        animation: modalFadeIn 0.3s ease;
+    }
+    @keyframes modalFadeIn {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+    }
+    .quiz-result-card {
+        background: #fff;
+        border-radius: 24px;
+        padding: 40px 36px;
+        max-width: 460px;
+        width: 100%;
+        text-align: center;
+        box-shadow: 0 25px 60px rgba(0,0,0,0.25);
+        position: relative;
+    }
+    .quiz-result-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        font-size: 2.5rem;
+    }
+    .quiz-result-icon.passed {
+        background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+    }
+    .quiz-result-icon.failed {
+        background: linear-gradient(135deg, #fee2e2, #fecaca);
+    }
+    .quiz-result-score {
+        font-size: 3.5rem;
+        font-weight: 900;
+        line-height: 1;
+        margin-bottom: 4px;
+    }
+    .quiz-result-score.passed { color: #059669; }
+    .quiz-result-score.failed { color: #dc2626; }
+    .quiz-result-label {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+    .quiz-result-label.passed { color: #065f46; }
+    .quiz-result-label.failed { color: #991b1b; }
+    .quiz-result-passing {
+        font-size: 0.85rem;
+        color: #94a3b8;
+        margin-bottom: 28px;
+    }
+    .quiz-result-actions {
+        display: flex;
+        gap: 12px;
+        flex-direction: column;
+    }
+    .btn-retake {
+        display: block;
+        background: linear-gradient(135deg, #6366f1, #4f46e5);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 14px 24px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-decoration: none;
+    }
+    .btn-retake:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(99,102,241,0.35);
+        color: white;
+    }
+    .btn-back-list {
+        display: block;
+        background: #f1f5f9;
+        color: #475569;
+        border: none;
+        border-radius: 12px;
+        padding: 14px 24px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-decoration: none;
+    }
+    .btn-back-list:hover {
+        background: #e2e8f0;
+        color: #334155;
+    }
+
     /* === MOBILE DROPDOWN POPUP FIX === */
     /* Force SurveyJS popup ABOVE the sticky navbar (z-index: 100) */
     .sv-popup {
@@ -330,6 +437,25 @@
 
     </div>
 </div>
+
+<!-- Quiz Result Modal (outside wrapper for correct z-index) -->
+<div id="quiz-result-modal" role="dialog" aria-modal="true" aria-labelledby="quiz-result-title">
+    <div class="quiz-result-card">
+        <div class="quiz-result-icon" id="quiz-result-icon">🎉</div>
+        <div class="quiz-result-score" id="quiz-result-score">0%</div>
+        <div class="quiz-result-label" id="quiz-result-label">Selamat, Anda Lulus!</div>
+        <div class="quiz-result-passing" id="quiz-result-passing">Nilai standar kelulusan: 0%</div>
+        <div class="quiz-result-actions">
+            <a id="btn-retake" href="{{ route('survey.show', $survey) }}" class="btn-retake" style="display:none;">
+                🔄 Ulangi Kuis
+            </a>
+            <a href="{{ route('survey.index') }}" class="btn-back-list">
+                ← Kembali ke Daftar Survei
+            </a>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @section('scripts')
@@ -441,14 +567,60 @@
                 })
                 .then(r => r.json())
                 .then(data => {
+                    loading.classList.add('hidden');
                     if (data.success) {
-                        loading.classList.add('hidden');
+                        // Show quiz result modal if this is a quiz
+                        if (data.quiz) {
+                            showQuizResult(data.quiz);
+                        }
+                        // Otherwise completedHtml from SurveyJS handles the display
                     } else {
                         fatal(data.message || "Proses simpan gagal.");
                     }
                 })
                 .catch(err => fatal("Koneksi gagal tersambung."));
             });
+
+            function showQuizResult(quiz) {
+                const modal   = document.getElementById('quiz-result-modal');
+                const icon    = document.getElementById('quiz-result-icon');
+                const score   = document.getElementById('quiz-result-score');
+                const label   = document.getElementById('quiz-result-label');
+                const passing = document.getElementById('quiz-result-passing');
+                const btnRetake = document.getElementById('btn-retake');
+
+                const passed = quiz.passed;
+                const scoreVal = parseFloat(quiz.score).toFixed(1);
+                const passingVal = parseFloat(quiz.passing_score).toFixed(0);
+
+                icon.textContent   = passed ? '🎉' : '😔';
+                icon.className     = 'quiz-result-icon ' + (passed ? 'passed' : 'failed');
+                score.textContent  = scoreVal + '%';
+                score.className    = 'quiz-result-score ' + (passed ? 'passed' : 'failed');
+                label.className    = 'quiz-result-label ' + (passed ? 'passed' : 'failed');
+
+                if (passed) {
+                    label.textContent = '🎊 Selamat, Anda Lulus!';
+                } else {
+                    label.textContent = 'Belum Lulus — Coba Lagi!';
+                }
+
+                if (quiz.passing_score > 0) {
+                    passing.textContent = 'Nilai standar kelulusan: ' + passingVal + '%';
+                } else {
+                    passing.textContent = 'Jawaban Anda telah berhasil disimpan.';
+                }
+
+                if (quiz.can_retake) {
+                    btnRetake.style.display = 'block';
+                } else {
+                    btnRetake.style.display = 'none';
+                }
+
+                // Hide the survey container
+                document.getElementById('surveyElement').style.display = 'none';
+                modal.classList.add('show');
+            }
 
             const container = document.getElementById("surveyElement");
             if (container) {
