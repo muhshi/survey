@@ -241,3 +241,28 @@ protected function getViewData(): array
 ```
 
 The view file lives at `resources/views/filament/pages/{kebab-case-class-name}.blade.php` and must use `<x-filament-panels::page>` as its root element.
+
+### ⚠️ Tailwind Utility Classes Do NOT Work in Custom Filament Pages
+
+**Problem**: Custom blade views for Filament Pages (`resources/views/filament/pages/*.blade.php`) render inside Filament's admin panel, which has its **own separate Tailwind CSS build**. Classes like `bg-gradient-to-br`, `rounded-2xl`, `grid-cols-3` from your `app.css` Tailwind build are **NOT included** in the panel's CSS. The page renders as unstyled plain text.
+
+**This happens because**:
+- Your Vite/Tailwind compiles `resources/css/app.css` → `public/build/assets/app-xxx.css`
+- Filament's panel loads its own CSS, not yours
+- Even `npm run build` won't help — the Filament panel never loads your CSS file
+
+**Fix**: Use **inline `style` attributes** for all styling in custom Filament panel page views. Do NOT use Tailwind utility classes.
+
+```html
+{{-- ✅ CORRECT — works in Filament panel --}}
+<div style="background: linear-gradient(135deg, #0ea5e9, #4f46e5); border-radius: 16px; padding: 20px; color: white;">
+    <h3 style="font-size: 2rem; font-weight: 900;">Title</h3>
+</div>
+
+{{-- ❌ WRONG — these classes are NOT compiled for the Filament panel --}}
+<div class="bg-gradient-to-br from-sky-500 to-indigo-600 rounded-2xl p-5 text-white">
+    <h3 class="text-3xl font-black">Title</h3>
+</div>
+```
+
+> **Alternative**: Set up a custom Filament panel theme via `php artisan filament:theme` to include your own CSS. But inline styles are simpler for one-off pages.
