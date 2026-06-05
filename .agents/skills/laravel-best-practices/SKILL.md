@@ -211,6 +211,22 @@ protected static ?string $navigationIcon = 'heroicon-o-some-icon';
 
 This applies to **any property inherited from a Filament base class** where the parent uses a union type. Always check the parent's property declaration before adding a type hint in a child class.
 
+### ⚠️ Property `$view` Is Non-Static in Filament v5
+
+**Problem**: Declaring `protected static string $view` causes `Cannot redeclare non static ... as static`. In Filament v5, `$view` on `Filament\Pages\Page` is a **non-static instance property**.
+
+**Fix**: Drop `static`:
+
+```php
+// ✅ CORRECT (Filament v5)
+protected string $view = 'filament.pages.my-page';
+
+// ❌ WRONG — parent declares it as non-static
+protected static string $view = 'filament.pages.my-page';
+```
+
+> **Note**: The `php artisan make:filament-page` scaffold may generate it with `static`. Always remove `static` manually.
+
 ### `getViewData()` for Custom Filament Pages
 
 To pass data to a custom Filament Page's Blade view, override `getViewData()`:

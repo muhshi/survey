@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class MySurveyPage extends Page
 {
-    protected static string $view = 'filament.pages.my-survey-page';
+    protected string $view = 'filament.pages.my-survey-page';
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-clipboard-document-list';
 
