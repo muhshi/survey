@@ -11,7 +11,7 @@ class MySurveyPage extends Page
 {
     protected static string $view = 'filament.pages.my-survey-page';
 
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-clipboard-document-list';
 
     protected static ?string $navigationLabel = 'My Survey';
 

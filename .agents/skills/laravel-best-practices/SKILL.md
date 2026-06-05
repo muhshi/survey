@@ -188,3 +188,40 @@ Always use a sub-agent to read rule files and explore this skill's content.
 1. Identify the file type and select relevant sections (e.g., migration → §16, controller → §1, §3, §5, §6, §10)
 2. Check sibling files for existing patterns — follow those first per Consistency First
 3. Verify API syntax with `search-docs` for the installed Laravel version
+
+---
+
+## Filament v5 Gotchas (Project-Specific)
+
+Critical issues encountered in this project. Always apply when creating or editing Filament Pages, Resources, or Widgets.
+
+### ⚠️ Property Type: `$navigationIcon` Must Be `BackedEnum|string|null`
+
+**Problem**: Declaring `protected static ?string $navigationIcon` causes a `FatalError` in Filament v5 because the parent class `Filament\Pages\Page` declares it as `BackedEnum|string|null`. A child class cannot narrow the type.
+
+**Fix**: Always declare with the full union type in any Filament Page, Resource, or Widget:
+
+```php
+// ✅ CORRECT — matches parent class type
+protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-some-icon';
+
+// ❌ WRONG — type narrowing causes FatalError
+protected static ?string $navigationIcon = 'heroicon-o-some-icon';
+```
+
+This applies to **any property inherited from a Filament base class** where the parent uses a union type. Always check the parent's property declaration before adding a type hint in a child class.
+
+### `getViewData()` for Custom Filament Pages
+
+To pass data to a custom Filament Page's Blade view, override `getViewData()`:
+
+```php
+protected function getViewData(): array
+{
+    return [
+        'items' => MyModel::where('user_id', Auth::id())->get(),
+    ];
+}
+```
+
+The view file lives at `resources/views/filament/pages/{kebab-case-class-name}.blade.php` and must use `<x-filament-panels::page>` as its root element.
