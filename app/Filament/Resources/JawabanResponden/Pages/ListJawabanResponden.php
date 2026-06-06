@@ -56,21 +56,21 @@ class ListJawabanResponden extends ListRecords
                                     $hasQuiz = true;
                                 } else {
                                     $hasNonQuiz = true;
-                                }
 
-                                $parsed = $survey->getParsedSchema();
-                                $surveySchemaFields = array_keys($parsed['fields']);
+                                    $parsed = $survey->getParsedSchema();
+                                    $surveySchemaFields = array_keys($parsed['fields']);
 
-                                // If schema is empty, fallback to payload keys
-                                if (empty($surveySchemaFields)) {
-                                    $surveySchemaFields = JawabanResponden::where('survey_id', $survey->id)
-                                        ->get()
-                                        ->flatMap(fn ($j) => array_keys($j->payload ?? []))
-                                        ->unique()
-                                        ->values()
-                                        ->toArray();
+                                    // If schema is empty, fallback to payload keys
+                                    if (empty($surveySchemaFields)) {
+                                        $surveySchemaFields = JawabanResponden::where('survey_id', $survey->id)
+                                            ->get()
+                                            ->flatMap(fn ($j) => array_keys($j->payload ?? []))
+                                            ->unique()
+                                            ->values()
+                                            ->toArray();
+                                    }
+                                    $schemaFields = array_merge($schemaFields, $surveySchemaFields);
                                 }
-                                $schemaFields = array_merge($schemaFields, $surveySchemaFields);
                             }
                             $schemaFields = array_unique($schemaFields);
 
@@ -89,6 +89,7 @@ class ListJawabanResponden extends ListRecords
                         }),
                     CheckboxList::make('fields')
                         ->label('Kolom yang Diekspor')
+                        ->bulkToggleable()
                         ->options(function (Get $get) {
                             $surveyIds = $get('survey_id');
                             if (empty($surveyIds)) {
@@ -155,20 +156,20 @@ class ListJawabanResponden extends ListRecords
                                     $hasQuiz = true;
                                 } else {
                                     $hasNonQuiz = true;
-                                }
 
-                                $parsed = $survey->getParsedSchema();
-                                $surveySchemaFields = array_keys($parsed['fields']);
+                                    $parsed = $survey->getParsedSchema();
+                                    $surveySchemaFields = array_keys($parsed['fields']);
 
-                                if (empty($surveySchemaFields)) {
-                                    $surveySchemaFields = JawabanResponden::where('survey_id', $survey->id)
-                                        ->get()
-                                        ->flatMap(fn ($j) => array_keys($j->payload ?? []))
-                                        ->unique()
-                                        ->values()
-                                        ->toArray();
+                                    if (empty($surveySchemaFields)) {
+                                        $surveySchemaFields = JawabanResponden::where('survey_id', $survey->id)
+                                            ->get()
+                                            ->flatMap(fn ($j) => array_keys($j->payload ?? []))
+                                            ->unique()
+                                            ->values()
+                                            ->toArray();
+                                    }
+                                    $schemaFields = array_merge($schemaFields, $surveySchemaFields);
                                 }
-                                $schemaFields = array_merge($schemaFields, $surveySchemaFields);
                             }
                             $schemaFields = array_unique($schemaFields);
 
