@@ -13,7 +13,6 @@ use Filament\Forms\Components\Select;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
-use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ListJawabanResponden extends ListRecords
@@ -35,60 +34,74 @@ class ListJawabanResponden extends ListRecords
                 ->form([
                     Select::make('survey_id')
                         ->label('Pilih Survey')
+                        ->multiple()
                         ->options(Survey::pluck('title', 'id'))
-                        ->default(fn () => $this->getTableFilterState('survey_id')['value'] ?? null)
+                        ->default(fn () => $this->getTableFilterState('survey_id')['values'] ?? null)
                         ->required()
                         ->live()
                         ->afterStateUpdated(function (Set $set, $state) {
-                            if (! $state) {
+                            if (empty($state)) {
                                 $set('fields', []);
 
                                 return;
                             }
 
-                            $survey = Survey::find($state);
-                            if (! $survey) {
-                                return;
+                            $surveys = Survey::whereIn('id', (array) $state)->get();
+                            $schemaFields = [];
+                            $hasQuiz = false;
+                            $hasNonQuiz = false;
+
+                            foreach ($surveys as $survey) {
+                                if ($survey->is_quiz) {
+                                    $hasQuiz = true;
+                                } else {
+                                    $hasNonQuiz = true;
+                                }
+
+                                $parsed = $survey->getParsedSchema();
+                                $surveySchemaFields = array_keys($parsed['fields']);
+
+                                // If schema is empty, fallback to payload keys
+                                if (empty($surveySchemaFields)) {
+                                    $surveySchemaFields = JawabanResponden::where('survey_id', $survey->id)
+                                        ->get()
+                                        ->flatMap(fn ($j) => array_keys($j->payload ?? []))
+                                        ->unique()
+                                        ->values()
+                                        ->toArray();
+                                }
+                                $schemaFields = array_merge($schemaFields, $surveySchemaFields);
                             }
+                            $schemaFields = array_unique($schemaFields);
 
-                            $parsed = $survey->getParsedSchema();
-                            $schemaFields = array_keys($parsed['fields']);
-
-                            // If schema is empty, fallback to payload keys
-                            if (empty($schemaFields)) {
-                                $schemaFields = JawabanResponden::where('survey_id', $state)
-                                    ->get()
-                                    ->flatMap(fn ($j) => array_keys($j->payload ?? []))
-                                    ->unique()
-                                    ->values()
-                                    ->toArray();
-                            }
-
-                            if ($survey->is_quiz) {
-                                $defaultFields = ['nama_lengkap', 'email_peserta', 'skor_kuis', 'waktu_submit'];
+                            $defaultFields = ['survey_title'];
+                            if ($hasNonQuiz) {
+                                $defaultFields = array_merge($defaultFields, ['nama_pewawancara', 'nama_peserta', 'email_peserta']);
                             } else {
-                                $defaultFields = array_merge(['nama_pewawancara', 'nama_peserta', 'email_peserta', 'waktu_submit'], $schemaFields);
+                                $defaultFields = array_merge($defaultFields, ['nama_lengkap', 'email_peserta']);
                             }
+                            if ($hasQuiz) {
+                                $defaultFields[] = 'skor_kuis';
+                            }
+                            $defaultFields[] = 'waktu_submit';
 
-                            $set('fields', $defaultFields);
+                            $set('fields', array_values(array_unique(array_merge($defaultFields, $schemaFields))));
                         }),
                     CheckboxList::make('fields')
                         ->label('Kolom yang Diekspor')
                         ->options(function (Get $get) {
-                            $surveyId = $get('survey_id');
-                            if (! $surveyId) {
+                            $surveyIds = $get('survey_id');
+                            if (empty($surveyIds)) {
                                 return [];
                             }
 
-                            $survey = Survey::find($surveyId);
-                            if (! $survey) {
+                            $surveys = Survey::whereIn('id', (array) $surveyIds)->get();
+                            if ($surveys->isEmpty()) {
                                 return [];
                             }
-
-                            $parsed = $survey->getParsedSchema();
-                            $schemaFields = $parsed['fields'];
 
                             $options = [
+                                'survey_title' => 'Judul Survey',
                                 'waktu_submit' => 'Waktu Submit',
                                 'skor_kuis' => 'Skor Kuis',
                                 'nama_pewawancara' => 'Nama Pewawancara',
@@ -96,63 +109,88 @@ class ListJawabanResponden extends ListRecords
                                 'email_peserta' => 'Email Peserta',
                             ];
 
-                            // Add parsed schema fields in exact order
-                            foreach ($schemaFields as $key => $title) {
-                                $options[$key] = $title;
-                            }
+                            foreach ($surveys as $survey) {
+                                $parsed = $survey->getParsedSchema();
+                                $schemaFields = $parsed['fields'];
 
-                            // If there are keys in payload that aren't in schema, add them at the end
-                            $payloadKeys = JawabanResponden::where('survey_id', $surveyId)
-                                ->get()
-                                ->flatMap(fn ($j) => array_keys($j->payload ?? []))
-                                ->unique()
-                                ->values()
-                                ->toArray();
+                                // Add parsed schema fields
+                                foreach ($schemaFields as $key => $title) {
+                                    $options[$key] = $title;
+                                }
 
-                            foreach ($payloadKeys as $key) {
-                                if (! isset($options[$key])) {
-                                    $options[$key] = ucwords(str_replace('_', ' ', $key));
+                                // If there are keys in payload that aren't in schema, add them
+                                $payloadKeys = JawabanResponden::where('survey_id', $survey->id)
+                                    ->get()
+                                    ->flatMap(fn ($j) => array_keys($j->payload ?? []))
+                                    ->unique()
+                                    ->values()
+                                    ->toArray();
+
+                                foreach ($payloadKeys as $key) {
+                                    if (! isset($options[$key])) {
+                                        $options[$key] = ucwords(str_replace('_', ' ', $key));
+                                    }
                                 }
                             }
 
                             return $options;
                         })
                         ->default(function (Get $get) {
-                            $surveyId = $get('survey_id');
-                            if (! $surveyId) {
+                            $surveyIds = $get('survey_id');
+                            if (empty($surveyIds)) {
                                 return [];
                             }
 
-                            $survey = Survey::find($surveyId);
-                            if (! $survey) {
+                            $surveys = Survey::whereIn('id', (array) $surveyIds)->get();
+                            if ($surveys->isEmpty()) {
                                 return [];
                             }
 
-                            $parsed = $survey->getParsedSchema();
-                            $schemaFields = array_keys($parsed['fields']);
+                            $schemaFields = [];
+                            $hasQuiz = false;
+                            $hasNonQuiz = false;
 
-                            if (empty($schemaFields)) {
-                                $schemaFields = JawabanResponden::where('survey_id', $surveyId)
-                                    ->get()
-                                    ->flatMap(fn ($j) => array_keys($j->payload ?? []))
-                                    ->unique()
-                                    ->values()
-                                    ->toArray();
+                            foreach ($surveys as $survey) {
+                                if ($survey->is_quiz) {
+                                    $hasQuiz = true;
+                                } else {
+                                    $hasNonQuiz = true;
+                                }
+
+                                $parsed = $survey->getParsedSchema();
+                                $surveySchemaFields = array_keys($parsed['fields']);
+
+                                if (empty($surveySchemaFields)) {
+                                    $surveySchemaFields = JawabanResponden::where('survey_id', $survey->id)
+                                        ->get()
+                                        ->flatMap(fn ($j) => array_keys($j->payload ?? []))
+                                        ->unique()
+                                        ->values()
+                                        ->toArray();
+                                }
+                                $schemaFields = array_merge($schemaFields, $surveySchemaFields);
                             }
+                            $schemaFields = array_unique($schemaFields);
 
-                            if ($survey->is_quiz) {
-                                return ['nama_lengkap', 'email_peserta', 'skor_kuis', 'waktu_submit'];
+                            $defaultFields = ['survey_title'];
+                            if ($hasNonQuiz) {
+                                $defaultFields = array_merge($defaultFields, ['nama_pewawancara', 'nama_peserta', 'email_peserta']);
                             } else {
-                                return array_merge(['nama_pewawancara', 'nama_peserta', 'email_peserta', 'waktu_submit'], $schemaFields);
+                                $defaultFields = array_merge($defaultFields, ['nama_lengkap', 'email_peserta']);
                             }
+                            if ($hasQuiz) {
+                                $defaultFields[] = 'skor_kuis';
+                            }
+                            $defaultFields[] = 'waktu_submit';
+
+                            return array_values(array_unique(array_merge($defaultFields, $schemaFields)));
                         })
                         ->columns(3)
                         ->required()
                         ->visible(fn (Get $get) => filled($get('survey_id'))),
                 ])
                 ->action(function (array $data) {
-                    $survey = Survey::find($data['survey_id']);
-                    $fileName = Str::slug($survey->title).'_'.date('Y-m-d').'.xlsx';
+                    $fileName = 'Jawaban_Responden_'.date('Y-m-d').'.xlsx';
 
                     // Get active table filter state
                     $submittedFrom = $this->getTableFilterState('submitted_at')['submitted_from'] ?? null;
@@ -160,7 +198,7 @@ class ListJawabanResponden extends ListRecords
 
                     return Excel::download(
                         new JawabanRespondenExport(
-                            $data['survey_id'],
+                            (array) $data['survey_id'],
                             $data['fields'],
                             $submittedFrom,
                             $submittedUntil

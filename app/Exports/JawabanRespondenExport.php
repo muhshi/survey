@@ -14,7 +14,7 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class JawabanRespondenExport implements FromQuery, WithHeadings, WithMapping, WithStyles
 {
-    protected int $surveyId;
+    protected array $surveyIds;
 
     protected array $selectedFields;
 
@@ -26,9 +26,9 @@ class JawabanRespondenExport implements FromQuery, WithHeadings, WithMapping, Wi
 
     protected ?array $parsedSchema = null;
 
-    public function __construct(int $surveyId, array $selectedFields, ?string $submittedFrom = null, ?string $submittedUntil = null)
+    public function __construct(array $surveyIds, array $selectedFields, ?string $submittedFrom = null, ?string $submittedUntil = null)
     {
-        $this->surveyId = $surveyId;
+        $this->surveyIds = $surveyIds;
         $this->selectedFields = $selectedFields;
         $this->submittedFrom = $submittedFrom;
         $this->submittedUntil = $submittedUntil;
@@ -47,17 +47,24 @@ class JawabanRespondenExport implements FromQuery, WithHeadings, WithMapping, Wi
     public function query()
     {
         return JawabanResponden::query()
-            ->with('user')
-            ->where('survey_id', $this->surveyId)
-            ->when($this->submittedFrom, fn ($q, $date) => $q->whereDate('submitted_at', '>=', $date))
-            ->when($this->submittedUntil, fn ($q, $date) => $q->whereDate('submitted_at', '<=', $date));
+            ->with(['user', 'survey'])
+            ->whereIn('survey_id', $this->surveyIds)
+            ->when($this->submittedFrom, fn($q, $date) => $q->whereDate('submitted_at', '>=', $date))
+            ->when($this->submittedUntil, fn($q, $date) => $q->whereDate('submitted_at', '<=', $date));
     }
 
     protected function getParsedSchema()
     {
-        if (! isset($this->parsedSchema)) {
-            $survey = Survey::find($this->surveyId);
-            $this->parsedSchema = $survey ? $survey->getParsedSchema() : ['fields' => [], 'choices' => []];
+        if (!isset($this->parsedSchema)) {
+            $surveys = Survey::whereIn('id', $this->surveyIds)->get();
+            $fields = [];
+            $choices = [];
+            foreach ($surveys as $survey) {
+                $parsed = $survey->getParsedSchema();
+                $fields = array_merge($fields, $parsed['fields'] ?? []);
+                $choices = array_merge($choices, $parsed['choices'] ?? []);
+            }
+            $this->parsedSchema = ['fields' => $fields, 'choices' => $choices];
         }
 
         return $this->parsedSchema;
@@ -70,6 +77,7 @@ class JawabanRespondenExport implements FromQuery, WithHeadings, WithMapping, Wi
         return array_map(function ($field) use ($schemaFields) {
             // Use standard overrides first
             $overrides = [
+                'survey_title' => 'Judul Survey',
                 'waktu_submit' => 'Waktu Submit',
                 'skor_kuis' => 'Skor Kuis',
                 'nama_pewawancara' => 'Nama Pewawancara',
@@ -94,6 +102,9 @@ class JawabanRespondenExport implements FromQuery, WithHeadings, WithMapping, Wi
 
         foreach ($this->selectedFields as $field) {
             switch ($field) {
+                case 'survey_title':
+                    $row[] = $jawaban->survey ? $jawaban->survey->title : '-';
+                    break;
                 case 'nama_pewawancara':
                     $row[] = $jawaban->user ? html_entity_decode($jawaban->user->name, ENT_QUOTES | ENT_HTML5, 'UTF-8') : 'Anonim';
                     break;
@@ -108,7 +119,7 @@ class JawabanRespondenExport implements FromQuery, WithHeadings, WithMapping, Wi
                     $pesertaId = $payload['nama_peserta'] ?? $payload['pilih_peserta'] ?? null;
                     if ($pesertaId && is_numeric($pesertaId)) {
                         $peserta = $this->getUsersCache()->get($pesertaId);
-                        $row[] = $peserta ? html_entity_decode($peserta->name, ENT_QUOTES | ENT_HTML5, 'UTF-8') : 'Unknown ('.$pesertaId.')';
+                        $row[] = $peserta ? html_entity_decode($peserta->name, ENT_QUOTES | ENT_HTML5, 'UTF-8') : 'Unknown (' . $pesertaId . ')';
                     } elseif ($pesertaId) {
                         $row[] = html_entity_decode((string) $pesertaId, ENT_QUOTES | ENT_HTML5, 'UTF-8');
                     } else {
@@ -139,7 +150,7 @@ class JawabanRespondenExport implements FromQuery, WithHeadings, WithMapping, Wi
                             }, $val);
                             $row[] = implode(', ', $mappedArray);
                         } else {
-                            $row[] = implode(', ', array_map(fn ($v) => is_string($v) ? html_entity_decode($v, ENT_QUOTES | ENT_HTML5, 'UTF-8') : $v, $val));
+                            $row[] = implode(', ', array_map(fn($v) => is_string($v) ? html_entity_decode($v, ENT_QUOTES | ENT_HTML5, 'UTF-8') : $v, $val));
                         }
                     } else {
                         // Map the single value if choice exists

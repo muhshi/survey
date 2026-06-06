@@ -8,6 +8,7 @@ Format ini didasarkan pada [Keep a Changelog](https://keepachangelog.com/en/1.0.
 ### Added
 - **My Survey Page**: Halaman dashboard peserta di panel admin (`/admin/my-survey-page`) yang menampilkan semua survey yang pernah diisi oleh user login, lengkap dengan skor terbaik, status lulus/belum lulus, progress bar menuju kelulusan, riwayat semua percobaan (collapsible), dan tombol aksi (Ulangi Kuis / Edit Jawaban / Lihat Survey).
 - **Notifikasi Hasil Kuis**: Setelah submit kuis, sistem menampilkan modal interaktif berisi skor akhir, status lulus/tidak lulus, nilai standar kelulusan, dan tombol "Ulangi Kuis" jika masih diizinkan mengulang — tanpa perlu reload halaman.
+- **Multi-Survey Filter & Export**: Menambahkan kemampuan filter `survey_id` dengan mode `multiple` di halaman Jawaban Responden, serta memungkinkan fitur Export Excel untuk mengunduh gabungan data (termasuk kolom dinamis) dari beberapa survei sekaligus secara otomatis.
 - **Tombol Refresh Tabel Jawaban Responden**: Menambahkan tombol refresh di header tabel Jawaban Responden pada panel admin, untuk me-refresh data tabel secara Livewire tanpa reload halaman penuh.
 
 ### Changed

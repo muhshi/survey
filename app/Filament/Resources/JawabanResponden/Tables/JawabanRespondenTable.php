@@ -95,6 +95,7 @@ class JawabanRespondenTable
                 SelectFilter::make('survey_id')
                     ->label('Filter Survey')
                     ->relationship('survey', 'title')
+                    ->multiple()
                     ->searchable()
                     ->preload(),
                 Filter::make('submitted_at')

@@ -25,6 +25,9 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 
 ## Changelog
 
+### 2026-06-06
+- **Multi-Survey Filter & Export**: Menambahkan kemampuan filter `survey_id` dengan mode `multiple` di halaman Jawaban Responden, serta memungkinkan fitur Export Excel untuk mengunduh gabungan data (termasuk kolom dinamis) dari beberapa survei sekaligus secara otomatis.
+
 ### 2026-06-03
 - **Fix JSON Generation Duplicate Names**: Memperbaiki bug pada file kuesioner `pendalaman.json` yang memiliki duplikasi atribut `name` (misal `soal_4` muncul berulang kali) akibat manipulasi manual sebelumnya, yang menyebabkan jawaban saling tertimpa saat dipilih. Script `generate_survey.py` telah disesuaikan untuk mempertahankan field identitas khusus (gelombang, tc_hotel, kelas) dan dijalankan ulang untuk mengenerate ID soal yang unik (sequensial) di seluruh kuesioner.
 
