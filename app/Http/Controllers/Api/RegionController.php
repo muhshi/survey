@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\JawabanResponden;
 use App\Models\MasterWilayah;
 use Illuminate\Http\Request;
 
@@ -76,9 +77,33 @@ class RegionController extends Controller
         $desa = $request->query('desa');
         $sls = $request->query('sls');
 
+        $usedSubSls = [];
+        $currentUserId = auth()->id();
+
+        // Cari jawaban_responden yang berisi alokasi_wilayah
+        $responses = JawabanResponden::where('payload', 'like', '%alokasi_wilayah%')->get();
+
+        foreach ($responses as $resp) {
+            // Jangan filter pilihan user yang sedang login agar tetap tampil saat mereka membuka ulang form
+            if ($currentUserId && $resp->user_id === $currentUserId) {
+                continue;
+            }
+
+            $payload = $resp->payload;
+            if (isset($payload['alokasi_wilayah']) && is_array($payload['alokasi_wilayah'])) {
+                foreach ($payload['alokasi_wilayah'] as $panel) {
+                    if (isset($panel['sub_sls']) && is_array($panel['sub_sls'])) {
+                        $usedSubSls = array_merge($usedSubSls, $panel['sub_sls']);
+                    }
+                }
+            }
+        }
+        $usedSubSls = array_unique($usedSubSls);
+
         $data = MasterWilayah::select('idsubsls', 'kdsubsls', 'nama_ketua')
             ->where('nmdesa', $desa)
             ->where('nmsls', $sls)
+            ->whereNotIn('idsubsls', $usedSubSls)
             ->orderByRaw('CAST(kdsubsls AS UNSIGNED) ASC')
             ->get()
             ->map(function ($item) {
