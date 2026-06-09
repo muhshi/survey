@@ -25,6 +25,10 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 
 ## Changelog
 
+### 2026-06-09
+- **Alokasi Petugas Form**: Menambahkan skema formulir "Alokasi Petugas SE2026" menggunakan format SurveyJS melalui *seeder* (`AlokasiPetugasSurveySeeder`).
+- **Hierarchical Region API**: Menambahkan dukungan API hierarkis bertingkat (Kecamatan -> Desa/Kelurahan -> SLS -> Sub SLS) di `RegionController` untuk memfasilitasi filter *dependent dropdown* (pilihan wilayah berjenjang) pada form SurveyJS.
+
 ### 2026-06-06
 - **Multi-Survey Filter & Export**: Menambahkan kemampuan filter `survey_id` dengan mode `multiple` di halaman Jawaban Responden, serta memungkinkan fitur Export Excel untuk mengunduh gabungan data (termasuk kolom dinamis) dari beberapa survei sekaligus secara otomatis.
 

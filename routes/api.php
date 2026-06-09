@@ -10,4 +10,6 @@ Route::prefix('regions')->group(function () {
     Route::get('/kecamatan', [RegionController::class, 'kecamatan']);
     Route::get('/desa', [RegionController::class, 'desa']);
     Route::get('/sls', [RegionController::class, 'sls']);
+    Route::get('/subsls', [RegionController::class, 'subSls']);
+    Route::get('/sls-by-kecamatan', [RegionController::class, 'slsByKecamatan']);
 });

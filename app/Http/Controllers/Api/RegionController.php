@@ -53,13 +53,59 @@ class RegionController extends Controller
     {
         $desa = $request->query('desa');
 
-        $data = MasterWilayah::select('idsubsls', 'nmsls')
+        $data = MasterWilayah::select('nmsls', 'kdsls')
             ->where('nmdesa', $desa)
+            ->distinct()
+            ->orderByRaw('CAST(kdsls AS UNSIGNED) ASC')
+            ->get()
+            ->map(function ($item) {
+                $kode = str_pad((string) $item->kdsls, 4, '0', STR_PAD_LEFT);
+                $nama = $item->nmsls;
+
+                return [
+                    'value' => $item->nmsls,
+                    'text' => "$kode $nama",
+                ];
+            });
+
+        return response()->json($data);
+    }
+
+    public function subSls(Request $request)
+    {
+        $desa = $request->query('desa');
+        $sls = $request->query('sls');
+
+        $data = MasterWilayah::select('idsubsls', 'kdsubsls', 'nama_ketua')
+            ->where('nmdesa', $desa)
+            ->where('nmsls', $sls)
+            ->orderByRaw('CAST(kdsubsls AS UNSIGNED) ASC')
+            ->get()
+            ->map(function ($item) {
+                $kode = str_pad((string) $item->kdsubsls, 2, '0', STR_PAD_LEFT);
+                $ketua = $item->nama_ketua ? ' - Ketua: '.ucwords(strtolower($item->nama_ketua)) : '';
+
+                return [
+                    'value' => $item->idsubsls,
+                    'text' => "Sub SLS $kode$ketua",
+                ];
+            });
+
+        return response()->json($data);
+    }
+
+    public function slsByKecamatan(Request $request)
+    {
+        $kecamatan = $request->query('kecamatan');
+
+        $data = MasterWilayah::select('idsubsls', 'nmsls', 'nmdesa')
+            ->where('nmkec', $kecamatan)
+            ->orderBy('nmdesa')
             ->orderBy('nmsls')
             ->get()
             ->map(fn ($item) => [
                 'value' => $item->idsubsls,
-                'text' => $item->nmsls,
+                'text' => $item->nmdesa.' - '.$item->nmsls,
             ]);
 
         return response()->json($data);
