@@ -57,7 +57,7 @@ class UsersRelationManager extends RelationManager
                     ->searchable()
                     ->sortable(),
             ])
-            ->filters([
+            ->filters([])
             ->headerActions([
                 AttachAction::make()
                     ->preloadRecordSelect()
