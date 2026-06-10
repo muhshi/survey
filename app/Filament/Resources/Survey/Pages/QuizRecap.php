@@ -6,6 +6,8 @@ use App\Filament\Resources\Survey\SurveyResource;
 use App\Models\JawabanResponden;
 use App\Models\Survey;
 use App\Models\User;
+use Filament\Actions\Action;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Select;
 use Filament\Resources\Pages\Page;
 use Filament\Tables\Columns\TextColumn;
@@ -15,6 +17,8 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
 
 class QuizRecap extends Page implements HasTable
 {
@@ -120,5 +124,66 @@ class QuizRecap extends Page implements HasTable
                         return $query;
                     }),
             ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('export')
+                ->label('Export Excel')
+                ->icon('heroicon-o-document-arrow-down')
+                ->color('success')
+                ->form([
+                    CheckboxList::make('fields')
+                        ->label('Kolom yang Diekspor')
+                        ->bulkToggleable()
+                        ->options(function () {
+                            $options = [
+                                'nama_peserta' => 'Peserta',
+                                'email_peserta' => 'Email',
+                                'attempts_count' => 'Total Percobaan',
+                                'best_score' => 'Skor Terbaik',
+                                'status_lulus' => 'Status Lulus',
+                                'latest_submission' => 'Submit Terakhir',
+                            ];
+
+                            $parsed = $this->record->getParsedSchema();
+                            $schemaFields = $parsed['fields'] ?? [];
+
+                            foreach ($schemaFields as $key => $title) {
+                                $options[$key] = $title;
+                            }
+
+                            return $options;
+                        })
+                        ->default(function () {
+                            $defaults = [
+                                'nama_peserta',
+                                'email_peserta',
+                                'attempts_count',
+                                'best_score',
+                                'status_lulus',
+                                'latest_submission',
+                            ];
+
+                            $parsed = $this->record->getParsedSchema();
+                            $schemaFields = array_keys($parsed['fields'] ?? []);
+
+                            return array_values(array_unique(array_merge($defaults, $schemaFields)));
+                        })
+                        ->columns(3)
+                        ->required(),
+                ])
+                ->action(function (array $data) {
+                    $fileName = 'Rekap_Kuis_'.Str::slug($this->record->title).'_'.date('Y-m-d').'.xlsx';
+
+                    $statusFilter = $this->getTableFilterState('passed')['status'] ?? null;
+
+                    return Excel::download(
+                        new QuizRecapExport($this->record, $data['fields'], $statusFilter),
+                        $fileName
+                    );
+                }),
+        ];
     }
 }

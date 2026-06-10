@@ -26,7 +26,7 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 ## Changelog
 
 ### 2026-06-10
-- **Quiz Recap in Admin**: Menambahkan fitur halaman Rekap Kuis di panel admin (terkait langsung ke survei yang bertipe kuis) untuk melihat daftar peserta beserta skor kuis terbaik mereka, total percobaan, dan status kelulusan (Lulus/Belum Lulus) berdasarkan nilai minimum (`passing_score`). Dilengkapi juga dengan filter status kelulusan.
+- **Quiz Recap in Admin**: Menambahkan fitur halaman Rekap Kuis di panel admin (terkait langsung ke survei yang bertipe kuis) untuk melihat daftar peserta beserta skor kuis terbaik mereka, total percobaan, dan status kelulusan (Lulus/Belum Lulus) berdasarkan nilai minimum (`passing_score`). Dilengkapi juga dengan filter status kelulusan dan fitur **Export Excel** yang secara cerdas mendeteksi *field* kuesioner dinamis (seperti gelombang, tc hotel, dll) dari upaya kuis terbaik masing-masing peserta.
 - **Fix MySurveyPage Enum Error**: Memperbaiki error `Call to undefined method App\Enums\SurveyMode::getLabel()` pada `my-survey-page.blade.php` dengan memanggil nama fungsi yang benar, yakni `label()`.
 
 ### 2026-06-09
