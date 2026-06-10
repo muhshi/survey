@@ -157,7 +157,7 @@ class QuizRecap extends Page implements HasTable
                             return $options;
                         })
                         ->default(function () {
-                            $defaults = [
+                            return [
                                 'nama_peserta',
                                 'email_peserta',
                                 'attempts_count',
@@ -165,11 +165,6 @@ class QuizRecap extends Page implements HasTable
                                 'status_lulus',
                                 'latest_submission',
                             ];
-
-                            $parsed = $this->record->getParsedSchema();
-                            $schemaFields = array_keys($parsed['fields'] ?? []);
-
-                            return array_values(array_unique(array_merge($defaults, $schemaFields)));
                         })
                         ->columns(3)
                         ->required(),
