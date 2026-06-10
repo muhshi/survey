@@ -143,6 +143,12 @@ class SurveyTable
                     ->icon('heroicon-o-eye')
                     ->color('info')
                     ->url(fn ($record) => SurveyResource::getUrl('submissions', ['record' => $record])),
+                Action::make('recapQuiz')
+                    ->label('Rekap Kuis')
+                    ->icon('heroicon-o-chart-bar')
+                    ->color('success')
+                    ->url(fn ($record) => SurveyResource::getUrl('recap', ['record' => $record]))
+                    ->visible(fn ($record) => $record->is_quiz),
                 EditAction::make(),
                 ReplicateAction::make()
                     ->label('Duplikat')

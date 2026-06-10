@@ -25,6 +25,10 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 
 ## Changelog
 
+### 2026-06-10
+- **Quiz Recap in Admin**: Menambahkan fitur halaman Rekap Kuis di panel admin (terkait langsung ke survei yang bertipe kuis) untuk melihat daftar peserta beserta skor kuis terbaik mereka, total percobaan, dan status kelulusan (Lulus/Belum Lulus) berdasarkan nilai minimum (`passing_score`). Dilengkapi juga dengan filter status kelulusan.
+- **Fix MySurveyPage Enum Error**: Memperbaiki error `Call to undefined method App\Enums\SurveyMode::getLabel()` pada `my-survey-page.blade.php` dengan memanggil nama fungsi yang benar, yakni `label()`.
+
 ### 2026-06-09
 - **Alokasi Petugas Form**: Menambahkan skema formulir "Alokasi Petugas SE2026" berformat SurveyJS.
 - **Hierarchical Region API**: Menambahkan dukungan API hierarkis bertingkat (Kecamatan -> Desa/Kelurahan -> SLS -> Sub SLS) di `RegionController` untuk memfasilitasi filter *dependent dropdown* (pilihan wilayah berjenjang) pada form SurveyJS.

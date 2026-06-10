@@ -6,6 +6,7 @@ use App\Filament\Resources\Survey\Pages\CreateSurvey;
 use App\Filament\Resources\Survey\Pages\DesignSurvey;
 use App\Filament\Resources\Survey\Pages\EditSurvey;
 use App\Filament\Resources\Survey\Pages\ListSurvey;
+use App\Filament\Resources\Survey\Pages\QuizRecap;
 use App\Filament\Resources\Survey\Pages\ViewSubmissions;
 use App\Filament\Resources\Survey\Schemas\SurveyForm;
 use App\Filament\Resources\Survey\SurveyResource\RelationManagers\GroupsRelationManager;
@@ -54,6 +55,7 @@ class SurveyResource extends Resource
             'edit' => EditSurvey::route('/{record}/edit'),
             'design' => DesignSurvey::route('/{record}/design'),
             'submissions' => ViewSubmissions::route('/{record}/submissions'),
+            'recap' => QuizRecap::route('/{record}/recap'),
         ];
     }
 }

@@ -165,7 +165,7 @@
                                 @if($isQuiz && $item['allow_retake'])
                                     Maks. {{ $item['max_retakes'] }}x percobaan
                                 @elseif($survey)
-                                    Mode: {{ $survey->mode?->getLabel() ?? '-' }}
+                                    Mode: {{ $survey->mode?->label() ?? '-' }}
                                 @endif
                             </span>
                             <div style="display: flex; align-items: center; gap: 8px;">
