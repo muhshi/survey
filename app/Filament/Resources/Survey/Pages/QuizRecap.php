@@ -44,7 +44,7 @@ class QuizRecap extends Page implements HasTable
         return $table
             ->query(
                 User::query()
-                    ->whereHas('jawabanRespondens', function (Builder $query) {
+                    ->whereHas('jawaban_responden', function (Builder $query) {
                         $query->where('survey_id', $this->record->id);
                     })
                     ->addSelect([
@@ -106,12 +106,12 @@ class QuizRecap extends Page implements HasTable
                         }
 
                         if ($data['status'] === 'passed') {
-                            $query->whereHas('jawabanRespondens', function (Builder $q) use ($passingScore) {
+                            $query->whereHas('jawaban_responden', function (Builder $q) use ($passingScore) {
                                 $q->where('survey_id', $this->record->id)
                                     ->where('score', '>=', $passingScore);
                             });
                         } elseif ($data['status'] === 'failed') {
-                            $query->whereDoesntHave('jawabanRespondens', function (Builder $q) use ($passingScore) {
+                            $query->whereDoesntHave('jawaban_responden', function (Builder $q) use ($passingScore) {
                                 $q->where('survey_id', $this->record->id)
                                     ->where('score', '>=', $passingScore);
                             });
