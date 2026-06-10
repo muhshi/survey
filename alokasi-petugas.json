@@ -1,0 +1,78 @@
+{
+ "title": "Alokasi Wilayah Tugas Petugas SE2026",
+ "description": "Silakan tambah wilayah tugas Anda (maksimal 2 Sub SLS). Anda bisa memilih Sub SLS dari SLS/Desa yang berbeda dengan menekan tombol 'Tambah Alokasi Wilayah Lain'.",
+ "logoPosition": "right",
+ "pages": [
+  {
+   "name": "page_alokasi",
+   "elements": [
+    {
+     "type": "paneldynamic",
+     "name": "alokasi_wilayah",
+     "title": "Daftar Alokasi Wilayah",
+     "isRequired": true,
+     "maxPanelCount": 2,
+     "minPanelCount": 1,
+     "panelAddText": "Tambah Alokasi Wilayah Lain",
+     "panelRemoveText": "Hapus Alokasi Ini",
+     "templateElements": [
+      {
+       "type": "dropdown",
+       "name": "kecamatan",
+       "title": "Kecamatan",
+       "isRequired": true,
+       "placeholder": "Pilih Kecamatan...",
+       "choicesByUrl": {
+        "url": "/api/regions/kecamatan",
+        "valueName": "value",
+        "titleName": "text"
+       }
+      },
+      {
+       "type": "dropdown",
+       "name": "desa",
+       "title": "Desa/Kelurahan",
+       "visibleIf": "{panel.kecamatan} notempty",
+       "isRequired": true,
+       "placeholder": "Pilih Desa/Kelurahan...",
+       "choicesByUrl": {
+        "url": "/api/regions/desa?kecamatan={panel.kecamatan}",
+        "valueName": "value",
+        "titleName": "text"
+       }
+      },
+      {
+       "type": "dropdown",
+       "name": "sls",
+       "title": "Satuan Lingkungan Setempat (SLS)",
+       "visibleIf": "{panel.desa} notempty",
+       "isRequired": true,
+       "placeholder": "Pilih SLS...",
+       "choicesByUrl": {
+        "url": "/api/regions/sls?desa={panel.desa}",
+        "valueName": "value",
+        "titleName": "text"
+       }
+      },
+      {
+       "type": "tagbox",
+       "name": "sub_sls",
+       "title": "Pilih Sub SLS",
+       "visibleIf": "{panel.sls} notempty",
+       "isRequired": true,
+       "placeholder": "Pilih Sub SLS...",
+       "maxSelectedChoices": 2,
+       "choicesByUrl": {
+        "url": "/api/regions/subsls?desa={panel.desa}&sls={panel.sls}",
+        "valueName": "value",
+        "titleName": "text"
+       }
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "showQuestionNumbers": "off",
+ "completeText": "Simpan Alokasi"
+}
