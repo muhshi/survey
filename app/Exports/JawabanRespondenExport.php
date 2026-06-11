@@ -144,21 +144,29 @@ class JawabanRespondenExport implements FromQuery, WithHeadings, WithMapping, Wi
                         // Map each item in the array if there are choices defined
                         if (isset($choicesMap[$field])) {
                             $mappedArray = array_map(function ($v) use ($choicesMap, $field) {
+                                if (is_array($v) || is_object($v)) return json_encode($v);
                                 $mapped = $choicesMap[$field][$v] ?? $v;
 
                                 return is_string($mapped) ? html_entity_decode($mapped, ENT_QUOTES | ENT_HTML5, 'UTF-8') : $mapped;
                             }, $val);
                             $row[] = implode(', ', $mappedArray);
                         } else {
-                            $row[] = implode(', ', array_map(fn($v) => is_string($v) ? html_entity_decode($v, ENT_QUOTES | ENT_HTML5, 'UTF-8') : $v, $val));
+                            $row[] = implode(', ', array_map(function ($v) {
+                                if (is_array($v) || is_object($v)) return json_encode($v);
+                                return is_string($v) ? html_entity_decode($v, ENT_QUOTES | ENT_HTML5, 'UTF-8') : $v;
+                            }, $val));
                         }
                     } else {
                         // Map the single value if choice exists
-                        if (isset($choicesMap[$field][$val])) {
+                        if (is_scalar($val) && isset($choicesMap[$field][$val])) {
                             $mapped = $choicesMap[$field][$val];
                             $row[] = is_string($mapped) ? html_entity_decode($mapped, ENT_QUOTES | ENT_HTML5, 'UTF-8') : $mapped;
                         } else {
-                            $row[] = is_string($val) ? html_entity_decode($val, ENT_QUOTES | ENT_HTML5, 'UTF-8') : $val;
+                            if (is_array($val) || is_object($val)) {
+                                $row[] = json_encode($val);
+                            } else {
+                                $row[] = is_string($val) ? html_entity_decode($val, ENT_QUOTES | ENT_HTML5, 'UTF-8') : $val;
+                            }
                         }
                     }
                     break;
