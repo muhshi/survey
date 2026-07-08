@@ -3,6 +3,11 @@
 Semua perubahan penting dalam proyek ini akan dicatat di file ini.
 Format ini didasarkan pada [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [Unreleased]
+
+### Changed
+- **Improve User Import**: Memperbarui fitur "Import Calon Petugas" di halaman ManageUsers Filament menjadi "Import / Tambah User". Menambahkan dukungan import menggunakan file Excel, input manual secara *multiple* (banyak sekaligus), serta kemampuan menentukan Role untuk semua user yang diimpor secara otomatis dengan password default `Mitra3321`.
+
 ## [1.4.0] - 2026-06-05
 
 ### Added
