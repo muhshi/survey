@@ -1,6 +1,6 @@
 {
   "title": "Pre-Test Pelatihan Pengolahan Pemutakhiran Kerangka Geospasial dan Muatan Wilkerstat SE2026",
-  "description": "Pre-test ini bertujuan untuk mengukur pemahaman awal peserta terkait konsep, aturan topologi spasial, editing-coding dokumen, dan proses pengolahan data kerangka geospasial serta muatan Wilkerstat SE2026.",
+  "description": "Pre-test ini bertujuan untuk mengukur pemahaman awal peserta terkait konsep, organisasi, metodologi, dan persiapan proses pengolahan kerangka geospasial dan muatan Wilkerstat SE2026.",
   "logoPosition": "right",
   "completedHtml": "<div style=\"text-align:center; padding: 20px;\"><h3 style=\"color: #1e1b4b; font-weight: bold;\">Terima kasih telah menyelesaikan Pre-Test!</h3><p style=\"color: #64748b;\">Jawaban Anda telah berhasil disimpan dan dinilai oleh sistem.</p></div>",
   "progressBarType": "questions",
@@ -39,281 +39,71 @@
         {
           "name": "soal_1",
           "type": "radiogroup",
-          "title": "Apa tujuan utama dari kegiatan Pemutakhiran Kerangka Geospasial dan Muatan Wilkerstat SE2026?",
+          "title": "Salah satu output Kegiatan Penetapan Kerangka Geospasial dan Muatan Wilkerstat tahun 2026 ini adalah ...",
           "choices": [
-            { "value": "a", "text": "Mengubah batas seluruh wilayah administrasi desa/kelurahan secara sepihak" },
-            { "value": "b", "text": "Memperbarui batas SLS, muatan usaha, dan kerangka geospasial sebagai dasar pembagian beban kerja pendataan lapangan SE2026" },
-            { "value": "c", "text": "Melakukan penarikan pajak daerah dan retribusi izin usaha" },
-            { "value": "d", "text": "Menggantikan seluruh data kependudukan hasil Sensus Penduduk" }
+            { "value": "a", "text": "Master dan muatan wilkerstat 2026 Semester 1" },
+            { "value": "b", "text": "Peta Wilkerstat Blok Sensus" },
+            { "value": "c", "text": "Geotagging rumah" },
+            { "value": "d", "text": "Prelist keluarga pemilik usaha" }
           ],
           "isRequired": true,
-          "score": 5,
-          "correctAnswer": "b"
+          "score": 20,
+          "correctAnswer": "a"
         },
         {
           "name": "soal_2",
           "type": "radiogroup",
-          "title": "Definisi Satuan Lingkungan Setempat (SLS) yang paling tepat dalam konsep Wilkerstat BPS adalah:",
+          "title": "Pelaksana Rekonsiliasi Batas kabupaten/kota adalah ...",
           "choices": [
-            { "value": "a", "text": "Satuan wilayah terkecil di bawah desa/kelurahan yang memiliki batas jelas dan diakui secara de facto/de jure (seperti RT, RW, Dusun, atau Lingkungan)" },
-            { "value": "b", "text": "Wilayah kerja petugas sensus yang luasnya dibatasi maksimal 10 hektar" },
-            { "value": "c", "text": "Wilayah administrasi setingkat kecamatan yang tidak memiliki kantor desa" },
-            { "value": "d", "text": "Daerah hamparan sawah dan perairan yang tidak berpenduduk" }
+            { "value": "a", "text": "Tim Wilkerstat BPS Provinsi" },
+            { "value": "b", "text": "Tim Wilkerstat BPS Kabupaten/kota" },
+            { "value": "c", "text": "Petugas Pengawas" },
+            { "value": "d", "text": "Petugas Pengolah Peta" }
           ],
           "isRequired": true,
-          "score": 5,
+          "score": 20,
           "correctAnswer": "a"
         },
         {
           "name": "soal_3",
           "type": "radiogroup",
-          "title": "Suatu SLS perlu dimekarkan atau dibentuk Sub-SLS apabila:",
+          "title": "Kegiatan yang tidak dilakukan di BPS Kabupaten/Kota adalah ...",
           "choices": [
-            { "value": "a", "text": "Jumlah muatan usaha/bangunan atau keluarga melebihi standar beban kerja seorang petugas dan memiliki batas fisik pemisah yang jelas" },
-            { "value": "b", "text": "Nama ketua RT diganti dengan pengurus baru" },
-            { "value": "c", "text": "Wilayah tersebut sering mengalami pergantian cuaca ekstrem" },
-            { "value": "d", "text": "Terdapat minimal 1 warga yang menolak didata" }
+            { "value": "a", "text": "rekonsiliasi batas kabupaten/kota" },
+            { "value": "b", "text": "pengolahan peta" },
+            { "value": "c", "text": "pengolahan master" },
+            { "value": "d", "text": "pengolahan geotagging" }
           ],
           "isRequired": true,
-          "score": 5,
+          "score": 20,
           "correctAnswer": "a"
         },
         {
           "name": "soal_4",
           "type": "radiogroup",
-          "title": "Ciri utama kawasan yang dikategorikan sebagai 'Konsentrasi Ekonomi' pada pemutakhiran SE2026 adalah:",
+          "title": "Aplikasi atau tools yang digunakan dalam proses pengolahan titik bangunan (geotagging) SE2026 adalah ...",
           "choices": [
-            { "value": "a", "text": "Kawasan hutan lindung yang dikelola pemerintah" },
-            { "value": "b", "text": "Kawasan dengan aglomerasi/kepadatan aktivitas usaha non-pertanian yang tinggi, seperti pasar, pusat perbelanjaan, sentra industri, atau pertokoan" },
-            { "value": "c", "text": "Kompleks perumahan yang seluruh penghuninya tidak bekerja" },
-            { "value": "d", "text": "Lahan persawahan irigasi teknis" }
+            { "value": "a", "text": "QGIS" },
+            { "value": "b", "text": "FRS-MFDOnline" },
+            { "value": "c", "text": "FASIH" },
+            { "value": "d", "text": "SPSS" }
           ],
           "isRequired": true,
-          "score": 5,
-          "correctAnswer": "b"
+          "score": 20,
+          "correctAnswer": "a"
         },
         {
           "name": "soal_5",
           "type": "radiogroup",
-          "title": "Urutan alur kerja pengolahan data geospasial dan muatan Wilkerstat yang benar adalah:",
+          "title": "Tahapan umum pengolahan master wilkerstat tingkat SLS/sub-SLS meliputi kegiatan berikut, kecuali ...",
           "choices": [
-            { "value": "a", "text": "Digitasi peta -> Penerimaan dokumen -> Pengarsipan berkas -> Editing coding" },
-            { "value": "b", "text": "Penerimaan dokumen & batching -> Editing-coding dokumen -> Digitasi/editing spasial & validasi topologi -> Penggabungan data & sinkronisasi server" },
-            { "value": "c", "text": "Sinkronisasi server -> Validasi topologi -> Editing dokumen -> Pembuatan peta analog" },
-            { "value": "d", "text": "Pencetakan peta -> Penutupan kuesioner -> Digitasi -> Pembagian honor" }
+            { "value": "a", "text": "Penghapusan seluruh kode wilayah lama" },
+            { "value": "b", "text": "Penyiapan daftar PSLS" },
+            { "value": "c", "text": "Pengajuan perubahan SLS" },
+            { "value": "d", "text": "Approval perubahan SLS" }
           ],
           "isRequired": true,
-          "score": 5,
-          "correctAnswer": "b"
-        },
-        {
-          "name": "soal_6",
-          "type": "radiogroup",
-          "title": "Hal utama yang harus diperiksa petugas pengolahan pada tahap editing-coding dokumen hasil lapangan adalah:",
-          "choices": [
-            { "value": "a", "text": "Merek tinta pulpen yang dipakai oleh petugas lapangan" },
-            { "value": "b", "text": "Konsistensi kode identitas wilayah (Provinsi, Kab/Kota, Kecamatan, Desa/Kelurahan, Kode SLS/Sub-SLS) antara daftar muatan dan peta analog" },
-            { "value": "c", "text": "Jumlah foto selfie petugas di lokasi batas wilayah" },
-            { "value": "d", "text": "Berat fisik berkas kuesioner dalam gram" }
-          ],
-          "isRequired": true,
-          "score": 5,
-          "correctAnswer": "b"
-        },
-        {
-          "name": "soal_7",
-          "type": "radiogroup",
-          "title": "Prinsip utama yang WAJIB dipenuhi dalam digitasi poligon batas SLS dalam satu desa adalah:",
-          "choices": [
-            { "value": "a", "text": "Poligon SLS boleh saling bertumpuk (overlap) hingga 25% wilayah" },
-            { "value": "b", "text": "Seluruh wilayah desa/kelurahan harus tertutup poligon SLS/Non-SLS tanpa ada celah (gap) dan tanpa tumpang tindih (overlap)" },
-            { "value": "c", "text": "Garis batas SLS harus selalu berbentuk garis lurus dan kotak sempurna" },
-            { "value": "d", "text": "Poligon SLS tidak boleh berbatasan langsung dengan jalan atau sungai" }
-          ],
-          "isRequired": true,
-          "score": 5,
-          "correctAnswer": "b"
-        },
-        {
-          "name": "soal_8",
-          "type": "radiogroup",
-          "title": "Apabila dalam validasi topologi ditemukan 'Polygon Gap' (celah kosong) di antara batas SLS dalam satu desa, tindakan pengolahan yang benar adalah:",
-          "choices": [
-            { "value": "a", "text": "Membiarkan celah tersebut sebagai wilayah tanpa kepemilikan" },
-            { "value": "b", "text": "Mengidentifikasi kepemilikan wilayah celah berdasarkan dokumen lapangan/peta WA dan menyatukannya (snap/merge) ke poligon SLS yang berhak" },
-            { "value": "c", "text": "Menghapus seluruh poligon desa tersebut" },
-            { "value": "d", "text": "Membuat desa baru pada area celah tersebut" }
-          ],
-          "isRequired": true,
-          "score": 5,
-          "correctAnswer": "b"
-        },
-        {
-          "name": "soal_9",
-          "type": "radiogroup",
-          "title": "Dampak buruk jika terjadi kasus 'Must Not Overlap' (tumpang tindih batas poligon SLS) yang tidak diperbaiki pada data Wilkerstat adalah:",
-          "choices": [
-            { "value": "a", "text": "Terjadinya potensi penghitungan ganda (double counting) muatan bangunan/usaha pada saat pendataan SE2026" },
-            { "value": "b", "text": "Komputer pengolahan otomatis terinstal ulang" },
-            { "value": "c", "text": "Format file peta berubah menjadi file video" },
-            { "value": "d", "text": "Warna poligon peta tidak bisa diubah" }
-          ],
-          "isRequired": true,
-          "score": 5,
-          "correctAnswer": "a"
-        },
-        {
-          "name": "soal_10",
-          "type": "radiogroup",
-          "title": "Jika di lapangan dilaporkan 1 SLS lama resmi dimekarkan menjadi 2 SLS baru, langkah yang dilakukan petugas pengolahan pada layer batas adalah:",
-          "choices": [
-            { "value": "a", "text": "Membiarkan poligon lama dan mencatat SLS baru hanya di catatan kaki" },
-            { "value": "b", "text": "Memotong/membagi poligon SLS lama menjadi 2 poligon sesuai batas pemekaran, mengisi atribut kode/nama SLS baru, dan memetakan muatannya secara tepat" },
-            { "value": "c", "text": "Menggabungkan kedua SLS ke desa sebelah" },
-            { "value": "d", "text": "Menghapus data SLS lama dan tidak menggambar SLS baru" }
-          ],
-          "isRequired": true,
-          "score": 5,
-          "correctAnswer": "b"
-        },
-        {
-          "name": "soal_11",
-          "type": "radiogroup",
-          "title": "Apabila dua SLS digabungkan menjadi satu SLS tunggal di lapangan, perlakuan spasial pada layer peta adalah:",
-          "choices": [
-            { "value": "a", "text": "Melakukan merge/dissolve kedua poligon menjadi satu poligon tunggal dengan kode SLS resmi yang disepakati" },
-            { "value": "b", "text": "Menumpuk kedua poligon satu sama lain tanpa menghilangkan garis tengahnya" },
-            { "value": "c", "text": "Mengubah tipe geometri poligon menjadi titik (point)" },
-            { "value": "d", "text": "Membuat garis silang merah di tengah kedua poligon" }
-          ],
-          "isRequired": true,
-          "score": 5,
-          "correctAnswer": "a"
-        },
-        {
-          "name": "soal_12",
-          "type": "radiogroup",
-          "title": "Saat memvalidasi titik geotagging muatan bangunan/usaha, kondisi manakah yang menunjukkan data TIDAK valid secara spasial?",
-          "choices": [
-            { "value": "a", "text": "Titik bangunan berada di daratan dan masuk di dalam poligon SLS yang bersangkutan" },
-            { "value": "b", "text": "Titik koordinat bangunan berada di luar batas poligon SLS/Desa (out of boundary) atau di tengah perairan lepas yang tidak wajar" },
-            { "value": "c", "text": "Titik bangunan berada dekat dengan jalan lingkungan" },
-            { "value": "d", "text": "Titik koordinat memiliki akurasi GPS yang baik" }
-          ],
-          "isRequired": true,
-          "score": 5,
-          "correctAnswer": "b"
-        },
-        {
-          "name": "soal_13",
-          "type": "radiogroup",
-          "title": "Dalam digitasi batas SLS yang mengikuti fitur alami/buatan (seperti sungai atau jalan), kaidah yang benar adalah:",
-          "choices": [
-            { "value": "a", "text": "Menggambar garis lurus memotong sungai dan jalan tanpa mengikuti kelengkungannya" },
-            { "value": "b", "text": "Mengaktifkan snapping dan mengikuti centerline atau batas jalan/sungai sesuai kesepakatan batas pada peta kerja lapangan" },
-            { "value": "c", "text": "Batas harus berjarak minimal 500 meter dari tepi jalan" },
-            { "value": "d", "text": "Batas digambar secara acak tanpa memperhatikan citra satelit" }
-          ],
-          "isRequired": true,
-          "score": 5,
-          "correctAnswer": "b"
-        },
-        {
-          "name": "soal_14",
-          "type": "radiogroup",
-          "title": "Manakah syarat utama yang harus dipenuhi dalam penentuan wilayah Sub-SLS?",
-          "choices": [
-            { "value": "a", "text": "Wilayah Sub-SLS harus kompak (compact), berada dalam satu hamparan kontinu (tidak terpisah/enclave), serta memiliki batas fisik yang jelas" },
-            { "value": "b", "text": "Sub-SLS boleh terdiri dari pulau-pulau kecil yang terpencar di desa lain" },
-            { "value": "c", "text": "Wilayah Sub-SLS harus mencakup minimal 3 kecamatan" },
-            { "value": "d", "text": "Pembagian Sub-SLS didasarkan pada urutan tanggal lahir ketua RT" }
-          ],
-          "isRequired": true,
-          "score": 5,
-          "correctAnswer": "a"
-        },
-        {
-          "name": "soal_15",
-          "type": "radiogroup",
-          "title": "Jika sebuah ruko 3 lantai memuat 3 unit usaha aktif yang berbeda (lantai 1 apotek, lantai 2 kantor notaris, lantai 3 salon), perlakuan data yang benar adalah:",
-          "choices": [
-            { "value": "a", "text": "Hanya mendata 1 usaha saja dan mengabaikan 2 usaha lainnya" },
-            { "value": "b", "text": "Titik lokasi bangunan merepresentasikan posisi fisik ruko, dan ketiga unit usaha dicatat serta diasosiasikan pada atribut muatan bangunan tersebut" },
-            { "value": "c", "text": "Membuat 3 titik bangunan di lokasi yang berjauhan" },
-            { "value": "d", "text": "Bangunan ruko tidak perlu dicatat karena bertingkat" }
-          ],
-          "isRequired": true,
-          "score": 5,
-          "correctAnswer": "b"
-        },
-        {
-          "name": "soal_16",
-          "type": "radiogroup",
-          "title": "Dokumen SE2026-PSLS dalam rangkaian pemutakhiran kerangka geospasial berfungsi sebagai:",
-          "choices": [
-            { "value": "a", "text": "Daftar rekapitulasi pengenalan wilayah, keberadaan dan perubahan batas SLS, serta ringkasan estimasi muatan tingkat desa/kelurahan" },
-            { "value": "b", "text": "Surat izin keramaian untuk kegiatan pendataan" },
-            { "value": "c", "text": "Formulir pemesanan seragam rompi petugas" },
-            { "value": "d", "text": "Lembar bukti pembayaran sewa kendaraan operasional" }
-          ],
-          "isRequired": true,
-          "score": 5,
-          "correctAnswer": "a"
-        },
-        {
-          "name": "soal_17",
-          "type": "radiogroup",
-          "title": "Jika ditemukan ketidaksesuaian antara jumlah muatan pada dokumen kuesioner dengan sebaran titik di peta atau batas yang digambar meragukan, tindakan petugas pengolahan adalah:",
-          "choices": [
-            { "value": "a", "text": "Mengubah angka secara mandiri berdasarkan perkiraan pribadi" },
-            { "value": "b", "text": "Melakukan konfirmasi dan klarifikasi kepada PML (Pengawas Lapangan) atau Koseka terkait untuk memastikan kondisi sebenarnya di lapangan" },
-            { "value": "c", "text": "Mengabaikan perbedaan tersebut dan langsung melakukan approval" },
-            { "value": "d", "text": "Menghapus kuesioner yang bermasalah" }
-          ],
-          "isRequired": true,
-          "score": 5,
-          "correctAnswer": "b"
-        },
-        {
-          "name": "soal_18",
-          "type": "radiogroup",
-          "title": "Fungsi utama mengaktifkan fitur 'Snapping' saat melakukan digitasi dan perbaikan simpul (vertex) batas SLS adalah:",
-          "choices": [
-            { "value": "a", "text": "Menghubungkan titik/garis batas dengan simpul tetangga secara presisi otomatis untuk menghindari terbentuknya celah (gaps) dan tumpang tindih (overlaps)" },
-            { "value": "b", "text": "Mempercepat koneksi internet saat mengunggah data" },
-            { "value": "c", "text": "Mengubah warna peta menjadi hitam putih" },
-            { "value": "d", "text": "Menghapus atribut tabel wilayah secara otomatis" }
-          ],
-          "isRequired": true,
-          "score": 5,
-          "correctAnswer": "a"
-        },
-        {
-          "name": "soal_19",
-          "type": "radiogroup",
-          "title": "Kapan suatu SLS dapat ditetapkan berstatus 'Hilang / Tidak Aktif' dalam pemutakhiran Wilkerstat SE2026?",
-          "choices": [
-            { "value": "a", "text": "Ketika sebagian warga sedang bepergian mudik" },
-            { "value": "b", "text": "Ketika seluruh wilayah SLS telah beralih fungsi secara permanen (seperti terendam waduk, terdampak bencana dan direlokasi, atau menjadi area industri kosong tanpa penduduk dan usaha)" },
-            { "value": "c", "text": "Ketika kantor balai desa tutup pada hari libur" },
-            { "value": "d", "text": "Ketika nama jalan utama di SLS tersebut diganti oleh pemerintah daerah" }
-          ],
-          "isRequired": true,
-          "score": 5,
-          "correctAnswer": "b"
-        },
-        {
-          "name": "soal_20",
-          "type": "radiogroup",
-          "title": "Kondisi yang menandakan bahwa pengolahan wilayah kerja statistik suatu desa/kecamatan telah SELESAI dan siap disahkan adalah:",
-          "choices": [
-            { "value": "a", "text": "Seluruh SLS terdigitasi lengkap, bebas error topologi, konsistensi muatan dokumen dan spasial terverifikasi, serta data berhasil disinkronisasi ke server" },
-            { "value": "b", "text": "Baru 50% berkas selesai diedit asalkan sudah mendekati tenggat waktu" },
-            { "value": "c", "text": "Masih ada overlap poligon tetapi peta sudah dicetak" },
-            { "value": "d", "text": "Seluruh data di komputer pengolahan telah dipindahkan ke flashdisk tanpa dicek" }
-          ],
-          "isRequired": true,
-          "score": 5,
+          "score": 20,
           "correctAnswer": "a"
         }
       ]
