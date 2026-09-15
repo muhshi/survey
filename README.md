@@ -25,6 +25,10 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 
 ## Changelog
 
+### 2026-09-15
+- **Soal Pre-Test & Post-Test Pelatihan Pengolahan Wilkerstat SE2026**: Menambahkan skema survei kuis terpisah untuk Pre-Test (`pretest-pengolahan-wilkerstat-se2026.json`) dan Post-Test (`posttest-pengolahan-wilkerstat-se2026.json`) Pelatihan Pengolahan Pemutakhiran Kerangka Geospasial dan Muatan Wilkerstat SE2026 dengan 20 butir soal pilihan ganda standar BPS lengkap dengan kunci jawaban, bobot nilai, serta integrasi identitas 17 petugas pengolahan.
+- **Seeder WilkerstatQuizSeeder**: Menambahkan database seeder `WilkerstatQuizSeeder` untuk mendaftarkan kategori "Pelatihan SE2026", grup "Petugas Pengolahan Wilkerstat SE2026", 17 akun petugas pengolahan, serta menghubungkan 2 survei kuis (Pre-Test dan Post-Test) ke dalam sistem.
+
 ### 2026-06-10
 - **Quiz Recap in Admin**: Menambahkan fitur halaman Rekap Kuis di panel admin (terkait langsung ke survei yang bertipe kuis) untuk melihat daftar peserta beserta skor kuis terbaik mereka, total percobaan, dan status kelulusan (Lulus/Belum Lulus) berdasarkan nilai minimum (`passing_score`). Dilengkapi juga dengan filter status kelulusan dan fitur **Export Excel** yang secara cerdas mendeteksi *field* kuesioner dinamis (seperti gelombang, tc hotel, dll) dari upaya kuis terbaik masing-masing peserta.
 - **Fix MySurveyPage Enum Error**: Memperbaiki error `Call to undefined method App\Enums\SurveyMode::getLabel()` pada `my-survey-page.blade.php` dengan memanggil nama fungsi yang benar, yakni `label()`.
