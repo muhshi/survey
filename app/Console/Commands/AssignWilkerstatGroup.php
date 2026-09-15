@@ -45,7 +45,7 @@ class AssignWilkerstatGroup extends Command
         // Daftar 17 Petugas Pengolahan yang akan dicari di database
         $candidates = [
             ['search' => 'Abdul Rosid', 'label' => 'Abdul Rosid Wedung'],
-            ['search' => 'Adek Maya', 'label' => 'Adek Maya'],
+            ['search' => 'Mayashita', 'label' => 'Adek Maya (Adhek Pramudya Mayashita)'],
             ['search' => 'Mariska', 'label' => 'Mariska dewantari'],
             ['search' => 'Bagas', 'label' => 'Bagas okfi'],
             ['search' => 'Lukman', 'label' => 'Lukman'],
@@ -56,8 +56,8 @@ class AssignWilkerstatGroup extends Command
             ['search' => 'Nurul Huda', 'label' => 'Nurul Huda karg tengah'],
             ['search' => 'Hanun Alya', 'label' => 'Hanun Alya Karangawen'],
             ['search' => 'Al Hikmah', 'label' => 'Al Hikmah Kebonagung'],
-            ['search' => 'Dzikrullah', 'label' => 'Dzikrullah Bonang'],
-            ['search' => 'Ita Rahmahwati', 'label' => 'Ita Rahmahwati Bonang'],
+            ['search' => 'DZIKRULLO', 'label' => 'Dzikrullah Bonang (DZIKRULLOH)'],
+            ['search' => 'ITA RAHMAH', 'label' => 'Ita Rahmahwati Bonang (ITA RAHMAH WATI)'],
             ['search' => 'Roikhatul', 'label' => 'Roikhatul Miskiyah'],
             ['search' => 'indah megantara', 'label' => 'indah megantara'],
             ['search' => 'Ahmad Dany', 'label' => 'Ahmad Dany Naufal Al Faruq'],
