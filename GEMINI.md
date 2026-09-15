@@ -158,3 +158,19 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 - Do NOT delete tests without approval.
 
 </laravel-boost-guidelines>
+
+<survey-quiz-rules>
+=== survey-quiz rules ===
+
+# Aturan Pembuatan Kuis & Survei
+
+1. **Sumber Soal (Dilarang Mengarang)**:
+   - Selalu minta atau gunakan materi/bank soal resmi dari pengguna (tabel spreadsheet, gambar, atau dokumen). Jangan membuat butir soal fiktif/ngawang jika materi ujian sudah memiliki kisi-kisi atau tabel baku.
+2. **Identitas Otomatis**:
+   - Dilarang membuat dropdown nama manual di form kuis. Gunakan field `nama_lengkap` dan `email_peserta` bertipe `text` dengan `readOnly: true` pada `page_identitas`. Sistem runner `show.blade.php` otomatis mengisinya dari `Auth::user()`.
+3. **Pengelolaan Peserta**:
+   - Kelola pembagian peserta melalui fitur Kelompok Survei (`Group`). Tautkan akun user ke kelompok dan kelompok ke survei kuis (`$survey->groups()->syncWithoutDetaching(...)`).
+4. **Format Skema Kuis**:
+   - Model Survey: `is_quiz: true`, `mode: single`.
+   - Butir soal menggunakan type `radiogroup`, pilihan value `a`, `b`, `c`, `d`, properti `score` (total skor kumulatif = 100), dan `correctAnswer`. Frontend runner otomatis mengacak urutan pertanyaan dan pilihan jawaban.
+</survey-quiz-rules>

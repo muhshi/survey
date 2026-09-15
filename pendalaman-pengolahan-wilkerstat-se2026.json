@@ -1,0 +1,322 @@
+{
+  "title": "Kuis Pendalaman Pelatihan Pengolahan Pemutakhiran Kerangka Geospasial dan Muatan Wilkerstat SE2026",
+  "description": "Kuis pendalaman materi pengolahan peta, master wilkerstat, dan titik bangunan SE2026.",
+  "logoPosition": "right",
+  "completedHtml": "<div style=\"text-align:center; padding: 20px;\"><h3 style=\"color: #1e1b4b; font-weight: bold;\">Terima kasih telah menyelesaikan Kuis Pendalaman!</h3><p style=\"color: #64748b;\">Hasil evaluasi Anda telah berhasil disimpan dan dinilai oleh sistem.</p></div>",
+  "progressBarType": "questions",
+  "showProgressBar": "top",
+  "goNextPageAutomatic": false,
+  "questionsOnPageMode": "standard",
+  "showQuestionNumbers": "on",
+  "pages": [
+    {
+      "name": "page_identitas",
+      "title": "Identitas Peserta",
+      "description": "Identitas peserta otomatis dimuat dari akun login sistem.",
+      "elements": [
+        {
+          "type": "text",
+          "name": "nama_lengkap",
+          "title": "Nama Lengkap",
+          "readOnly": true,
+          "isRequired": true
+        },
+        {
+          "type": "text",
+          "name": "email_peserta",
+          "title": "Email Peserta",
+          "readOnly": true,
+          "inputType": "email",
+          "isRequired": true
+        }
+      ]
+    },
+    {
+      "name": "page_soal",
+      "title": "Lembar Soal Pendalaman",
+      "description": "Pilihlah salah satu jawaban yang paling tepat pada setiap butir soal.",
+      "elements": [
+        {
+          "name": "soal_1",
+          "type": "radiogroup",
+          "title": "Salah satu alasan utama dilaksanakannya kegiatan Penetapan Kerangka Geospasial dan Muatan Wilkerstat pada SE2026 adalah karena ...",
+          "choices": [
+            { "value": "a", "text": "perubahan batas dan muatan SLS dapat terjadi dalam waktu relatif singkat sehingga perlu pemutakhiran peta dan master wilkerstat" },
+            { "value": "b", "text": "seluruh desa definitif wajib dimekarkan menjadi desa persiapan" },
+            { "value": "c", "text": "wilayah kerja statistik tingkat kecamatan sudah tidak digunakan lagi" },
+            { "value": "d", "text": "seluruh wilayah non-SLS harus dihapus dari master wilkerstat" }
+          ],
+          "isRequired": true,
+          "score": 5,
+          "correctAnswer": "a"
+        },
+        {
+          "name": "soal_2",
+          "type": "radiogroup",
+          "title": "Berikut ini yang BUKAN merupakan tanggung jawab Tim Wilkerstat BPS Provinsi adalah ...",
+          "choices": [
+            { "value": "a", "text": "membuat layout peta desa hasil pengolahan" },
+            { "value": "b", "text": "melakukan monitoring dan approval pengolahan master melalui FRS-MFDOnline" },
+            { "value": "c", "text": "melakukan rekonsiliasi batas kabupaten/kota" },
+            { "value": "d", "text": "mengatur manajemen pengguna Geospatial System tingkat kabupaten/kota" }
+          ],
+          "isRequired": true,
+          "score": 5,
+          "correctAnswer": "a"
+        },
+        {
+          "name": "soal_3",
+          "type": "radiogroup",
+          "title": "Dalam proses pengolahan peta wilkerstat, perubahan batas SLS yang menyebabkan perubahan muatan wilayah harus ditindaklanjuti dengan ...",
+          "choices": [
+            { "value": "a", "text": "penghitungan kembali muatan pada batas SLS hasil perbaikan" },
+            { "value": "b", "text": "penghapusan seluruh titik geotagging lama" },
+            { "value": "c", "text": "pembentukan kecamatan baru" },
+            { "value": "d", "text": "pengubahan seluruh kode desa pada kecamatan terkait" }
+          ],
+          "isRequired": true,
+          "score": 5,
+          "correctAnswer": "a"
+        },
+        {
+          "name": "soal_4",
+          "type": "radiogroup",
+          "title": "Berikut ini merupakan Material atau Tools yang digunakan dalam pengolahan Peta kecuali",
+          "choices": [
+            { "value": "a", "text": "Template Layout WB" },
+            { "value": "b", "text": "Template Layout WS" },
+            { "value": "c", "text": "Plugin Cliper" },
+            { "value": "d", "text": "GS" }
+          ],
+          "isRequired": true,
+          "score": 5,
+          "correctAnswer": "a"
+        },
+        {
+          "name": "soal_5",
+          "type": "radiogroup",
+          "title": "Ketika melakukan georeferensi secara manual, untuk memanggil peta sls/sub-sls menggunakan menu...",
+          "choices": [
+            { "value": "a", "text": "Add Vector Layer" },
+            { "value": "b", "text": "Add Raster Layer" },
+            { "value": "c", "text": "Add Delimited Text Layer" },
+            { "value": "d", "text": "Add Mesh Layer" }
+          ],
+          "isRequired": true,
+          "score": 5,
+          "correctAnswer": "a"
+        },
+        {
+          "name": "soal_6",
+          "type": "radiogroup",
+          "title": "Jenis-jenis perubahan berikut yang ada pada level sub-SLS, kecuali ...",
+          "choices": [
+            { "value": "a", "text": "Perubahan nama/tingkatan sub-SLS" },
+            { "value": "b", "text": "Pemekaran sub-SLS" },
+            { "value": "c", "text": "Perubahan kode sub-SLS" },
+            { "value": "d", "text": "Penggabungan sub-SLS" }
+          ],
+          "isRequired": true,
+          "score": 5,
+          "correctAnswer": "a"
+        },
+        {
+          "name": "soal_7",
+          "type": "radiogroup",
+          "title": "Di Desa Maju Makmur, terdapat SLS bernama Dusun Pesanggrahan yang mengalami pemekaran wilayah. SLS tersebut mekar menjadi Dusun Perjuangan dan Dusun Pamijahan. Berikut pernyataan yang benar mengenai pengolahan master wilkerstat untuk kasus tersebut, kecuali ...",
+          "choices": [
+            { "value": "a", "text": "Salah satu kode SLS baru harus menggunakan kembali kode SLS lama yang sebelumnya sudah pernah digunakan agar nomor tetap berurutan" },
+            { "value": "b", "text": "Kode SLS baru menggunakan kode lanjutan dari kode SLS terakhir di Desa Maju Makmur" },
+            { "value": "c", "text": "Pada Daftar PSLS, kode perubahan wilayah untuk SLS induk dan SLS hasil pemekaran diisikan kode 1" },
+            { "value": "d", "text": "Informasi perubahan SLS perlu diajukan melalui menu Pemekaran SLS pada aplikasi FRS-MFDOnline" }
+          ],
+          "isRequired": true,
+          "score": 5,
+          "correctAnswer": "a"
+        },
+        {
+          "name": "soal_8",
+          "type": "radiogroup",
+          "title": "SLS Dusun Mekar Jaya memiliki 2 sub-SLS, yaitu sub-SLS 01 dan 02. Berdasarkan hasil lapangan SE2026, wilayah tersebut mengalami pemekaran menjadi tiga SLS baru: Dusun Mekar Jaya, Dusun Mekar Asri, dan Dusun Mekar Indah. Setelah dilakukan pemeriksaan peta WSS, diketahui sub-SLS 01 dominan masuk ke Dusun Mekar Jaya, sedangkan sub-SLS 02 terbagi ke dua wilayah baru lainnya. Tindakan yang paling tepat dilakukan dalam pengolahan master wilkerstat adalah ...",
+          "choices": [
+            { "value": "a", "text": "Melakukan pemekaran sub-SLS terlebih dahulu, kemudian mengalokasikan sub-SLS hasil pemekaran ke masing-masing SLS baru dalam satu pengajuan Pemekaran SLS." },
+            { "value": "b", "text": "Seluruh sub-SLS dipertahankan tanpa perubahan karena pemekaran hanya terjadi pada tingkat SLS." },
+            { "value": "c", "text": "Membuat pengajuan terpisah antara pemekaran SLS dan pemekaran sub-SLS agar proses lebih mudah dikendalikan." },
+            { "value": "d", "text": "Menghapus seluruh sub-SLS lama dan menggantinya dengan kode sub-SLS 00 pada semua SLS hasil pemekaran." }
+          ],
+          "isRequired": true,
+          "score": 5,
+          "correctAnswer": "a"
+        },
+        {
+          "name": "soal_9",
+          "type": "radiogroup",
+          "title": "Suatu titik bangunan berada di luar batas SLS/SubSLS saat ini. Saat kursor diarahkan ke titik, informasi menunjukkan bahwa titik tersebut seharusnya berada pada idsubsls lain. Langkah paling tepat sebelum menggeser titik adalah ...",
+          "choices": [
+            { "value": "a", "text": "Mengimpor Peta WS/WSS georeferensi sesuai idsubsls tujuan sebagai acuan posisi" },
+            { "value": "b", "text": "Mengubah flag_repair menjadi 0 agar titik berubah warna" },
+            { "value": "c", "text": "Menghapus titik dari layer karena berada di luar batas" },
+            { "value": "d", "text": "Mengekspor layer menjadi GeoJSON terlebih dahulu" }
+          ],
+          "isRequired": true,
+          "score": 5,
+          "correctAnswer": "a"
+        },
+        {
+          "name": "soal_10",
+          "type": "radiogroup",
+          "title": "Seorang petugas langsung menggeser titik tanpa menjalankan proses identifikasi terlebih dahulu. Risiko utama dari langkah tersebut adalah ...",
+          "choices": [
+            { "value": "a", "text": "Petugas tidak memiliki penanda awal titik mana yang berada di luar batas dan perlu diedit" },
+            { "value": "b", "text": "File project QGIS tidak dapat disimpan" },
+            { "value": "c", "text": "Semua atribut otomatis berubah menjadi kosong" },
+            { "value": "d", "text": "Peta WS/WSS tidak dapat ditampilkan di QGIS" }
+          ],
+          "isRequired": true,
+          "score": 5,
+          "correctAnswer": "a"
+        },
+        {
+          "name": "soal_11",
+          "type": "radiogroup",
+          "title": "Saat melakukan editing, petugas mengubah flag_repair dari 1 menjadi 0 secara manual setelah menggeser titik, tetapi tidak menjalankan model pengecekan ulang. Mengapa langkah ini belum cukup untuk menyatakan titik valid?",
+          "choices": [
+            { "value": "a", "text": "Karena perubahan manual atribut tidak menggantikan proses validasi spasial terhadap batas SLS/SubSLS" },
+            { "value": "b", "text": "Karena flag_repair tidak boleh diubah dalam kondisi apa pun" },
+            { "value": "c", "text": "Karena titik harus selalu tetap berwarna oranye sampai akhir" },
+            { "value": "d", "text": "Karena model pengecekan hanya digunakan sebelum editing" }
+          ],
+          "isRequired": true,
+          "score": 5,
+          "correctAnswer": "a"
+        },
+        {
+          "name": "soal_12",
+          "type": "radiogroup",
+          "title": "Tujuan identifikasi perubahan batas SLS adalah untuk",
+          "choices": [
+            { "value": "a", "text": "Menentukan wilayah yang perlu dilakukan editing" },
+            { "value": "b", "text": "Menghapus seluruh data lama" },
+            { "value": "c", "text": "Membuat layout peta otomatis" },
+            { "value": "d", "text": "Mengubah sistem koordinat peta" }
+          ],
+          "isRequired": true,
+          "score": 5,
+          "correctAnswer": "a"
+        },
+        {
+          "name": "soal_13",
+          "type": "radiogroup",
+          "title": "Tools QGIS yang digunakan untuk memotong poligon adalah",
+          "choices": [
+            { "value": "a", "text": "Split Features" },
+            { "value": "b", "text": "Merge Feature" },
+            { "value": "c", "text": "Fill Ring" },
+            { "value": "d", "text": "Topology Checker" }
+          ],
+          "isRequired": true,
+          "score": 5,
+          "correctAnswer": "a"
+        },
+        {
+          "name": "soal_14",
+          "type": "radiogroup",
+          "title": "CRS yang digunakan saat export GeoJSON adalah",
+          "choices": [
+            { "value": "a", "text": "EPSG:4326" },
+            { "value": "b", "text": "EPSG:3857" },
+            { "value": "c", "text": "EPSG:32748" },
+            { "value": "d", "text": "EPSG:32648" }
+          ],
+          "isRequired": true,
+          "score": 5,
+          "correctAnswer": "a"
+        },
+        {
+          "name": "soal_15",
+          "type": "radiogroup",
+          "title": "Koreksi topologis dilakukan untuk",
+          "choices": [
+            { "value": "a", "text": "Menghilangkan gap dan overlap" },
+            { "value": "b", "text": "Menambah warna simbol" },
+            { "value": "c", "text": "Mengubah nama wilayah" },
+            { "value": "d", "text": "Mengatur layout peta" }
+          ],
+          "isRequired": true,
+          "score": 5,
+          "correctAnswer": "a"
+        },
+        {
+          "name": "soal_16",
+          "type": "radiogroup",
+          "title": "Informasi perubahan SLS yang tidak bisa didapatkan dari hasil kegiatan lapangan SE2026 adalah ...",
+          "choices": [
+            { "value": "a", "text": "Perubahan kode SLS" },
+            { "value": "b", "text": "Pemekaran SLS" },
+            { "value": "c", "text": "Penggabungan SLS" },
+            { "value": "d", "text": "Perubahan batas SLS" }
+          ],
+          "isRequired": true,
+          "score": 5,
+          "correctAnswer": "a"
+        },
+        {
+          "name": "soal_17",
+          "type": "radiogroup",
+          "title": "Manakah pernyataan yang benar terkait proses georeferensi otomatis Peta WS/WSS menggunakan file .jgw?",
+          "choices": [
+            { "value": "a", "text": "Peta JPEG akan otomatis memiliki referensi geografis jika nama file .jpg dan .jgw identik dan berada dalam folder yang sama" },
+            { "value": "b", "text": "File .jgw digunakan untuk menyimpan atribut wilayah hasil digitasi" },
+            { "value": "c", "text": "Georeferensi otomatis hanya dapat dilakukan menggunakan plugin Freehand Raster Georeferencer" },
+            { "value": "d", "text": "File .jgw dibuat melalui proses scan peta hasil lapangan" }
+          ],
+          "isRequired": true,
+          "score": 5,
+          "correctAnswer": "a"
+        },
+        {
+          "name": "soal_18",
+          "type": "radiogroup",
+          "title": "Informasi pada daftar PSLS yang tidak perlu diisi oleh tim wilkerstat BPS kabupaten/kota yaitu ...",
+          "choices": [
+            { "value": "a", "text": "Jumlah BKU" },
+            { "value": "b", "text": "Kode SLS setelah perubahan" },
+            { "value": "c", "text": "Muatan dominan" },
+            { "value": "d", "text": "Status perubahan wilayah SLS/sub-SLS" }
+          ],
+          "isRequired": true,
+          "score": 5,
+          "correctAnswer": "a"
+        },
+        {
+          "name": "soal_19",
+          "type": "radiogroup",
+          "title": "Pada proses penggabungan SLS di FRS-MFDOnline, SLS yang menjadi hasil/tujuan gabungan (induk penggabungan) harus diisikan pada ...",
+          "choices": [
+            { "value": "a", "text": "Baris pertama" },
+            { "value": "b", "text": "Baris terakhir" },
+            { "value": "c", "text": "Baris kedua" },
+            { "value": "d", "text": "Bebas dan tidak ditentukan" }
+          ],
+          "isRequired": true,
+          "score": 5,
+          "correctAnswer": "a"
+        },
+        {
+          "name": "soal_20",
+          "type": "radiogroup",
+          "title": "Mengapa kita memilih 'fill ring' untuk memotong poligon peta pada kasus wilayah kantong (wilayah lain dalam suatu poligon), yaitu untuk memastikan:",
+          "choices": [
+            { "value": "a", "text": "Semua jawaban benar" },
+            { "value": "b", "text": "Poligon terpotong" },
+            { "value": "c", "text": "Bebas dari gap" },
+            { "value": "d", "text": "Bebas dari overlap" }
+          ],
+          "isRequired": true,
+          "score": 5,
+          "correctAnswer": "a"
+        }
+      ]
+    }
+  ]
+}

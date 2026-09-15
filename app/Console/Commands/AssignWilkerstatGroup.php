@@ -161,6 +161,32 @@ class AssignWilkerstatGroup extends Command
             $this->line("✅ Post-Test ditautkan ke Kelompok '{$group->name}': ".route('survey.show', $posttest));
         }
 
+        $pendalamanPath = base_path('pendalaman-pengolahan-wilkerstat-se2026.json');
+        $pendalamanSchema = file_exists($pendalamanPath) ? json_decode(file_get_contents($pendalamanPath), true) : null;
+
+        if ($pendalamanSchema) {
+            $pendalaman = Survey::updateOrCreate(
+                ['slug' => 'pendalaman-pengolahan-wilkerstat-se2026'],
+                [
+                    'kategori_id' => $kategori->id,
+                    'title' => 'Kuis Pendalaman Pelatihan Pengolahan Pemutakhiran Kerangka Geospasial dan Muatan Wilkerstat SE2026',
+                    'description' => 'Kuis pendalaman materi pengolahan peta, master wilkerstat, dan titik bangunan SE2026.',
+                    'schema' => $pendalamanSchema,
+                    'mode' => SurveyMode::Single,
+                    'is_quiz' => true,
+                    'is_active' => true,
+                    'access_level' => 'public',
+                    'settings' => [
+                        'passing_score' => 70,
+                        'allow_retake' => true,
+                        'max_retakes' => 3,
+                    ],
+                ]
+            );
+            $pendalaman->groups()->syncWithoutDetaching([$group->id]);
+            $this->line("✅ Kuis Pendalaman ditautkan ke Kelompok '{$group->name}': ".route('survey.show', $pendalaman));
+        }
+
         $this->info('Proses selesai dengan sukses.');
 
         return self::SUCCESS;
