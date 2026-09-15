@@ -28,29 +28,6 @@
           "readOnly": true,
           "inputType": "email",
           "isRequired": true
-        },
-        {
-          "type": "dropdown",
-          "name": "wilayah_tugas",
-          "title": "Alokasi Kecamatan Tugas Pengolahan",
-          "isRequired": true,
-          "placeholder": "Pilih Kecamatan...",
-          "choices": [
-            "Bonang",
-            "Demak",
-            "Dempet",
-            "Gajah",
-            "Guntur",
-            "Karanganyar",
-            "Karangawen",
-            "Karangtengah",
-            "Kebonagung",
-            "Mijen",
-            "Mranggen",
-            "Sayung",
-            "Wedung",
-            "Wonosalam"
-          ]
         }
       ]
     },

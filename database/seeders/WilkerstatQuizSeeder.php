@@ -49,7 +49,7 @@ class WilkerstatQuizSeeder extends Seeder
 
         // 3. Buat / Ambil Group Petugas Pengolahan
         $group = Group::firstOrCreate(
-            ['name' => 'Petugas Pengolahan Wilkerstat SE2026']
+            ['name' => 'Petugas Pengolahan Peta SE2026']
         );
 
         $userIds = [];

@@ -16,7 +16,7 @@ class AssignWilkerstatGroup extends Command
      *
      * @var string
      */
-    protected $signature = 'survey:assign-wilkerstat-group {--group=Petugas Pengolahan Wilkerstat SE2026 : Nama Kelompok Survei}';
+    protected $signature = 'survey:assign-wilkerstat-group {--group=Petugas Pengolahan Peta SE2026 : Nama Kelompok Survei}';
 
     /**
      * The console command description.
