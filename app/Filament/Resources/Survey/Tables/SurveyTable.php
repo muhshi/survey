@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Survey\Tables;
 
 use App\Filament\Resources\Survey\SurveyResource;
+use App\Models\Survey;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
@@ -12,14 +13,16 @@ use Filament\Actions\ReplicateAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Role;
 
 class SurveyTable
 {
@@ -55,15 +58,63 @@ class SurveyTable
                     ->label('Aktif')
                     ->boolean()
                     ->sortable(),
-                SelectColumn::make('access_level')
+                TextColumn::make('access_level')
                     ->label('Akses')
-                    ->options([
+                    ->badge()
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
                         'public' => 'Umum',
                         'auth' => 'Login',
                         'role' => 'Role',
-                    ])
-                    ->selectablePlaceholder(false)
-                    ->rules(['required', 'in:public,auth,role'])
+                        default => $state,
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        'public' => 'success',
+                        'auth' => 'warning',
+                        'role' => 'danger',
+                        default => 'gray',
+                    })
+                    ->tooltip('Klik untuk mengubah level akses')
+                    ->action(
+                        Action::make('changeAccessLevel')
+                            ->label('Ubah Akses')
+                            ->modalHeading(fn (Survey $record) => "Ubah Akses Survei: {$record->title}")
+                            ->modalDescription('Pilih pengaturan hak akses untuk survei ini.')
+                            ->modalIcon('heroicon-o-lock-closed')
+                            ->modalWidth('md')
+                            ->modalSubmitActionLabel('Simpan')
+                            ->fillForm(fn (Survey $record): array => [
+                                'access_level' => $record->access_level,
+                                'allowed_roles' => $record->allowed_roles ?? [],
+                            ])
+                            ->form([
+                                Select::make('access_level')
+                                    ->label('Level Akses')
+                                    ->options([
+                                        'public' => 'Umum (Tanpa Login)',
+                                        'auth' => 'Harus Login',
+                                        'role' => 'Role Spesifik',
+                                    ])
+                                    ->required()
+                                    ->live(),
+                                Select::make('allowed_roles')
+                                    ->label('Role yang Diizinkan')
+                                    ->options(fn () => Role::pluck('name', 'name')->toArray())
+                                    ->multiple()
+                                    ->visible(fn (Get $get) => $get('access_level') === 'role')
+                                    ->required(fn (Get $get) => $get('access_level') === 'role'),
+                            ])
+                            ->action(function (Survey $record, array $data): void {
+                                $record->update([
+                                    'access_level' => $data['access_level'],
+                                    'allowed_roles' => $data['access_level'] === 'role' ? ($data['allowed_roles'] ?? []) : null,
+                                ]);
+
+                                Notification::make()
+                                    ->title('Level akses berhasil diperbarui')
+                                    ->success()
+                                    ->send();
+                            })
+                    )
                     ->sortable(),
                 TextColumn::make('jawaban_respondens_count')
                     ->label('Jawaban')

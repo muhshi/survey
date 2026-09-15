@@ -92,7 +92,7 @@ test('survey list page calculates group completion ratio correctly', function ()
         ->assertSee('1 / 2');
 });
 
-test('survey list page renders access_level as editable select column with options', function () {
+test('survey list page renders access_level badge and can change access level via modal action', function () {
     $survey = Survey::factory()->create([
         'title' => 'Survey Uji Akses',
         'access_level' => 'public',
@@ -108,9 +108,11 @@ test('survey list page renders access_level as editable select column with optio
 
     Livewire::test(ListSurvey::class)
         ->assertSuccessful()
-        ->assertTableSelectColumnHasOptions('access_level', [
-            'public' => 'Umum',
-            'auth' => 'Login',
-            'role' => 'Role',
-        ], $survey);
+        ->assertSee('Umum')
+        ->callTableAction('changeAccessLevel', $survey, data: [
+            'access_level' => 'auth',
+        ])
+        ->assertHasNoTableActionErrors();
+
+    expect($survey->fresh()->access_level)->toBe('auth');
 });
