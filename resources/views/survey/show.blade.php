@@ -537,8 +537,11 @@
                 model.data = {!! json_encode($existingSubmission->payload ?? [], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) !!};
             @elseif(Auth::check())
                 model.data = {
-                    "nama_lengkap": "{{ Auth::user()->name }}",
-                    "email_peserta": "{{ Auth::user()->email }}"
+                    "nama_lengkap": {!! json_encode(Auth::user()->name) !!},
+                    "nama": {!! json_encode(Auth::user()->name) !!},
+                    "name": {!! json_encode(Auth::user()->name) !!},
+                    "email_peserta": {!! json_encode(Auth::user()->email) !!},
+                    "email": {!! json_encode(Auth::user()->email) !!}
                 };
             @endif
 
