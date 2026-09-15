@@ -11,57 +11,29 @@
   "pages": [
     {
       "name": "page_identitas",
-      "title": "Identitas Petugas Pengolahan",
-      "description": "Silakan pilih nama Anda atau lengkapi data identitas di bawah ini.",
+      "title": "Identitas Peserta",
+      "description": "Identitas peserta otomatis dimuat dari akun login sistem.",
       "elements": [
-        {
-          "type": "dropdown",
-          "name": "petugas_pengolahan",
-          "title": "Nama Petugas Pengolahan",
-          "isRequired": true,
-          "placeholder": "Pilih Nama Petugas...",
-          "choices": [
-            "Abdul Rosid (Wedung)",
-            "Adek Maya",
-            "Mariska Dewantari",
-            "Bagas Okfi",
-            "Lukman",
-            "Rikha Puspita (Sayung)",
-            "Erna (Gajah)",
-            "Nur Amatullah (Mijen)",
-            "Ahmad Zuhri (Guntur)",
-            "Nurul Huda (Karangtengah)",
-            "Hanun Alya (Karangawen)",
-            "Al Hikmah (Kebonagung)",
-            "Dzikrullah (Bonang)",
-            "Ita Rahmahwati (Bonang)",
-            "Roikhatul Miskiyah",
-            "Indah Megantara",
-            "Ahmad Dany Naufal Al Faruq",
-            "Lainnya"
-          ]
-        },
         {
           "type": "text",
           "name": "nama_lengkap",
-          "title": "Nama Lengkap (Jika memilih Lainnya / Login)",
-          "visibleIf": "{petugas_pengolahan} == 'Lainnya'",
-          "isRequired": true,
-          "placeholder": "Tuliskan nama lengkap..."
+          "title": "Nama Lengkap",
+          "readOnly": true,
+          "isRequired": true
         },
         {
           "type": "text",
           "name": "email_peserta",
           "title": "Email Peserta",
+          "readOnly": true,
           "inputType": "email",
-          "isRequired": false,
-          "placeholder": "nama@bpsdemak.id / email aktif"
+          "isRequired": true
         },
         {
           "type": "dropdown",
           "name": "wilayah_tugas",
           "title": "Alokasi Kecamatan Tugas Pengolahan",
-          "isRequired": false,
+          "isRequired": true,
           "placeholder": "Pilih Kecamatan...",
           "choices": [
             "Bonang",

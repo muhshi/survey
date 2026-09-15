@@ -26,8 +26,9 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 ## Changelog
 
 ### 2026-09-15
-- **Soal Pre-Test & Post-Test Pelatihan Pengolahan Wilkerstat SE2026**: Menambahkan skema survei kuis terpisah untuk Pre-Test (`pretest-pengolahan-wilkerstat-se2026.json`) dan Post-Test (`posttest-pengolahan-wilkerstat-se2026.json`) Pelatihan Pengolahan Pemutakhiran Kerangka Geospasial dan Muatan Wilkerstat SE2026 dengan 20 butir soal pilihan ganda standar BPS lengkap dengan kunci jawaban, bobot nilai, serta integrasi identitas 17 petugas pengolahan.
-- **Seeder WilkerstatQuizSeeder**: Menambahkan database seeder `WilkerstatQuizSeeder` untuk mendaftarkan kategori "Pelatihan SE2026", grup "Petugas Pengolahan Wilkerstat SE2026", 17 akun petugas pengolahan, serta menghubungkan 2 survei kuis (Pre-Test dan Post-Test) ke dalam sistem.
+- **Soal Pre-Test & Post-Test Pelatihan Pengolahan Wilkerstat SE2026**: Menambahkan skema survei kuis terpisah untuk Pre-Test (`pretest-pengolahan-wilkerstat-se2026.json`) dan Post-Test (`posttest-pengolahan-wilkerstat-se2026.json`) Pelatihan Pengolahan Wilkerstat SE2026 dengan 20 butir soal standar BPS. Form identitas disesuaikan secara otomatis membaca akun login pengguna tanpa dropdown manual.
+- **Integrasi Kelompok Survei & Command Penugasan**: Menambahkan perintah artisan `survey:assign-wilkerstat-group` dan seeder `WilkerstatQuizSeeder` untuk mencari dan memasukkan 17 petugas pengolahan ke dalam Kelompok Survei `Petugas Pengolahan Wilkerstat SE2026` serta menautkannya langsung ke Pre-Test dan Post-Test.
+- **File Import Excel Anggota Kelompok**: Menyediakan file `petugas_pengolahan_wilkerstat.xlsx` yang dapat diimpor langsung melalui tombol *Import dari Excel* pada menu Kelompok Survei.
 
 ### 2026-06-10
 - **Quiz Recap in Admin**: Menambahkan fitur halaman Rekap Kuis di panel admin (terkait langsung ke survei yang bertipe kuis) untuk melihat daftar peserta beserta skor kuis terbaik mereka, total percobaan, dan status kelulusan (Lulus/Belum Lulus) berdasarkan nilai minimum (`passing_score`). Dilengkapi juga dengan filter status kelulusan dan fitur **Export Excel** yang secara cerdas mendeteksi *field* kuesioner dinamis (seperti gelombang, tc hotel, dll) dari upaya kuis terbaik masing-masing peserta.

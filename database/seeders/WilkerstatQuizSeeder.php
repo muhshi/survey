@@ -28,23 +28,23 @@ class WilkerstatQuizSeeder extends Seeder
 
         // 2. Daftar 17 Petugas Pengolahan
         $petugasList = [
-            ['name' => 'Abdul Rosid', 'wilayah' => 'Wedung', 'email' => 'abdul.rosid@bpsdemak.id'],
-            ['name' => 'Adek Maya', 'wilayah' => 'Demak', 'email' => 'adek.maya@bpsdemak.id'],
-            ['name' => 'Mariska Dewantari', 'wilayah' => 'Demak', 'email' => 'mariska.dewantari@bpsdemak.id'],
-            ['name' => 'Bagas Okfi', 'wilayah' => 'Demak', 'email' => 'bagas.okfi@bpsdemak.id'],
-            ['name' => 'Lukman', 'wilayah' => 'Demak', 'email' => 'lukman@bpsdemak.id'],
-            ['name' => 'Rikha Puspita', 'wilayah' => 'Sayung', 'email' => 'rikha.puspita@bpsdemak.id'],
-            ['name' => 'Erna', 'wilayah' => 'Gajah', 'email' => 'erna@bpsdemak.id'],
-            ['name' => 'Nur Amatullah', 'wilayah' => 'Mijen', 'email' => 'nur.amatullah@bpsdemak.id'],
-            ['name' => 'Ahmad Zuhri', 'wilayah' => 'Guntur', 'email' => 'ahmad.zuhri@bpsdemak.id'],
-            ['name' => 'Nurul Huda', 'wilayah' => 'Karangtengah', 'email' => 'nurul.huda@bpsdemak.id'],
-            ['name' => 'Hanun Alya', 'wilayah' => 'Karangawen', 'email' => 'hanun.alya@bpsdemak.id'],
-            ['name' => 'Al Hikmah', 'wilayah' => 'Kebonagung', 'email' => 'al.hikmah@bpsdemak.id'],
-            ['name' => 'Dzikrullah', 'wilayah' => 'Bonang', 'email' => 'dzikrullah@bpsdemak.id'],
-            ['name' => 'Ita Rahmahwati', 'wilayah' => 'Bonang', 'email' => 'ita.rahmahwati@bpsdemak.id'],
-            ['name' => 'Roikhatul Miskiyah', 'wilayah' => 'Demak', 'email' => 'roikhatul.miskiyah@bpsdemak.id'],
-            ['name' => 'Indah Megantara', 'wilayah' => 'Demak', 'email' => 'indah.megantara@bpsdemak.id'],
-            ['name' => 'Ahmad Dany Naufal Al Faruq', 'wilayah' => 'Demak', 'email' => 'ahmad.dany@bpsdemak.id'],
+            ['search' => 'Abdul Rosid', 'name' => 'Abdul Rosid', 'email' => 'abdul.rosid@bpsdemak.id'],
+            ['search' => 'Adek Maya', 'name' => 'Adek Maya', 'email' => 'adek.maya@bpsdemak.id'],
+            ['search' => 'Mariska', 'name' => 'Mariska Dewantari', 'email' => 'mariska.dewantari@bpsdemak.id'],
+            ['search' => 'Bagas', 'name' => 'Bagas Okfi', 'email' => 'bagas.okfi@bpsdemak.id'],
+            ['search' => 'Lukman', 'name' => 'Lukman', 'email' => 'lukman@bpsdemak.id'],
+            ['search' => 'Rikha', 'name' => 'Rikha Puspita', 'email' => 'rikha.puspita@bpsdemak.id'],
+            ['search' => 'Erna', 'name' => 'Erna', 'email' => 'erna@bpsdemak.id'],
+            ['search' => 'Nur amatullah', 'name' => 'Nur Amatullah', 'email' => 'nur.amatullah@bpsdemak.id'],
+            ['search' => 'Ahmad zuhri', 'name' => 'Ahmad Zuhri', 'email' => 'ahmad.zuhri@bpsdemak.id'],
+            ['search' => 'Nurul Huda', 'name' => 'Nurul Huda', 'email' => 'nurul.huda@bpsdemak.id'],
+            ['search' => 'Hanun Alya', 'name' => 'Hanun Alya', 'email' => 'hanun.alya@bpsdemak.id'],
+            ['search' => 'Al Hikmah', 'name' => 'Al Hikmah', 'email' => 'al.hikmah@bpsdemak.id'],
+            ['search' => 'Dzikrullah', 'name' => 'Dzikrullah', 'email' => 'dzikrullah@bpsdemak.id'],
+            ['search' => 'Ita Rahmahwati', 'name' => 'Ita Rahmahwati', 'email' => 'ita.rahmahwati@bpsdemak.id'],
+            ['search' => 'Roikhatul', 'name' => 'Roikhatul Miskiyah', 'email' => 'roikhatul.miskiyah@bpsdemak.id'],
+            ['search' => 'indah megantara', 'name' => 'Indah Megantara', 'email' => 'indah.megantara@bpsdemak.id'],
+            ['search' => 'Ahmad Dany', 'name' => 'Ahmad Dany Naufal Al Faruq', 'email' => 'ahmad.dany@bpsdemak.id'],
         ];
 
         // 3. Buat / Ambil Group Petugas Pengolahan
@@ -54,7 +54,7 @@ class WilkerstatQuizSeeder extends Seeder
 
         $userIds = [];
         foreach ($petugasList as $p) {
-            $user = User::where('name', 'like', "%{$p['name']}%")
+            $user = User::where('name', 'like', "%{$p['search']}%")
                 ->orWhere('email', $p['email'])
                 ->first();
 
