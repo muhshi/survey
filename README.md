@@ -26,6 +26,7 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 ## Changelog
 
 ### 2026-09-15
+- **Editable Access Level di Tabel Survei**: Mengubah kolom Level Akses (`access_level`) pada tabel admin Survei (`SurveyTable`) menjadi komponen `SelectColumn` interaktif, sehingga admin dapat langsung mengklik dan mengubah level akses survei (Umum, Login, Role) secara instan tanpa perlu masuk ke form edit survei.
 - **Kuis Pendalaman Pelatihan Pengolahan Wilkerstat SE2026**: Menambahkan skema survei kuis pendalaman (`pendalaman-pengolahan-wilkerstat-se2026.json`) berisi 20 butir soal lengkap dari tabel materi resmi pengolahan Wilkerstat SE2026, langsung ditautkan ke database dan kelompok `Petugas Pengolahan Peta SE2026`.
 - **Skill & Rule Pembuatan Kuis (survey-quiz-builder)**: Membuat agent skill (`.agents/skills/survey-quiz-builder/SKILL.md`) serta aturan paten di `AGENTS.md` dan `GEMINI.md` yang menetapkan standar pembuatan kuis di project ini (wajib menggunakan bank soal resmi pengguna, auto-prefill identitas `nama_lengkap`/`email_peserta` dari `Auth::user()`, integrasi via Kelompok Survei, dan acak pilihan jawaban otomatis).
 - **Soal Pre-Test & Post-Test Pelatihan Pengolahan Wilkerstat SE2026**: Menambahkan skema survei kuis terpisah untuk Pre-Test (`pretest-pengolahan-wilkerstat-se2026.json`) dan Post-Test (`posttest-pengolahan-wilkerstat-se2026.json`) Pelatihan Pengolahan Wilkerstat SE2026 dengan butir soal resmi dari tabel materi pengolahan.

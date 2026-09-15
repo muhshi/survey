@@ -13,6 +13,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
@@ -54,21 +55,16 @@ class SurveyTable
                     ->label('Aktif')
                     ->boolean()
                     ->sortable(),
-                TextColumn::make('access_level')
+                SelectColumn::make('access_level')
                     ->label('Akses')
-                    ->badge()
-                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                    ->options([
                         'public' => 'Umum',
                         'auth' => 'Login',
                         'role' => 'Role',
-                        default => $state,
-                    })
-                    ->color(fn (string $state): string => match ($state) {
-                        'public' => 'success',
-                        'auth' => 'warning',
-                        'role' => 'danger',
-                        default => 'gray',
-                    }),
+                    ])
+                    ->selectablePlaceholder(false)
+                    ->rules(['required', 'in:public,auth,role'])
+                    ->sortable(),
                 TextColumn::make('jawaban_respondens_count')
                     ->label('Jawaban')
                     ->getStateUsing(function ($record) {

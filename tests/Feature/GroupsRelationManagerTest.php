@@ -91,3 +91,26 @@ test('survey list page calculates group completion ratio correctly', function ()
         ->assertSuccessful()
         ->assertSee('1 / 2');
 });
+
+test('survey list page renders access_level as editable select column with options', function () {
+    $survey = Survey::factory()->create([
+        'title' => 'Survey Uji Akses',
+        'access_level' => 'public',
+    ]);
+
+    $admin = User::factory()->create(['is_active' => true]);
+
+    Permission::firstOrCreate(['name' => 'ViewAny:Survey']);
+    Permission::firstOrCreate(['name' => 'Update:Survey']);
+    $admin->givePermissionTo(['ViewAny:Survey', 'Update:Survey']);
+
+    $this->actingAs($admin);
+
+    Livewire::test(ListSurvey::class)
+        ->assertSuccessful()
+        ->assertTableSelectColumnHasOptions('access_level', [
+            'public' => 'Umum',
+            'auth' => 'Login',
+            'role' => 'Role',
+        ], $survey);
+});
