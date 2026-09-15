@@ -25,13 +25,21 @@ RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
     && apt-get install -y nodejs \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-COPY . /app
 # Composer (buat install deps dari dalam container)
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Install dependencies & build assets
-RUN composer install --no-interaction --optimize-autoloader --no-dev \
-    && npm install \
+# Salin manifest dependensi terlebih dahulu agar memanfaatkan cache layer Docker
+COPY composer.json composer.lock* ./
+RUN composer install --no-interaction --no-dev --no-scripts --no-autoloader --prefer-dist
+
+COPY package.json package-lock.json* ./
+RUN npm install
+
+# Salin seluruh kode aplikasi
+COPY . /app
+
+# Selesaikan autoloader composer & build aset frontend
+RUN composer dump-autoload --optimize --no-dev \
     && npm run build
 
 # Copy konfigurasi Caddy/FrankenPHP
