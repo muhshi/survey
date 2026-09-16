@@ -25,6 +25,13 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 
 ## Changelog
 
+### 2026-09-16
+- **Status Responden Modal (Pemantauan Sudah vs Belum Mengisi)**: Menambahkan aksi interaktif pada kolom Jawaban (`jawaban_respondens_count`) dan baris aksi (`statusResponden`) di tabel Survei admin panel. Ketika diklik, modal pop-up menampilkan pemantauan terpadu untuk memudahkan pengingatan peserta:
+  - Ringkasan statistik (Target Peserta, Total Sudah Mengisi, Total Belum Mengisi, dan Progress Bar persentase pengisian).
+  - Tab **Belum Mengisi**: Menampilkan daftar peserta target yang belum mengisi dengan fitur pencarian langsung, tombol 1-klik "Ingatkan WA" (membuka WhatsApp dengan pesan personal otomatis dan link survei), tombol "Salin Semua Email", dan tombol "Salin Pesan Broadcast WhatsApp".
+  - Tab **Sudah Mengisi**: Menampilkan daftar responden yang sudah menyelesaikan pengisian, waktu submit terakhir, jumlah percobaan, serta skor dan status kelulusan jika mode kuis.
+  - Tab **Template Broadcast**: Teks pesan pengingat siap salin yang otomatis merangkum daftar nama dan tautan survei/kuis untuk dibagikan ke grup WhatsApp.
+
 ### 2026-09-15
 - **Smart Deploy Script & Docker Cache Optimization**: Membuat script deployment otomatis cerdas (`deploy.sh`) yang hanya melakukan build (Docker image, Composer, maupun NPM/Vite) ketika terdeteksi perubahan konfigurasi atau file terkait pada commit diff git. Mengoptimalkan urutan layer `Dockerfile` agar instalasi dependensi memanfaatkan cache layer Docker.
 - **Modal Edit Akses pada Tabel Survei**: Mempertahankan tampilan badge estetis pada kolom Akses (`access_level`) di tabel admin Survei (`SurveyTable`), namun dibuat interaktif dengan Action Modal. Ketika badge diklik, muncul modal pop-up untuk mengubah level akses (Umum, Login, atau Role Spesifik beserta multi-pilihan role) yang langsung tersimpan ke database dan mengupdate status badge secara instan.
