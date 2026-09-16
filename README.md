@@ -26,11 +26,10 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 ## Changelog
 
 ### 2026-09-16
-- **Tombol "Salin Link" Eksplisit & Interaktif untuk Pengguna**: Menambahkan tombol interaktif yang sangat jelas dan mudah ditemukan untuk menyalin tautan survei/kuis di panel admin:
-  - Tombol pill interaktif **"Salin Link"** langsung di samping teks `/s/{slug}` pada kolom Survei dengan indikator umpan balik visual instan (*"✓ Tersalin!"*) serta tombol pintasan *"Buka ↗"* tab baru.
-  - Tombol aksi mandiri **"Salin Link"** pada baris aksi tabel (*recordActions*) tepat di samping tombol Desain untuk akses 1-klik langsung.
-  - Menu aksi **"Salin Link Survei"** dan **"Buka Survei (Tab Baru)"** di dalam dropdown *ActionGroup* (Aksi Lainnya).
-  - Kolom Tautan Survei pada halaman ringkasan Jawaban Responden (`ViewSubmissions`) yang kini dilengkapi aksi copyable dan tombol buka tab baru.
+- **Penyempurnaan UI Tombol Copy Link & Open (Icon-Only Vertikal di Sisi Kanan Kolom)**:
+  - Merancang ulang tata letak kolom Survei: info teks (kategori, judul, slug) di sisi kiri, dan dua tombol icon minimalis tersusun vertikal di sisi kanan (ikon salin link di atas, ikon buka tab baru di bawahnya).
+  - Memperbaiki bug navigasi tidak sengaja ke halaman edit dengan menyematkan `->recordUrl(null)` pada tabel serta `stopPropagation()` dan `preventDefault()`.
+  - Mengembalikan tombol baris aksi (*recordActions*) menjadi ringkas (hanya Desain dan menu titik tiga Aksi Lainnya).
 - **Refaktorisasi SurveyController ke Service Layer & Form Request**: Menerapkan arsitektur *Thin Controller* dan *Dependency Injection* sesuai standar skill `laravel-best-practices` (`rules/routing.md`, `rules/architecture.md`, dan `rules/validation.md`):
   - Memisahkan evaluasi hak akses survei, validasi kelompok peserta, jendela waktu aktif pivot, dan role fallback ke dalam **`SurveyAccessService`**.
   - Memisahkan penilaian otomatis skor kuis SurveyJS, aturan batas retake/pengulangan kuis, serta siklus hidup penyimpanan/pembaruan jawaban responden ke dalam **`SurveySubmissionService`**.

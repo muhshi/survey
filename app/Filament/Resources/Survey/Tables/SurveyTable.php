@@ -33,6 +33,7 @@ class SurveyTable
     {
         return $table
             ->modifyQueryUsing(fn ($query) => $query->withCount('jawabanRespondens')->with(['groups', 'kategori']))
+            ->recordUrl(null)
             ->columns([
                 TextColumn::make('title')
                     ->label('Survei')
@@ -48,35 +49,44 @@ class SurveyTable
                             : '';
 
                         return <<<HTML
-                        <div style="display: flex; flex-direction: column; gap: 5px; padding: 4px 0; max-width: 440px;">
-                            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-                                <span style="font-size: 10px; font-weight: 600; background: rgba(148, 163, 184, 0.15); color: #475569; padding: 1px 6px; border-radius: 4px;" class="dark:text-slate-300">
-                                    📁 {$kategori}
-                                </span>
-                                {$quizBadge}
-                            </div>
-                            <div style="font-size: 13px; font-weight: 700; color: #0f172a; line-height: 1.35;" class="dark:text-slate-100">
-                                {$title}
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 2px;">
-                                <span style="font-family: monospace; font-size: 11px; color: #0369a1; background: rgba(2, 132, 199, 0.08); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(2, 132, 199, 0.18);" class="dark:text-sky-300 dark:bg-sky-950/40">
+                        <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 4px 0; min-width: 280px; max-width: 480px;">
+                            <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                                    <span style="font-size: 10px; font-weight: 600; background: rgba(148, 163, 184, 0.15); color: #475569; padding: 1px 6px; border-radius: 4px;" class="dark:text-slate-300">
+                                        📁 {$kategori}
+                                    </span>
+                                    {$quizBadge}
+                                </div>
+                                <div style="font-size: 13px; font-weight: 700; color: #0f172a; line-height: 1.35; word-break: break-word;" class="dark:text-slate-100">
+                                    {$title}
+                                </div>
+                                <div style="font-size: 11px; font-family: monospace; color: #0284c7; background: rgba(2, 132, 199, 0.08); padding: 1px 6px; border-radius: 4px; display: inline-block; width: fit-content;" class="dark:text-sky-300 dark:bg-sky-950/40">
                                     /s/{$slug}
-                                </span>
-                                <button type="button" 
-                                    onclick="event.stopPropagation(); navigator.clipboard.writeText('{$url}').then(() => { const btn = this; const orig = btn.innerHTML; btn.innerHTML = '<svg style=\'width: 12px; height: 12px; display: inline-block; flex-shrink: 0;\' fill=\'none\' viewBox=\'0 0 24 24\' stroke-width=\'2.5\' stroke=\'currentColor\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' d=\'m4.5 12.75 6 6 9-13.5\'/></svg> <span>Tersalin!</span>'; btn.style.background = '#dcfce7'; btn.style.color = '#15803d'; btn.style.borderColor = '#86efac'; setTimeout(() => { btn.innerHTML = orig; btn.style.background = 'rgba(2, 132, 199, 0.08)'; btn.style.color = '#0284c7'; btn.style.borderColor = 'rgba(2, 132, 199, 0.25)'; }, 2000); if (window.FilamentNotification) { new FilamentNotification().title('Tautan survei disalin ke clipboard!').success().send(); } });" 
-                                    title="Salin tautan langsung survei ini ke clipboard" 
-                                    style="display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; font-size: 11px; font-weight: 600; color: #0284c7; background: rgba(2, 132, 199, 0.08); border: 1px solid rgba(2, 132, 199, 0.25); border-radius: 4px; cursor: pointer; transition: all 0.2s;"
-                                    onmouseover="this.style.background='rgba(2, 132, 199, 0.18)'; this.style.borderColor='#0284c7';"
-                                    onmouseout="if(!this.innerHTML.includes('Tersalin')) { this.style.background='rgba(2, 132, 199, 0.08)'; this.style.borderColor='rgba(2, 132, 199, 0.25)'; }"
+                                </div>
+                            </div>
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 5px; flex-shrink: 0;" onclick="event.stopPropagation();">
+                                <button 
+                                    type="button" 
+                                    onclick="event.stopPropagation(); event.preventDefault(); event.stopImmediatePropagation(); navigator.clipboard.writeText('{$url}').then(() => { const btn = this; const orig = btn.innerHTML; btn.innerHTML = '<svg style=\'width: 13px; height: 13px;\' fill=\'none\' viewBox=\'0 0 24 24\' stroke-width=\'2.5\' stroke=\'currentColor\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' d=\'m4.5 12.75 6 6 9-13.5\'/></svg>'; btn.style.color='#16a34a'; btn.style.background='#dcfce7'; btn.style.borderColor='#86efac'; setTimeout(() => { btn.innerHTML = orig; btn.style.color='#64748b'; btn.style.background='rgba(241, 245, 249, 0.6)'; btn.style.borderColor='#cbd5e1'; }, 2000); if (window.FilamentNotification) { new FilamentNotification().title('Tautan survei disalin ke clipboard!').success().send(); } }); return false;" 
+                                    title="Salin Tautan Survei" 
+                                    style="width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; border: 1px solid #cbd5e1; background: rgba(241, 245, 249, 0.6); color: #64748b; cursor: pointer; transition: all 0.15s ease;" 
+                                    onmouseover="this.style.color='#0284c7'; this.style.borderColor='#0284c7'; this.style.background='rgba(2, 132, 199, 0.08)';" 
+                                    onmouseout="if(!this.innerHTML.includes('m4.5')) { this.style.color='#64748b'; this.style.borderColor='#cbd5e1'; this.style.background='rgba(241, 245, 249, 0.6)'; }"
                                 >
-                                    <svg style="width: 12px; height: 12px; flex-shrink: 0;" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                    <svg style="width: 13px; height: 13px;" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184" />
                                     </svg>
-                                    <span>Salin Link</span>
                                 </button>
-                                <a href="{$url}" target="_blank" onclick="event.stopPropagation();" title="Buka survei di tab baru" style="display: inline-flex; align-items: center; gap: 3px; padding: 2px 7px; font-size: 11px; font-weight: 500; color: #64748b; background: rgba(148, 163, 184, 0.12); border: 1px solid rgba(148, 163, 184, 0.25); border-radius: 4px; text-decoration: none; transition: all 0.2s;" onmouseover="this.style.color='#0284c7'; this.style.borderColor='#0284c7';" onmouseout="this.style.color='#64748b'; this.style.borderColor='rgba(148, 163, 184, 0.25)';">
-                                    <span>Buka</span>
-                                    <svg style="width: 11px; height: 11px; flex-shrink: 0;" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                <a 
+                                    href="{$url}" 
+                                    target="_blank" 
+                                    onclick="event.stopPropagation(); event.stopImmediatePropagation();" 
+                                    title="Buka Survei di Tab Baru" 
+                                    style="width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; border: 1px solid #cbd5e1; background: rgba(241, 245, 249, 0.6); color: #64748b; text-decoration: none; cursor: pointer; transition: all 0.15s ease;" 
+                                    onmouseover="this.style.color='#0284c7'; this.style.borderColor='#0284c7'; this.style.background='rgba(2, 132, 199, 0.08)';" 
+                                    onmouseout="this.style.color='#64748b'; this.style.borderColor='#cbd5e1'; this.style.background='rgba(241, 245, 249, 0.6)';"
+                                >
+                                    <svg style="width: 13px; height: 13px;" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
                                     </svg>
                                 </a>
@@ -84,11 +94,7 @@ class SurveyTable
                         </div>
                         HTML;
                     })
-                    ->html()
-                    ->copyable()
-                    ->copyableState(fn (Survey $record) => $record->getPublicUrl())
-                    ->copyMessage('Link survei disalin!')
-                    ->tooltip('Klik untuk salin tautan survei'),
+                    ->html(),
                 TextColumn::make('mode')
                     ->badge()
                     ->sortable(),
@@ -237,14 +243,6 @@ class SurveyTable
                     ]),
             ])
             ->recordActions([
-                Action::make('copyLink')
-                    ->label('Salin Link')
-                    ->icon('heroicon-o-clipboard-document-check')
-                    ->color('info')
-                    ->tooltip('Salin tautan survei ke clipboard')
-                    ->extraAttributes(fn (Survey $record) => [
-                        'onclick' => "event.stopPropagation(); navigator.clipboard.writeText('{$record->getPublicUrl()}'); if(window.FilamentNotification) { new FilamentNotification().title('Tautan survei disalin ke clipboard!').success().send(); } return false;",
-                    ]),
                 Action::make('design')
                     ->label('Desain')
                     ->icon('heroicon-o-pencil-square')
@@ -256,8 +254,14 @@ class SurveyTable
                         ->label('Salin Link Survei')
                         ->icon('heroicon-o-clipboard-document-check')
                         ->color('info')
+                        ->action(function (Survey $record) {
+                            Notification::make()
+                                ->title('Tautan survei berhasil disalin!')
+                                ->success()
+                                ->send();
+                        })
                         ->extraAttributes(fn (Survey $record) => [
-                            'onclick' => "event.stopPropagation(); navigator.clipboard.writeText('{$record->getPublicUrl()}'); if(window.FilamentNotification) { new FilamentNotification().title('Tautan survei disalin ke clipboard!').success().send(); } return false;",
+                            'x-on:click.stop' => "navigator.clipboard.writeText('{$record->getPublicUrl()}')",
                         ]),
                     Action::make('openSurvey')
                         ->label('Buka Survei (Tab Baru)')
