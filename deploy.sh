@@ -53,6 +53,22 @@ is_container_running() {
     command -v docker &> /dev/null && docker ps --format '{{.Names}}' 2>/dev/null | grep -qE "^${CONTAINER_NAME}$"
 }
 
+has_docker_image() {
+    if ! command -v docker &> /dev/null; then
+        return 1
+    fi
+    if docker inspect "$CONTAINER_NAME" &>/dev/null; then
+        return 0
+    fi
+    if docker compose images -q "$CONTAINER_NAME" 2>/dev/null | grep -q .; then
+        return 0
+    fi
+    if docker images --format '{{.Repository}}:{{.Tag}}' 2>/dev/null | grep -qE "(^|/)(survey(-franken)?|survey-survey-franken)(:|$)"; then
+        return 0
+    fi
+    return 1
+}
+
 run_artisan() {
     if is_container_running; then
         docker exec -i "$CONTAINER_NAME" php artisan "$@"
@@ -132,11 +148,11 @@ if [ "$SKIP_BUILD" = true ]; then
 elif [ "$FORCE_BUILD" = true ]; then
     echo -e "   ${YELLOW}ℹ️  Flag --build aktif: Rebuild Docker image dipicu manual.${NC}"
     NEED_DOCKER_BUILD=true
-elif ! is_container_running; then
-    echo -e "   ${YELLOW}⚠️  Container '${CONTAINER_NAME}' belum berjalan. Perlu build/start container.${NC}"
+elif ! has_docker_image; then
+    echo -e "   ${YELLOW}⚠️  Docker image belum ditemukan. Perlu build image pertama kali.${NC}"
     NEED_DOCKER_BUILD=true
-elif [ -n "$CHANGED_FILES" ] && echo "$CHANGED_FILES" | grep -qE '^(Dockerfile|docker-compose\.ya?ml|Caddyfile|docker/)'; then
-    echo -e "   ${YELLOW}ℹ️  Terdeteksi perubahan konfigurasi inti Docker/Caddy. Rebuild diperlukan.${NC}"
+elif [ -n "$CHANGED_FILES" ] && echo "$CHANGED_FILES" | grep -qE '^Dockerfile$'; then
+    echo -e "   ${YELLOW}ℹ️  Terdeteksi perubahan pada Dockerfile. Rebuild image diperlukan.${NC}"
     NEED_DOCKER_BUILD=true
 fi
 
@@ -152,12 +168,15 @@ if [ "$NEED_DOCKER_BUILD" = true ]; then
     fi
     echo -e "   ${GREEN}✓ Docker container berhasil di-build dan berjalan.${NC}"
 else
-    echo -e "   ${GREEN}⚡ Lewati build Docker (konfigurasi Docker tidak berubah & container sudah aktif).${NC}"
-    # Pastikan stack tetap running
-    if docker compose version &>/dev/null; then
-        docker compose up -d --no-build 2>/dev/null || true
-    else
-        docker-compose up -d --no-build 2>/dev/null || true
+    echo -e "   ${GREEN}⚡ Lewati build Docker (image sudah tersedia & Dockerfile tidak berubah).${NC}"
+    # Pastikan stack tetap running jika sempat mati
+    if ! is_container_running; then
+        echo -e "   ${YELLOW}🚀 Menyalakan container (tanpa build)...${NC}"
+        if docker compose version &>/dev/null; then
+            docker compose up -d --no-build 2>/dev/null || docker compose up -d
+        else
+            docker-compose up -d --no-build 2>/dev/null || docker-compose up -d
+        fi
     fi
 fi
 
@@ -171,8 +190,8 @@ NEED_COMPOSER=false
 
 if [ "$FORCE_BUILD" = true ]; then
     NEED_COMPOSER=true
-elif [ ! -d "vendor" ]; then
-    echo -e "   ${YELLOW}⚠️  Folder 'vendor' tidak ditemukan.${NC}"
+elif [ ! -f "vendor/autoload.php" ]; then
+    echo -e "   ${YELLOW}⚠️  Autoloader composer ('vendor/autoload.php') tidak ditemukan.${NC}"
     NEED_COMPOSER=true
 elif [ -n "$CHANGED_FILES" ] && echo "$CHANGED_FILES" | grep -qE '^composer\.(json|lock)$'; then
     echo -e "   ${YELLOW}ℹ️  Terdeteksi perubahan pada composer.json / composer.lock.${NC}"
@@ -184,7 +203,7 @@ if [ "$NEED_COMPOSER" = true ]; then
     run_composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
     echo -e "   ${GREEN}✓ Dependensi PHP berhasil diperbarui.${NC}"
 else
-    echo -e "   ${GREEN}⚡ Dependensi PHP tidak berubah. Skip composer install.${NC}"
+    echo -e "   ${GREEN}⚡ Dependensi PHP tidak berubah & vendor sudah siap. Skip composer install.${NC}"
 fi
 
 # ------------------------------------------------------------------------------
@@ -210,8 +229,8 @@ elif [ -n "$CHANGED_FILES" ]; then
         echo -e "   ${YELLOW}ℹ️  Terdeteksi perubahan package.json / package-lock.json.${NC}"
         NEED_NPM_INSTALL=true
         NEED_NPM_BUILD=true
-    elif echo "$CHANGED_FILES" | grep -qE '^(vite\.config\.js|resources/|public/css|public/js)'; then
-        echo -e "   ${YELLOW}ℹ️  Terdeteksi perubahan file pada template/styling/script frontend.${NC}"
+    elif echo "$CHANGED_FILES" | grep -qE '^(vite\.config\.js|resources/(css|js)/|resources/views/(layouts/survey|welcome|survey/))'; then
+        echo -e "   ${YELLOW}ℹ️  Terdeteksi perubahan pada aset frontend publik (Vite/Tailwind).${NC}"
         NEED_NPM_BUILD=true
     fi
 fi
@@ -260,8 +279,12 @@ echo -e "   ${GREEN}✓ Cache aplikasi berhasil disegarkan.${NC}"
 echo -e ""
 echo -e "${BLUE}🔄 [7/7] Me-reload FrankenPHP Server...${NC}"
 if is_container_running; then
-    docker restart "$CONTAINER_NAME" >/dev/null 2>&1 || true
-    echo -e "   ${GREEN}✓ Container ${CONTAINER_NAME} di-restart untuk memuat kode PHP terbaru.${NC}"
+    if [ "$NEED_DOCKER_BUILD" = false ]; then
+        docker restart "$CONTAINER_NAME" >/dev/null 2>&1 || true
+        echo -e "   ${GREEN}✓ Container ${CONTAINER_NAME} di-restart untuk memuat kode PHP terbaru.${NC}"
+    else
+        echo -e "   ${GREEN}✓ Container ${CONTAINER_NAME} sudah berjalan dengan image terbaru.${NC}"
+    fi
 fi
 
 # Bersihkan image Docker dangling jika baru saja rebuild

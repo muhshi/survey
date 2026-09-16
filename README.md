@@ -31,6 +31,11 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
   - Tab **Belum Mengisi**: Menampilkan daftar peserta target yang belum mengisi dengan fitur pencarian langsung, tombol 1-klik "Ingatkan WA" (membuka WhatsApp dengan pesan personal otomatis dan link survei), tombol "Salin Semua Email", dan tombol "Salin Pesan Broadcast WhatsApp".
   - Tab **Sudah Mengisi**: Menampilkan daftar responden yang sudah menyelesaikan pengisian, waktu submit terakhir, jumlah percobaan, serta skor dan status kelulusan jika mode kuis.
   - Tab **Template Broadcast**: Teks pesan pengingat siap salin yang otomatis merangkum daftar nama dan tautan survei/kuis untuk dibagikan ke grup WhatsApp.
+- **Optimasi Script Deployment (Build Hanya Saat Dibutuhkan)**: Memperbaiki logika deteksi kebutuhan build pada `deploy.sh`:
+  - **Docker Rebuild**: Tidak lagi memicu rebuild image Docker hanya karena container sedang berhenti (*stopped*); jika image sudah ada, script langsung menyalakan container dengan `docker compose up -d --no-build`. Rebuild image hanya dilakukan bila ada perubahan pada `Dockerfile` atau bila image belum ada.
+  - **Vite & NPM Build**: Mempersempit deteksi perubahan frontend sehingga perubahan pada template Filament/Blade admin (`resources/views/filament/`) tidak lagi memicu `npm run build` yang lambat. Kompilasi aset Vite hanya berjalan jika terjadi perubahan pada `package.json`, `vite.config.js`, `resources/(css|js)`, atau template publik survei.
+  - **Composer Install**: Hanya dijalankan bila file autoloader `vendor/autoload.php` belum ada atau terjadi perubahan pada `composer.json` / `composer.lock`.
+  - **FrankenPHP Restart**: Mencegah restart ganda jika Docker image baru saja selesai di-build ulang.
 
 ### 2026-09-15
 - **Smart Deploy Script & Docker Cache Optimization**: Membuat script deployment otomatis cerdas (`deploy.sh`) yang hanya melakukan build (Docker image, Composer, maupun NPM/Vite) ketika terdeteksi perubahan konfigurasi atau file terkait pada commit diff git. Mengoptimalkan urutan layer `Dockerfile` agar instalasi dependensi memanfaatkan cache layer Docker.
