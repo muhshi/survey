@@ -26,10 +26,11 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 ## Changelog
 
 ### 2026-09-16
-- **Penyempurnaan UI Tombol Copy Link & Open (Icon-Only Vertikal di Sisi Kanan Kolom)**:
-  - Merancang ulang tata letak kolom Survei: info teks (kategori, judul, slug) di sisi kiri, dan dua tombol icon minimalis tersusun vertikal di sisi kanan (ikon salin link di atas, ikon buka tab baru di bawahnya).
-  - Memperbaiki bug navigasi tidak sengaja ke halaman edit dengan menyematkan `->recordUrl(null)` pada tabel serta `stopPropagation()` dan `preventDefault()`.
-  - Mengembalikan tombol baris aksi (*recordActions*) menjadi ringkas (hanya Desain dan menu titik tiga Aksi Lainnya).
+- **Penyempurnaan UI Tombol Copy Link & Open (Icon-Only Vertikal di Sisi Kanan Kolom Survei)**:
+  - Mengonversi rendering kolom Survei menggunakan Blade template terdedikasi (`survey-title.blade.php`) dengan komponen resmi `<x-filament::icon>` agar ikon Heroicons (`heroicon-o-clipboard-document` dan `heroicon-o-arrow-top-right-on-square`) ter-render sempurna tanpa terpengaruh sanitasi HTML Filament.
+  - Menempatkan dua tombol ikon minimalis tersusun rapi secara vertikal di sisi kanan kolom (ikon salin link di atas, ikon buka tab baru di bawahnya).
+  - Melengkapi fungsi copy dengan mekanisme fallback `document.execCommand` untuk lingkungan non-HTTPS/lokal, notifikasi toast sukses, dan perubahan ikon centang hijau (`✓`) sesaat.
+  - Memperbaiki bug navigasi tidak sengaja ke halaman edit dengan menyematkan `->recordUrl(null)` pada tabel serta penanganan event propagation.
 - **Refaktorisasi SurveyController ke Service Layer & Form Request**: Menerapkan arsitektur *Thin Controller* dan *Dependency Injection* sesuai standar skill `laravel-best-practices` (`rules/routing.md`, `rules/architecture.md`, dan `rules/validation.md`):
   - Memisahkan evaluasi hak akses survei, validasi kelompok peserta, jendela waktu aktif pivot, dan role fallback ke dalam **`SurveyAccessService`**.
   - Memisahkan penilaian otomatis skor kuis SurveyJS, aturan batas retake/pengulangan kuis, serta siklus hidup penyimpanan/pembaruan jawaban responden ke dalam **`SurveySubmissionService`**.
