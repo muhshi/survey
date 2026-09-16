@@ -39,7 +39,9 @@ class SurveyTable
                     ->label('Survei')
                     ->sortable()
                     ->searchable(['title', 'slug', 'kategori.name'])
-                    ->view('filament.tables.columns.survey-title'),
+                    ->view('filament.tables.columns.survey-title')
+                    ->wrap()
+                    ->width('440px'),
                 TextColumn::make('mode')
                     ->badge()
                     ->sortable(),

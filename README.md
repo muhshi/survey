@@ -31,6 +31,7 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
   - Menempatkan dua tombol ikon minimalis tersusun rapi secara vertikal di sisi kanan kolom (ikon salin link di atas, ikon buka tab baru di bawahnya).
   - Melengkapi fungsi copy dengan mekanisme fallback `document.execCommand` untuk lingkungan non-HTTPS/lokal, notifikasi toast sukses, dan perubahan ikon centang hijau (`✓`) sesaat.
   - Memperbaiki bug navigasi tidak sengaja ke halaman edit dengan menyematkan `->recordUrl(null)` pada tabel serta penanganan event propagation.
+  - **Penyesuaian Proporsi Lebar Kolom (440px)**: Mengatur lebar kolom Survei menjadi 440px dengan fitur text wrapping (`->wrap()`), tetap lebih panjang dibandingkan kolom lain agar judul survei terbaca jelas dalam 1–2 baris dan tidak bertumpuk/terpotong, namun tetap proporsional terhadap kolom tabel lainnya.
 - **Refaktorisasi SurveyController ke Service Layer & Form Request**: Menerapkan arsitektur *Thin Controller* dan *Dependency Injection* sesuai standar skill `laravel-best-practices` (`rules/routing.md`, `rules/architecture.md`, dan `rules/validation.md`):
   - Memisahkan evaluasi hak akses survei, validasi kelompok peserta, jendela waktu aktif pivot, dan role fallback ke dalam **`SurveyAccessService`**.
   - Memisahkan penilaian otomatis skor kuis SurveyJS, aturan batas retake/pengulangan kuis, serta siklus hidup penyimpanan/pembaruan jawaban responden ke dalam **`SurveySubmissionService`**.

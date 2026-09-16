@@ -7,7 +7,7 @@
     $isQuiz = (bool) $record->is_quiz;
 @endphp
 
-<div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 6px 0; width: 100%;" x-data="{
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 4px 0; width: 100%; max-width: 440px; white-space: normal;" x-data="{
     copied: false,
     copy(url) {
         if (navigator.clipboard && window.isSecureContext) {
@@ -35,7 +35,7 @@
     }
 }">
     <!-- Info Survei (Kiri) -->
-    <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1;">
+    <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1; white-space: normal;">
         <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
             <span style="font-size: 10px; font-weight: 600; background: rgba(148, 163, 184, 0.15); color: #475569; padding: 1px 6px; border-radius: 4px;" class="dark:text-slate-300">
                 📁 {{ $kategori }}
@@ -46,10 +46,10 @@
                 </span>
             @endif
         </div>
-        <div style="font-size: 13px; font-weight: 700; color: #0f172a; line-height: 1.35; word-break: break-word;" class="dark:text-slate-100">
+        <div style="font-size: 13px; font-weight: 700; color: #0f172a; line-height: 1.35; white-space: normal; word-break: break-word;" class="dark:text-slate-100">
             {{ $title }}
         </div>
-        <div style="font-size: 11px; font-family: monospace; color: #0284c7; background: rgba(2, 132, 199, 0.08); padding: 1px 6px; border-radius: 4px; display: inline-block; width: fit-content; border: 1px solid rgba(2, 132, 199, 0.18);" class="dark:text-sky-300 dark:bg-sky-950/40">
+        <div style="font-size: 11px; font-family: monospace; color: #0284c7; background: rgba(2, 132, 199, 0.08); padding: 1px 6px; border-radius: 4px; display: inline-block; width: fit-content; border: 1px solid rgba(2, 132, 199, 0.18); white-space: nowrap;" class="dark:text-sky-300 dark:bg-sky-950/40">
             /s/{{ $slug }}
         </div>
     </div>
