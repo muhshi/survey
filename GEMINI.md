@@ -173,4 +173,8 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 4. **Format Skema Kuis**:
    - Model Survey: `is_quiz: true`, `mode: single`.
    - Butir soal menggunakan type `radiogroup`, pilihan value `a`, `b`, `c`, `d`, properti `score` (total skor kumulatif = 100), dan `correctAnswer`. Frontend runner otomatis mengacak urutan pertanyaan dan pilihan jawaban.
+5. **Lokasi Penyimpanan File JSON**:
+   - Seluruh file JSON hasil generate skema survei dan kuis WAJIB disimpan di folder `database/surveys/` (contoh: `database/surveys/pretest-xxx.json`).
+   - DILARANG KERAS meletakkan atau men-generate file JSON skema langsung di root direktori proyek.
 </survey-quiz-rules>
+

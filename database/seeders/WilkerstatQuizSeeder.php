@@ -73,11 +73,15 @@ class WilkerstatQuizSeeder extends Seeder
         $group->users()->syncWithoutDetaching($userIds);
 
         // 4. Baca Skema JSON Pre-test & Post-test
-        $pretestPath = base_path('pretest-pengolahan-wilkerstat-se2026.json');
-        $posttestPath = base_path('posttest-pengolahan-wilkerstat-se2026.json');
+        $findJson = fn (string $filename): ?string => file_exists(database_path("surveys/{$filename}"))
+            ? database_path("surveys/{$filename}")
+            : (file_exists(base_path($filename)) ? base_path($filename) : null);
 
-        $pretestSchema = file_exists($pretestPath) ? json_decode(file_get_contents($pretestPath), true) : null;
-        $posttestSchema = file_exists($posttestPath) ? json_decode(file_get_contents($posttestPath), true) : null;
+        $pretestPath = $findJson('pretest-pengolahan-wilkerstat-se2026.json');
+        $posttestPath = $findJson('posttest-pengolahan-wilkerstat-se2026.json');
+
+        $pretestSchema = $pretestPath ? json_decode(file_get_contents($pretestPath), true) : null;
+        $posttestSchema = $posttestPath ? json_decode(file_get_contents($posttestPath), true) : null;
 
         // 5. Buat / Update Survey Pre-Test
         if ($pretestSchema) {

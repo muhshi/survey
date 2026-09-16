@@ -20,9 +20,12 @@ Panduan standar pembuatan kuis evaluasi, pre-test, post-test, dan pendalaman di 
 
 ---
 
-## 2. Struktur Skema SurveyJS Kuis
+## 2. Struktur Skema & Lokasi Penyimpanan File JSON
 
-File JSON skema kuis disimpan di root direktori dengan penamaan `kebab-case.json` (contoh: `pretest-pengolahan-wilkerstat-se2026.json`).
+1. **Lokasi Folder Khusus**:
+   - Seluruh file JSON skema survei maupun kuis **WAJIB disimpan di folder `database/surveys/`** (contoh: `database/surveys/pretest-pengolahan-wilkerstat-se2026.json`).
+   - **DILARANG KERAS** meletakkan atau men-generate file JSON skema langsung di *root directory* proyek agar repositori tetap bersih, rapi, dan terorganisir.
+   - Format penamaan file wajib menggunakan `kebab-case.json`.
 
 ### A. Halaman 1: Identitas Peserta (`page_identitas`)
 - **DILARANG** membuat dropdown manual daftar nama peserta di dalam form soal.

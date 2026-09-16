@@ -109,11 +109,15 @@ class AssignWilkerstatGroup extends Command
             ]
         );
 
-        $pretestPath = base_path('pretest-pengolahan-wilkerstat-se2026.json');
-        $posttestPath = base_path('posttest-pengolahan-wilkerstat-se2026.json');
+        $findJson = fn (string $filename): ?string => file_exists(database_path("surveys/{$filename}"))
+            ? database_path("surveys/{$filename}")
+            : (file_exists(base_path($filename)) ? base_path($filename) : null);
 
-        $pretestSchema = file_exists($pretestPath) ? json_decode(file_get_contents($pretestPath), true) : null;
-        $posttestSchema = file_exists($posttestPath) ? json_decode(file_get_contents($posttestPath), true) : null;
+        $pretestPath = $findJson('pretest-pengolahan-wilkerstat-se2026.json');
+        $posttestPath = $findJson('posttest-pengolahan-wilkerstat-se2026.json');
+
+        $pretestSchema = $pretestPath ? json_decode(file_get_contents($pretestPath), true) : null;
+        $posttestSchema = $posttestPath ? json_decode(file_get_contents($posttestPath), true) : null;
 
         if ($pretestSchema) {
             $pretest = Survey::updateOrCreate(
@@ -161,8 +165,8 @@ class AssignWilkerstatGroup extends Command
             $this->line("✅ Post-Test ditautkan ke Kelompok '{$group->name}': ".route('survey.show', $posttest));
         }
 
-        $pendalamanPath = base_path('pendalaman-pengolahan-wilkerstat-se2026.json');
-        $pendalamanSchema = file_exists($pendalamanPath) ? json_decode(file_get_contents($pendalamanPath), true) : null;
+        $pendalamanPath = $findJson('pendalaman-pengolahan-wilkerstat-se2026.json');
+        $pendalamanSchema = $pendalamanPath ? json_decode(file_get_contents($pendalamanPath), true) : null;
 
         if ($pendalamanSchema) {
             $pendalaman = Survey::updateOrCreate(

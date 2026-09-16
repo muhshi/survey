@@ -36,6 +36,10 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
   - **Vite & NPM Build**: Mempersempit deteksi perubahan frontend sehingga perubahan pada template Filament/Blade admin (`resources/views/filament/`) tidak lagi memicu `npm run build` yang lambat. Kompilasi aset Vite hanya berjalan jika terjadi perubahan pada `package.json`, `vite.config.js`, `resources/(css|js)`, atau template publik survei.
   - **Composer Install**: Hanya dijalankan bila file autoloader `vendor/autoload.php` belum ada atau terjadi perubahan pada `composer.json` / `composer.lock`.
   - **FrankenPHP Restart**: Mencegah restart ganda jika Docker image baru saja selesai di-build ulang.
+- **Standarisasi & Relokasi File Skema JSON Survei/Kuis**:
+  - Memindahkan seluruh file JSON skema dari root direktori (`alokasi-petugas.json`, `pretest-pengolahan-wilkerstat-se2026.json`, `posttest-pengolahan-wilkerstat-se2026.json`, `pendalaman-pengolahan-wilkerstat-se2026.json`, `pendalaman.json`) ke dalam folder khusus terpusat `database/surveys/` agar root repository tetap bersih dan rapi.
+  - Memperbarui path loader pada `AssignWilkerstatGroup.php`, `WilkerstatQuizSeeder.php`, dan `survey.js` dengan mekanisme pembacaan fallback.
+  - Memperbarui panduan skill `survey-quiz-builder` (`SKILL.md`), `AGENTS.md`, dan `GEMINI.md` sehingga pembuatan JSON skema kuis ke depan wajib disimpan di folder `database/surveys/`.
 
 ### 2026-09-15
 - **Smart Deploy Script & Docker Cache Optimization**: Membuat script deployment otomatis cerdas (`deploy.sh`) yang hanya melakukan build (Docker image, Composer, maupun NPM/Vite) ketika terdeteksi perubahan konfigurasi atau file terkait pada commit diff git. Mengoptimalkan urutan layer `Dockerfile` agar instalasi dependensi memanfaatkan cache layer Docker.
