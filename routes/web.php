@@ -36,3 +36,8 @@ Route::get('/survey-groups/template-import-user', function () {
         'template_import_user.xlsx'
     );
 })->middleware(['auth'])->name('survey.groups.template-import-user');
+
+// Survey / Quiz Export Recap Route
+Route::get('/admin/surveys/{survey}/export-recap', [SurveyController::class, 'exportRecap'])
+    ->middleware(['auth'])
+    ->name('survey.export-recap');

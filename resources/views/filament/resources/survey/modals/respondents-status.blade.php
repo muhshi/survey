@@ -501,7 +501,18 @@
                 <div class="resp-title">{{ $record->title }}</div>
             </div>
 
-            <div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <a
+                    href="{{ route('survey.export-recap', $record) }}"
+                    class="resp-btn resp-btn-emerald"
+                    title="Export data {{ $data['is_quiz'] ? 'rekap nilai kuis' : 'jawaban survei' }} ke Excel (.xlsx)"
+                >
+                    <svg class="resp-icon-sm" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                    </svg>
+                    <span>Export Excel</span>
+                </a>
+
                 <button
                     type="button"
                     @click="copy('{{ $data['public_url'] }}', 'url')"
@@ -748,18 +759,30 @@
                 <div style="font-size: 14px; font-weight: 700; color: #0f172a;">Belum Ada Jawaban Masuk</div>
                 <div class="resp-subtext" style="margin-top: 4px;">Belum ada peserta yang menyelesaikan pengisian kuis/survei ini.</div>
             </div>
-        @else
-            {{-- Search Bar --}}
-            <div class="resp-search-wrap">
-                <svg class="resp-icon-sm" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                </svg>
-                <input
-                    type="text"
-                    x-model="searchSudah"
-                    placeholder="Cari nama responden, email, unit..."
-                    class="resp-input"
-                />
+            {{-- Search & Export Toolbar --}}
+            <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 12px;">
+                <div class="resp-search-wrap" style="flex: 1; margin-bottom: 0;">
+                    <svg class="resp-icon-sm" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                    </svg>
+                    <input
+                        type="text"
+                        x-model="searchSudah"
+                        placeholder="Cari nama responden, email, unit..."
+                        class="resp-input"
+                    />
+                </div>
+                <a
+                    href="{{ route('survey.export-recap', $record) }}"
+                    class="resp-btn resp-btn-emerald"
+                    style="white-space: nowrap; height: 35px;"
+                    title="Export data ke file Excel (.xlsx)"
+                >
+                    <svg class="resp-icon-sm" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                    </svg>
+                    <span>Export Excel ({{ count($data['sudah']) }})</span>
+                </a>
             </div>
 
             {{-- Table --}}

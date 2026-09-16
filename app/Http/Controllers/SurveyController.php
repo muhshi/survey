@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Enums\SurveyMode;
+use App\Exports\JawabanRespondenExport;
+use App\Exports\QuizRecapExport;
 use App\Models\JawabanResponden;
 use App\Models\Kategori;
 use App\Models\Survey;
@@ -12,7 +14,9 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SurveyController extends Controller
 {
@@ -547,5 +551,46 @@ class SurveyController extends Controller
         }
 
         return round(($earnedPoints / $totalPoints) * 100, 2);
+    }
+
+    /**
+     * Export recap / respondent submissions of a survey to Excel.
+     */
+    public function exportRecap(Survey $survey)
+    {
+        $fileName = ($survey->is_quiz ? 'Rekap_Kuis_' : 'Rekap_Survei_').Str::slug($survey->title).'_'.date('Y-m-d').'.xlsx';
+
+        if ($survey->is_quiz) {
+            $parsed = $survey->getParsedSchema();
+            $schemaFields = $parsed['fields'] ?? [];
+
+            $fields = array_unique(array_merge([
+                'nama_peserta',
+                'email_peserta',
+                'attempts_count',
+                'best_score',
+                'status_lulus',
+                'latest_submission',
+            ], array_keys($schemaFields)));
+
+            return Excel::download(
+                new QuizRecapExport($survey, $fields),
+                $fileName
+            );
+        }
+
+        $parsed = $survey->getParsedSchema();
+        $schemaFields = $parsed['fields'] ?? [];
+        $fields = array_unique(array_merge([
+            'nama_peserta',
+            'email_peserta',
+            'waktu_submit',
+            'skor_kuis',
+        ], array_keys($schemaFields)));
+
+        return Excel::download(
+            new JawabanRespondenExport([$survey->id], $fields),
+            $fileName
+        );
     }
 }

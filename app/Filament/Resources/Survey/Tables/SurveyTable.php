@@ -7,6 +7,7 @@ use App\Models\JawabanResponden;
 use App\Models\Survey;
 use App\Models\User;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -200,58 +201,54 @@ class SurveyTable
                     ->label('Desain')
                     ->icon('heroicon-o-pencil-square')
                     ->color('warning')
+                    ->tooltip('Buka Form Builder')
                     ->url(fn ($record) => SurveyResource::getUrl('design', ['record' => $record])),
-                Action::make('statusResponden')
-                    ->label('Status Responden')
-                    ->icon('heroicon-o-user-group')
-                    ->color('secondary')
-                    ->tooltip('Lihat siapa yang sudah dan belum mengisi')
-                    ->modalHeading(fn (Survey $record): string => "Status Responden: {$record->title}")
-                    ->modalDescription('Pantau peserta yang sudah dan belum mengisi survei untuk memudahkan pengingatan.')
-                    ->modalIcon('heroicon-o-user-group')
-                    ->modalWidth('5xl')
-                    ->modalSubmitAction(false)
-                    ->modalCancelActionLabel('Tutup')
-                    ->modalContent(fn (Survey $record) => view('filament.resources.survey.modals.respondents-status', [
-                        'record' => $record,
-                        'data' => static::getRespondentsStatusData($record),
-                    ])),
-                Action::make('viewSubmissions')
-                    ->label('Jawaban')
-                    ->icon('heroicon-o-eye')
-                    ->color('info')
-                    ->url(fn ($record) => SurveyResource::getUrl('submissions', ['record' => $record])),
-                Action::make('recapQuiz')
-                    ->label('Rekap Kuis')
-                    ->icon('heroicon-o-chart-bar')
-                    ->color('success')
-                    ->url(fn ($record) => SurveyResource::getUrl('recap', ['record' => $record]))
-                    ->visible(fn ($record) => $record->is_quiz),
-                EditAction::make(),
-                ReplicateAction::make()
-                    ->label('Duplikat')
-                    ->excludeAttributes(['slug', 'created_at', 'updated_at'])
-                    ->form([
-                        TextInput::make('title')
-                            ->label('Judul Survei/Kuis Baru')
-                            ->required(),
-                        Select::make('kategori_id')
-                            ->label('Kategori')
-                            ->relationship('kategori', 'name')
-                            ->required(),
-                        Toggle::make('is_quiz')
-                            ->label('Jadikan Mode Kuis?'),
-                    ])
-                    ->mutateRecordDataUsing(function (array $data): array {
-                        $data['title'] = $data['title'].' (Copy)';
+                ActionGroup::make([
+                    Action::make('viewSubmissions')
+                        ->label('Lihat Semua Jawaban')
+                        ->icon('heroicon-o-eye')
+                        ->color('info')
+                        ->url(fn ($record) => SurveyResource::getUrl('submissions', ['record' => $record])),
+                    Action::make('exportRecap')
+                        ->label(fn (Survey $record) => $record->is_quiz ? 'Export Rekap Kuis (Excel)' : 'Export Jawaban (Excel)')
+                        ->icon('heroicon-o-document-arrow-down')
+                        ->color('success')
+                        ->url(fn (Survey $record) => route('survey.export-recap', $record))
+                        ->openUrlInNewTab(),
+                    Action::make('recapQuiz')
+                        ->label('Halaman Rekap Kuis')
+                        ->icon('heroicon-o-chart-bar')
+                        ->color('success')
+                        ->url(fn ($record) => SurveyResource::getUrl('recap', ['record' => $record]))
+                        ->visible(fn ($record) => $record->is_quiz),
+                    EditAction::make(),
+                    ReplicateAction::make()
+                        ->label('Duplikat')
+                        ->excludeAttributes(['slug', 'created_at', 'updated_at'])
+                        ->form([
+                            TextInput::make('title')
+                                ->label('Judul Survei/Kuis Baru')
+                                ->required(),
+                            Select::make('kategori_id')
+                                ->label('Kategori')
+                                ->relationship('kategori', 'name')
+                                ->required(),
+                            Toggle::make('is_quiz')
+                                ->label('Jadikan Mode Kuis?'),
+                        ])
+                        ->mutateRecordDataUsing(function (array $data): array {
+                            $data['title'] = $data['title'].' (Copy)';
 
-                        return $data;
-                    })
-                    ->beforeReplicaSaved(function (Model $replica): void {
-                        $replica->offsetUnset('jawaban_respondens_count');
-                    })
-                    ->successRedirectUrl(fn (Model $replica): string => SurveyResource::getUrl('edit', ['record' => $replica])),
-                DeleteAction::make(),
+                            return $data;
+                        })
+                        ->beforeReplicaSaved(function (Model $replica): void {
+                            $replica->offsetUnset('jawaban_respondens_count');
+                        })
+                        ->successRedirectUrl(fn (Model $replica): string => SurveyResource::getUrl('edit', ['record' => $replica])),
+                    DeleteAction::make(),
+                ])
+                    ->tooltip('Aksi Lainnya')
+                    ->icon('heroicon-m-ellipsis-vertical'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
