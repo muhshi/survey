@@ -59,12 +59,15 @@ class ViewSubmissions extends Page implements HasSchemas, HasTable
 
                         TextEntry::make('public_url')
                             ->label('Link Akses')
-                            ->state(fn () => 'Buka Link Survei')
-                            ->action(
+                            ->state(fn () => $this->record->getPublicUrl())
+                            ->copyable()
+                            ->copyMessage('Link survei disalin ke clipboard!')
+                            ->suffixAction(
                                 Action::make('open_link')
+                                    ->label('Buka')
+                                    ->icon('heroicon-m-arrow-top-right-on-square')
                                     ->url(fn () => $this->record->getPublicUrl())
                                     ->openUrlInNewTab()
-                                    ->icon('heroicon-m-arrow-top-right-on-square')
                                     ->color(Color::Sky)
                             )
                             ->icon('heroicon-m-link'),
