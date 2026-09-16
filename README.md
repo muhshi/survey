@@ -26,6 +26,11 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 ## Changelog
 
 ### 2026-09-16
+- **Refaktorisasi SurveyController ke Service Layer & Form Request**: Menerapkan arsitektur *Thin Controller* dan *Dependency Injection* sesuai standar skill `laravel-best-practices` (`rules/routing.md`, `rules/architecture.md`, dan `rules/validation.md`):
+  - Memisahkan evaluasi hak akses survei, validasi kelompok peserta, jendela waktu aktif pivot, dan role fallback ke dalam **`SurveyAccessService`**.
+  - Memisahkan penilaian otomatis skor kuis SurveyJS, aturan batas retake/pengulangan kuis, serta siklus hidup penyimpanan/pembaruan jawaban responden ke dalam **`SurveySubmissionService`**.
+  - Menggantikan validasi inline dengan Form Request terdedikasi (**`SubmitSurveyRequest`** dan **`UpdateSurveySubmissionRequest`**).
+  - Merampingkan `SurveyController` dari ~600 baris menjadi ~160 baris bersih, modular, dan teruji dengan baik.
 - **Status Responden Modal (Pemantauan Sudah vs Belum Mengisi)**: Menambahkan aksi interaktif pada kolom Jawaban (`jawaban_respondens_count`) dan baris aksi (`statusResponden`) di tabel Survei admin panel. Ketika diklik, modal pop-up menampilkan pemantauan terpadu untuk memudahkan pengingatan peserta:
   - Ringkasan statistik (Target Peserta, Total Sudah Mengisi, Total Belum Mengisi, dan Progress Bar persentase pengisian).
   - Tab **Belum Mengisi**: Menampilkan daftar peserta target yang belum mengisi dengan fitur pencarian langsung, tombol 1-klik "Ingatkan WA" (membuka WhatsApp dengan pesan personal otomatis dan link survei), tombol "Salin Semua Email", dan tombol "Salin Pesan Broadcast WhatsApp".

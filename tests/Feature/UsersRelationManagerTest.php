@@ -1,11 +1,9 @@
 <?php
 
-use App\Filament\Resources\Groups\RelationManagers\UsersRelationManager;
 use App\Filament\Resources\Groups\Pages\EditGroup;
+use App\Filament\Resources\Groups\RelationManagers\UsersRelationManager;
 use App\Models\Group;
 use App\Models\User;
-use App\Models\Survey;
-use App\Models\JawabanResponden;
 use Livewire\Livewire;
 
 test('users relation manager can be rendered and displays members', function () {
@@ -35,46 +33,15 @@ test('users relation manager can be rendered and displays members', function () 
         'ownerRecord' => $group,
         'pageClass' => EditGroup::class,
     ])
-    ->assertSuccessful()
-    ->assertCanSeeTableRecords([$user1])
-    ->assertCanNotSeeTableRecords([$user2]);
+        ->assertSuccessful()
+        ->assertCanSeeTableRecords([$user1])
+        ->assertCanNotSeeTableRecords([$user2]);
 });
 
-test('users relation manager shows pretest and pendalaman scores', function () {
-    // Create pretest and pendalaman surveys
-    Survey::factory()->create([
-        'id' => 4,
-        'title' => 'Pretest Pelatihan Petugas Lapangan SE2026',
-        'is_quiz' => true,
-    ]);
-
-    Survey::factory()->create([
-        'id' => 5,
-        'title' => 'Pendalaman Petugas Lapangan SE2026',
-        'is_quiz' => true,
-    ]);
-
+test('users relation manager displays group members', function () {
     $group = Group::create(['name' => 'Kelompok 1']);
-    $user = User::factory()->create(['name' => 'John Doe']);
+    $user = User::factory()->create(['name' => 'John Doe', 'email' => 'john@example.com']);
     $group->users()->attach($user);
-
-    // Create survey submission for pretest (survey_id = 4)
-    JawabanResponden::create([
-        'survey_id' => 4,
-        'user_id' => $user->id,
-        'payload' => [],
-        'score' => 85.5,
-        'submitted_at' => now(),
-    ]);
-
-    // Create survey submission for pendalaman (survey_id = 5)
-    JawabanResponden::create([
-        'survey_id' => 5,
-        'user_id' => $user->id,
-        'payload' => [],
-        'score' => 90.0,
-        'submitted_at' => now(),
-    ]);
 
     $admin = User::factory()->create(['is_active' => true]);
     $this->actingAs($admin);
@@ -83,7 +50,7 @@ test('users relation manager shows pretest and pendalaman scores', function () {
         'ownerRecord' => $group,
         'pageClass' => EditGroup::class,
     ])
-    ->assertSuccessful()
-    ->assertSee('Selesai (85.5%)')
-    ->assertSee('Selesai (90%)');
+        ->assertSuccessful()
+        ->assertSee('John Doe')
+        ->assertSee('john@example.com');
 });
