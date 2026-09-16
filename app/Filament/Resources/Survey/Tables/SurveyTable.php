@@ -18,8 +18,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Utilities\Get;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
@@ -32,35 +32,62 @@ class SurveyTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn ($query) => $query->withCount('jawabanRespondens')->with(['groups']))
+            ->modifyQueryUsing(fn ($query) => $query->withCount('jawabanRespondens')->with(['groups', 'kategori']))
             ->columns([
-                TextColumn::make('kategori.name')
-                    ->label('Kategori')
-                    ->sortable()
-                    ->searchable(),
                 TextColumn::make('title')
-                    ->label('Judul')
+                    ->label('Survei')
                     ->sortable()
-                    ->searchable()
-                    ->limit(40),
-                TextColumn::make('public_url')
-                    ->label('Link Survei')
-                    ->state(fn ($record) => $record->getPublicUrl())
+                    ->searchable(['title', 'slug', 'kategori.name'])
+                    ->formatStateUsing(function (string $state, Survey $record) {
+                        $kategori = e($record->kategori?->name ?? 'Umum');
+                        $title = e($record->title);
+                        $slug = e($record->slug);
+                        $url = e($record->getPublicUrl());
+                        $quizBadge = $record->is_quiz
+                            ? '<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300" style="font-size: 10px; font-weight: 700;">Kuis</span>'
+                            : '';
+
+                        return <<<HTML
+                        <div style="display: flex; flex-direction: column; gap: 4px; padding: 4px 0; max-width: 400px;">
+                            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                                <span style="font-size: 10px; font-weight: 600; background: rgba(148, 163, 184, 0.15); color: #475569; padding: 1px 6px; border-radius: 4px;" class="dark:text-slate-300">
+                                    📁 {$kategori}
+                                </span>
+                                {$quizBadge}
+                            </div>
+                            <div style="font-size: 13px; font-weight: 700; color: #0f172a; line-height: 1.35;" class="dark:text-slate-100">
+                                {$title}
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px; font-size: 11px; color: #64748b;" class="dark:text-slate-400">
+                                <span style="font-family: monospace; color: #0284c7; background: rgba(2, 132, 199, 0.08); padding: 1px 5px; border-radius: 4px;">
+                                    /s/{$slug}
+                                </span>
+                                <a href="{$url}" target="_blank" onclick="event.stopPropagation();" title="Buka survei di tab baru" style="color: #94a3b8; display: inline-flex; align-items: center;" onmouseover="this.style.color='#0284c7'" onmouseout="this.style.color='#94a3b8'">
+                                    <svg style="width: 12px; height: 12px;" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                        HTML;
+                    })
+                    ->html()
                     ->copyable()
-                    ->copyableState(fn ($record) => $record->getPublicUrl())
-                    ->copyMessage('Link disalin!')
-                    ->icon('heroicon-o-link')
-                    ->color('primary')
-                    ->extraAttributes([
-                        'style' => 'max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;',
-                    ]),
+                    ->copyableState(fn (Survey $record) => $record->getPublicUrl())
+                    ->copyMessage('Link survei disalin!')
+                    ->tooltip('Klik untuk salin tautan survei'),
                 TextColumn::make('mode')
                     ->badge()
                     ->sortable(),
-                IconColumn::make('is_active')
+                ToggleColumn::make('is_active')
                     ->label('Aktif')
-                    ->boolean()
-                    ->sortable(),
+                    ->sortable()
+                    ->afterStateUpdated(function (Survey $record, bool $state) {
+                        Notification::make()
+                            ->title($state ? "Survei '{$record->title}' diaktifkan" : "Survei '{$record->title}' dinonaktifkan")
+                            ->color($state ? 'success' : 'warning')
+                            ->send();
+                    }),
                 TextColumn::make('access_level')
                     ->label('Akses')
                     ->badge()
