@@ -53,10 +53,16 @@ class RegionController extends Controller
     public function sls(Request $request)
     {
         $desa = $request->query('desa');
+        $kecamatan = $request->query('kecamatan');
 
-        $data = MasterWilayah::select('nmsls', 'kdsls')
-            ->where('nmdesa', $desa)
-            ->distinct()
+        $query = MasterWilayah::select('nmsls', 'kdsls')
+            ->where('nmdesa', $desa);
+
+        if ($kecamatan) {
+            $query->where('nmkec', $kecamatan);
+        }
+
+        $data = $query->distinct()
             ->orderByRaw('CAST(kdsls AS UNSIGNED) ASC')
             ->get()
             ->map(function ($item) {

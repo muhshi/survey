@@ -1,0 +1,186 @@
+{
+ "title": "Konfirmasi Pendataan Sensus Ekonomi 2026 (SE2026)",
+ "description": "Konfirmasi pendataan Sensus Ekonomi 2026 bagi ASN, PPPK, dan Tenaga Non-ASN di lingkungan Pemerintah Kabupaten Demak.",
+ "logoPosition": "right",
+ "pages": [
+  {
+   "name": "page_konfirmasi",
+   "elements": [
+    {
+     "type": "text",
+     "name": "email",
+     "title": "Email",
+     "placeholder": "Contoh: nama@gmail.com",
+     "inputType": "email",
+     "isRequired": true,
+     "validators": [
+      {
+       "type": "email",
+       "text": "Format email tidak valid. Pastikan penulisan email sudah benar."
+      }
+     ]
+    },
+    {
+     "type": "text",
+     "name": "nama_opd",
+     "title": "Nama Dinas / OPD / Instansi",
+     "placeholder": "Contoh: RSUD Sunan Kalijaga, Dinas Kesehatan, Bappelitbangda, dll.",
+     "isRequired": true
+    },
+    {
+     "type": "text",
+     "name": "nama_lengkap",
+     "title": "Nama Lengkap",
+     "placeholder": "Masukkan nama lengkap beserta gelar (jika ada)",
+     "isRequired": true
+    },
+    {
+     "type": "text",
+     "name": "nik",
+     "title": "Nomor Induk Kependudukan (NIK)",
+     "placeholder": "Masukkan 16 digit NIK",
+     "maxLength": 16,
+     "isRequired": true,
+     "validators": [
+      {
+       "type": "regex",
+       "regex": "^[0-9]{16}$",
+       "text": "NIK harus terdiri dari 16 digit angka."
+      }
+     ]
+    },
+    {
+     "type": "radiogroup",
+     "name": "status_kepegawaian",
+     "title": "Status Kepegawaian",
+     "isRequired": true,
+     "choices": [
+      "PNS",
+      "PPPK",
+      "PPPK Paruh Waktu",
+      "BLUD/Karyawan Daerah"
+     ]
+    },
+    {
+     "type": "text",
+     "name": "nama_kk",
+     "title": "Nama Lengkap Kepala Keluarga",
+     "description": "Tuliskan nama Kepala Keluarga sesuai yang tercantum pada Kartu Keluarga (KK).",
+     "placeholder": "Nama Kepala Keluarga",
+     "isRequired": true
+    },
+    {
+     "type": "radiogroup",
+     "name": "status_pendataan",
+     "title": "Apakah sudah dilakukan pendataan oleh petugas SE2026 di tempat tinggal Anda?",
+     "isRequired": true,
+     "choices": [
+      "Sudah",
+      "Belum"
+     ]
+    },
+    {
+     "type": "panel",
+     "name": "panel_domisili",
+     "title": "Alamat Tempat Tinggal (Domisili)",
+     "description": "Mohon isikan alamat tempat tinggal saat ini untuk keperluan konfirmasi dan tindak lanjut pendataan petugas lapangan SE2026.",
+     "visibleIf": "{status_pendataan} = 'Belum'",
+     "elements": [
+      {
+       "type": "dropdown",
+       "name": "kecamatan",
+       "title": "Nama Kecamatan Domisili",
+       "isRequired": true,
+       "placeholder": "Pilih Kecamatan...",
+       "choices": [
+        { "value": "MRANGGEN", "text": "010 Mranggen" },
+        { "value": "KARANGAWEN", "text": "020 Karangawen" },
+        { "value": "GUNTUR", "text": "030 Guntur" },
+        { "value": "SAYUNG", "text": "040 Sayung" },
+        { "value": "KARANG TENGAH", "text": "050 Karangtengah" },
+        { "value": "BONANG", "text": "060 Bonang" },
+        { "value": "DEMAK", "text": "070 Demak" },
+        { "value": "WONOSALAM", "text": "080 Wonosalam" },
+        { "value": "DEMPET", "text": "090 Dempet" },
+        { "value": "KEBONAGUNG", "text": "100 Kebonagung" },
+        { "value": "GAJAH", "text": "110 Gajah" },
+        { "value": "KARANGANYAR", "text": "120 Karanganyar" },
+        { "value": "MIJEN", "text": "130 Mijen" },
+        { "value": "WEDUNG", "text": "140 Wedung" },
+        { "value": "DI LUAR KABUPATEN DEMAK", "text": "Di Luar Kabupaten Demak" }
+       ]
+      },
+      {
+       "type": "dropdown",
+       "name": "desa",
+       "title": "Nama Desa / Kelurahan",
+       "isRequired": true,
+       "placeholder": "Pilih Desa/Kelurahan...",
+       "visibleIf": "{kecamatan} notempty and {kecamatan} != 'DI LUAR KABUPATEN DEMAK'",
+       "choicesByUrl": {
+        "url": "/api/regions/desa?kecamatan={kecamatan}",
+        "valueName": "value",
+        "titleName": "text"
+       }
+      },
+      {
+       "type": "dropdown",
+       "name": "sls",
+       "title": "RT / RW / Satuan Lingkungan Setempat (SLS)",
+       "isRequired": true,
+       "placeholder": "Pilih SLS (RT/RW)...",
+       "visibleIf": "{desa} notempty and {kecamatan} != 'DI LUAR KABUPATEN DEMAK'",
+       "choicesByUrl": {
+        "url": "/api/regions/sls?desa={desa}&kecamatan={kecamatan}",
+        "valueName": "value",
+        "titleName": "text"
+       }
+      },
+      {
+       "type": "text",
+       "name": "desa_luar",
+       "title": "Nama Desa/Kelurahan & Kecamatan/Kabupaten di Luar Demak",
+       "placeholder": "Contoh: Desa Sukomulyo, Kec. Kaliwungu Selatan, Kendal",
+       "isRequired": true,
+       "visibleIf": "{kecamatan} = 'DI LUAR KABUPATEN DEMAK'"
+      },
+      {
+       "type": "text",
+       "name": "sls_luar",
+       "title": "RT / RW Domisili",
+       "placeholder": "Contoh: RT 002 RW 002",
+       "isRequired": true,
+       "visibleIf": "{kecamatan} = 'DI LUAR KABUPATEN DEMAK'"
+      },
+      {
+       "type": "comment",
+       "name": "alamat_lengkap",
+       "title": "Alamat Lengkap (Nama Jalan, Gang, Blok, Nomor Rumah, atau Perumahan)",
+       "placeholder": "Contoh: Perum Graha Indah Blok C No. 12, Jl. Kenanga RT 002 RW 001",
+       "isRequired": true
+      },
+      {
+       "type": "text",
+       "name": "no_hp",
+       "title": "Nomor HP / WhatsApp",
+       "inputType": "tel",
+       "placeholder": "Contoh: 081234567890",
+       "isRequired": true,
+       "validators": [
+        {
+         "type": "regex",
+         "regex": "^(08|\\+628)[0-9]{8,13}$",
+         "text": "Nomor HP/WA harus diawali 08 atau +628 dengan minimal 10 digit angka."
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "showQuestionNumbers": "on",
+ "questionTitlePattern": "numTitle",
+ "completeText": "Kirim Jawaban",
+ "completedHtml": "<div style=\"text-align: center; padding: 40px;\"><div style=\"font-size: 4rem; margin-bottom: 16px;\">✅</div><h2 style=\"color: #1e1b4b; font-weight: 800; font-size: 1.75rem; margin-bottom: 12px;\">Terima Kasih!</h2><p style=\"color: #64748b; font-size: 1rem; max-width: 500px; margin: 0 auto 24px auto; line-height: 1.6;\">Konfirmasi pendataan Sensus Ekonomi 2026 (SE2026) Anda telah berhasil disimpan di sistem BPS Kabupaten Demak.</p></div>"
+}
