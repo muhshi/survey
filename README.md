@@ -32,9 +32,10 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
   - Menerapkan logika kondisional: jika responden memilih "Belum" didata oleh petugas lapangan, form memunculkan seksi alamat domisili lengkap. Jika "Sudah", responden dapat langsung mengirim kuesioner.
   - **Dropdown Bertingkat Wilayah Domisili (Cascading Dropdown)**: Menghubungkan pilihan Kecamatan, Desa/Kelurahan, dan SLS (RT/RW) secara hierarkis ke data `master_wilayah` (8.270 data), serta opsi khusus "Di Luar Kabupaten Demak" dengan input teks manual.
   - Menyempurnakan endpoint `/api/regions/sls` di `RegionController` agar mendukung parameter opsional `kecamatan` guna mengeliminasi duplikasi nama desa antar kecamatan berbeda.
-- **Migrasi Data Eksisting Google Forms (960 Responden)**:
+- **Migrasi & Kurasi Data Eksisting Google Forms (960 Responden)**:
   - Menyediakan salinan backup data spreadsheet di `database/data/gform-se2026.csv`.
-  - Menambahkan Artisan Command terdedikasi `survey:import-gform-se2026` untuk mengimpor seluruh 960 data responden dari Google Forms secara otomatis dan idempotent ke tabel `jawaban_responden`, memetakan seluruh field sesuai kuesioner baru, dan mempertahankan timestamp asli pengisian responden.
+  - Menambahkan Artisan Command terdedikasi `survey:import-gform-se2026` untuk mengimpor data responden dari Google Forms secara otomatis dan idempotent ke tabel `jawaban_responden`, memetakan seluruh field sesuai kuesioner baru, dan mempertahankan timestamp asli pengisian responden.
+  - Menambahkan Artisan Command kurasi `survey:curate-gform-se2026`: menyeragamkan status BLUD ke "BLUD/Karyawan Daerah" (124 baris), membersihkan karakter non-angka pada NIK dan No HP, menyelaraskan status domisili luar Demak (60 baris), merapikan spasi teks, serta mengeliminasi 8 input duplikat lama dengan mempertahankan submit terakhir responden (total akhir: 952 responden unik).
   - Menambahkan pengujian otomatis fitur survei konfirmasi SE2026 di `tests/Feature/KonfirmasiSe2026SurveyTest.php`.
 
 ### 2026-09-16
