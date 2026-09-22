@@ -13,11 +13,146 @@ use Filament\Forms\Components\Select;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
+use Illuminate\Database\Eloquent\Builder;
+use Livewire\Attributes\Url;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ListJawabanResponden extends ListRecords
 {
     protected static string $resource = JawabanRespondenResource::class;
+
+    protected string $view = 'filament.resources.jawaban-responden.pages.list-jawaban-responden';
+
+    #[Url(as: 'survey_id')]
+    public ?int $selectedSurveyId = null;
+
+    #[Url(as: 'view')]
+    public string $currentTab = 'grafik';
+
+    public function mount(): void
+    {
+        parent::mount();
+
+        if (! $this->selectedSurveyId) {
+            $this->selectedSurveyId = (int) (
+                Survey::whereHas('jawabanRespondens')
+                    ->orderByDesc('is_active')
+                    ->orderByDesc('created_at')
+                    ->value('id')
+                ?: Survey::orderByDesc('is_active')
+                    ->orderByDesc('created_at')
+                    ->value('id')
+            );
+        }
+    }
+
+    public function setTab(string $tab): void
+    {
+        $this->currentTab = $tab;
+    }
+
+    public function updatedSelectedSurveyId(): void
+    {
+        $this->resetTable();
+    }
+
+    protected function getTableQuery(): ?Builder
+    {
+        $query = parent::getTableQuery();
+
+        if ($this->selectedSurveyId) {
+            $query->where('survey_id', $this->selectedSurveyId);
+        }
+
+        return $query;
+    }
+
+    public function getSurveyListProperty()
+    {
+        return Survey::withCount('jawabanRespondens')
+            ->orderByDesc('is_active')
+            ->orderByDesc('created_at')
+            ->get();
+    }
+
+    public function getCurrentSurveyProperty(): ?Survey
+    {
+        if (! $this->selectedSurveyId) {
+            return null;
+        }
+
+        return Survey::find($this->selectedSurveyId);
+    }
+
+    public function getQuestionStatsProperty(): array
+    {
+        if (! $this->selectedSurveyId) {
+            return [];
+        }
+
+        $survey = $this->currentSurvey;
+        if (! $survey) {
+            return [];
+        }
+
+        $parsed = $survey->getParsedSchema();
+        $fields = $parsed['fields'];
+        $choicesMap = $parsed['choices'];
+
+        $submissions = JawabanResponden::where('survey_id', $this->selectedSurveyId)->get();
+        $totalResponses = $submissions->count();
+
+        $stats = [];
+        foreach ($fields as $key => $title) {
+            $stats[$key] = [
+                'key' => $key,
+                'title' => $title,
+                'total_answered' => 0,
+                'counts' => [],
+                'recent_text' => [],
+            ];
+        }
+
+        foreach ($submissions as $sub) {
+            $payload = $sub->payload ?? [];
+            foreach ($fields as $key => $title) {
+                $val = $payload[$key] ?? null;
+                if ($val !== null && $val !== '') {
+                    $stats[$key]['total_answered']++;
+                    if (is_array($val)) {
+                        foreach ($val as $item) {
+                            $vStr = is_string($item) ? $item : json_encode($item);
+                            @$stats[$key]['counts'][$vStr]++;
+                        }
+                    } else {
+                        $vStr = trim((string) $val);
+                        if ($vStr !== '') {
+                            @$stats[$key]['counts'][$vStr]++;
+                            if (count($stats[$key]['recent_text']) < 50) {
+                                $stats[$key]['recent_text'][] = $vStr;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        foreach ($stats as $key => &$item) {
+            arsort($item['counts']);
+            $distinctCount = count($item['counts']);
+            $hasPredefinedChoices = isset($choicesMap[$key]);
+
+            $isChart = $hasPredefinedChoices || ($distinctCount > 0 && $distinctCount <= 25);
+            $item['is_chart'] = $isChart;
+            $item['chart_type'] = ($distinctCount <= 6) ? 'donut' : 'bar';
+            $item['distinct_count'] = $distinctCount;
+        }
+
+        return [
+            'total_responses' => $totalResponses,
+            'questions' => $stats,
+        ];
+    }
 
     protected function getHeaderActions(): array
     {
@@ -36,7 +171,7 @@ class ListJawabanResponden extends ListRecords
                         ->label('Pilih Survey')
                         ->multiple()
                         ->options(Survey::pluck('title', 'id'))
-                        ->default(fn () => $this->getTableFilterState('survey_id')['values'] ?? null)
+                        ->default(fn () => $this->selectedSurveyId ? [$this->selectedSurveyId] : ($this->getTableFilterState('survey_id')['values'] ?? null))
                         ->required()
                         ->live()
                         ->afterStateUpdated(function (Set $set, $state) {

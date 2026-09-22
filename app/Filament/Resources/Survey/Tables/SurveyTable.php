@@ -32,7 +32,7 @@ class SurveyTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn ($query) => $query->withCount('jawabanRespondens')->with(['groups', 'kategori']))
+            ->modifyQueryUsing(fn ($query) => $query->withCount('jawabanRespondens')->with(['groups', 'kategori'])->orderByDesc('is_active')->orderByDesc('created_at'))
             ->recordUrl(null)
             ->columns([
                 TextColumn::make('title')

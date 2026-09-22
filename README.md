@@ -26,6 +26,14 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 ## Changelog
 
 ### 2026-09-22
+- **Tampilan Jawaban Responden (Filter Per Survei & 2 Tab Interaktif: Grafik Ringkasan vs Tabel Response)**:
+  - Menerapkan arsitektur UI/UX Segmented Tabs pada resource Jawaban Responden (`/admin/jawaban-respondens`):
+    - **Filter Per Survei Terintegrasi**: Dropdown pilihan survei di bagian atas halaman dengan default survei aktif terbaru yang memuat tanggapan.
+    - **Tab 1 - Grafik Ringkasan (Google Form Style)**: Visualisasi visual interaktif per pertanyaan kuesioner dengan Donut Chart (SVG) untuk pertanyaan pilihan tunggal (2–6 opsi), Horizontal Bar Chart untuk pertanyaan dengan banyak kategori (seperti Kecamatan), dan kartu daftar teks terorganisir untuk isian bebas lengkap dengan pengelompokan jawaban berulang terbanyak (seperti OPD).
+    - **Tab 2 - Tabel Response**: Menampilkan tabel data jawaban responden lengkap dengan pencarian, pengurutan, pagination, dan ekspor Excel dinamis terfilter per survei.
+  - Menambahkan pengujian otomatis di `tests/Feature/JawabanRespondenViewTest.php`.
+- **Pengurutan Default Tabel Survei (Aktif & Terbaru di Atas)**:
+  - Memperbarui `SurveyTable.php` agar tabel survei secara otomatis mengurutkan survei aktif di paling atas (`is_active` desc) dan diurutkan berdasarkan waktu pembuatan terbaru (`created_at` desc), diikuti oleh survei-survei yang tidak aktif di bawahnya.
 - **Survei Konfirmasi Pendataan SE2026 untuk Pegawai ASN/Non-ASN**:
   - Membuat survei baru konfirmasi pendataan Sensus Ekonomi 2026 (SE2026) dengan slug `/survey/konfirmasi-pendataan-se2026` berakses publik (`access_level: 'public'`) untuk menampung pengisian dari seluruh pegawai OPD/Dinas di lingkungan Pemkab Demak tanpa perlu login.
   - Menyusun skema kuesioner SurveyJS di `database/surveys/konfirmasi-pendataan-se2026.json` dimulai langsung dari Nama Dinas / OPD (tanpa pertanyaan email), dilengkapi validasi 16 digit NIK numerik dan nomor HP/WhatsApp Indonesia.
