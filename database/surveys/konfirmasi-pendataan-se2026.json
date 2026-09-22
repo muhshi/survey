@@ -8,20 +8,6 @@
    "elements": [
     {
      "type": "text",
-     "name": "email",
-     "title": "Email",
-     "placeholder": "Contoh: nama@gmail.com",
-     "inputType": "email",
-     "isRequired": true,
-     "validators": [
-      {
-       "type": "email",
-       "text": "Format email tidak valid. Pastikan penulisan email sudah benar."
-      }
-     ]
-    },
-    {
-     "type": "text",
      "name": "nama_opd",
      "title": "Nama Dinas / OPD / Instansi",
      "placeholder": "Contoh: RSUD Sunan Kalijaga, Dinas Kesehatan, Bappelitbangda, dll.",

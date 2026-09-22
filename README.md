@@ -28,7 +28,7 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 ### 2026-09-22
 - **Survei Konfirmasi Pendataan SE2026 untuk Pegawai ASN/Non-ASN**:
   - Membuat survei baru konfirmasi pendataan Sensus Ekonomi 2026 (SE2026) dengan slug `/survey/konfirmasi-pendataan-se2026` berakses publik (`access_level: 'public'`) untuk menampung pengisian dari seluruh pegawai OPD/Dinas di lingkungan Pemkab Demak tanpa perlu login.
-  - Menyusun skema kuesioner SurveyJS di `database/surveys/konfirmasi-pendataan-se2026.json` dilengkapi validasi ketat format Email, 16 digit NIK numerik, dan nomor HP/WhatsApp Indonesia.
+  - Menyusun skema kuesioner SurveyJS di `database/surveys/konfirmasi-pendataan-se2026.json` dimulai langsung dari Nama Dinas / OPD (tanpa pertanyaan email), dilengkapi validasi 16 digit NIK numerik dan nomor HP/WhatsApp Indonesia.
   - Menerapkan logika kondisional: jika responden memilih "Belum" didata oleh petugas lapangan, form memunculkan seksi alamat domisili lengkap. Jika "Sudah", responden dapat langsung mengirim kuesioner.
   - **Dropdown Bertingkat Wilayah Domisili (Cascading Dropdown)**: Menghubungkan pilihan Kecamatan, Desa/Kelurahan, dan SLS (RT/RW) secara hierarkis ke data `master_wilayah` (8.270 data), serta opsi khusus "Di Luar Kabupaten Demak" dengan input teks manual.
   - Menyempurnakan endpoint `/api/regions/sls` di `RegionController` agar mendukung parameter opsional `kecamatan` guna mengeliminasi duplikasi nama desa antar kecamatan berbeda.

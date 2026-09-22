@@ -51,7 +51,6 @@ test('respondent can submit konfirmasi survey successfully without login', funct
     expect($survey)->not->toBeNull();
 
     $payload = [
-        'email' => 'testing_survey@demakkab.go.id',
         'nama_opd' => 'Dinas Komunikasi dan Informatika',
         'nama_lengkap' => 'Budi Santoso, S.Kom',
         'nik' => '3321011204900001',
@@ -80,5 +79,5 @@ test('respondent can submit konfirmasi survey successfully without login', funct
 
     expect($submission)->not->toBeNull()
         ->and($submission->payload['nama_lengkap'])->toBe('Budi Santoso, S.Kom')
-        ->and($submission->payload['email'])->toBe('testing_survey@demakkab.go.id');
+        ->and($submission->payload['nama_opd'])->toBe('Dinas Komunikasi dan Informatika');
 });
