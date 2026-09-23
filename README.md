@@ -36,6 +36,7 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
     - **Penyembunyian Skor Kuis untuk Non-Kuis**: Kolom skor di tabel, rincian modal view, serta opsi kolom pada modal Export Excel otomatis disembunyikan jika survei yang dipilih bukan bertipe kuis.
     - **Penghapusan Tombol Buat Tanggapan**: Menghilangkan tombol "New Jawaban Responden" di header dan menonaktifkan izin pembuatan tanggapan manual (`canCreate = false`).
     - **Waktu Submit**: Menampilkan format tanggal yang rapi dan dilengkapi keterangan waktu relatif (`diffForHumans()`).
+    - **Fix Format NIK & No HP pada Export Excel**: Mengimplementasikan `WithCustomValueBinder` dan `WithColumnFormatting` pada `JawabanRespondenExport` dan `QuizRecapExport` agar NIK (16 digit), No HP (08...), dan data numerik panjang disimpan secara eksplisit sebagai tipe data Text (`DataType::TYPE_STRING` dan format `@`). Hal ini mengeliminasi masalah angka NIK berubah menjadi notasi ilmiah (seperti `3.32E+15`) serta mencegah terpotongnya angka 0 di awal nomor telepon saat dibuka di Microsoft Excel.
     - **Column Manager**: Mendukung toggle kolom Filament sehingga admin leluasa memilih kolom mana saja yang ingin ditampilkan atau disembunyikan.
   - **Optimasi Query**: Menambahkan eager loading `['survey.kategori', 'user']` pada `getTableQuery()` di `ListJawabanResponden` untuk mengeliminasi potensi N+1 query.
 

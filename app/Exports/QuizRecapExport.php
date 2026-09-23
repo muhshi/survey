@@ -9,12 +9,19 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\FromQuery;
+use Maatwebsite\Excel\Concerns\WithColumnFormatting;
+use Maatwebsite\Excel\Concerns\WithCustomValueBinder;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
+use PhpOffice\PhpSpreadsheet\Cell\Cell;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
+use PhpOffice\PhpSpreadsheet\Cell\DefaultValueBinder;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class QuizRecapExport implements FromQuery, WithHeadings, WithMapping, WithStyles
+class QuizRecapExport extends DefaultValueBinder implements FromQuery, WithColumnFormatting, WithCustomValueBinder, WithHeadings, WithMapping, WithStyles
 {
     protected Survey $survey;
 
@@ -167,6 +174,43 @@ class QuizRecapExport implements FromQuery, WithHeadings, WithMapping, WithStyle
         }
 
         return $row;
+    }
+
+    public function bindValue(Cell $cell, $value)
+    {
+        if (is_numeric($value)) {
+            $strVal = (string) $value;
+            if (strlen($strVal) >= 10 || (strlen($strVal) > 1 && str_starts_with($strVal, '0'))) {
+                $cell->setValueExplicit($strVal, DataType::TYPE_STRING);
+
+                return true;
+            }
+        }
+
+        return parent::bindValue($cell, $value);
+    }
+
+    public function columnFormats(): array
+    {
+        $formats = [];
+        foreach ($this->selectedFields as $index => $field) {
+            $colLetter = Coordinate::stringFromColumnIndex($index + 1);
+            $fieldLower = strtolower($field);
+
+            if (
+                str_contains($fieldLower, 'nik') ||
+                str_contains($fieldLower, 'kk') ||
+                str_contains($fieldLower, 'hp') ||
+                str_contains($fieldLower, 'wa') ||
+                str_contains($fieldLower, 'telp') ||
+                str_contains($fieldLower, 'sls') ||
+                str_contains($fieldLower, 'kode')
+            ) {
+                $formats[$colLetter] = NumberFormat::FORMAT_TEXT;
+            }
+        }
+
+        return $formats;
     }
 
     public function styles(Worksheet $sheet)

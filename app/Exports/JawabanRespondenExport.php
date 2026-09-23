@@ -7,12 +7,19 @@ use App\Models\Survey;
 use App\Models\User;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromQuery;
+use Maatwebsite\Excel\Concerns\WithColumnFormatting;
+use Maatwebsite\Excel\Concerns\WithCustomValueBinder;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
+use PhpOffice\PhpSpreadsheet\Cell\Cell;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
+use PhpOffice\PhpSpreadsheet\Cell\DefaultValueBinder;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class JawabanRespondenExport implements FromQuery, WithHeadings, WithMapping, WithStyles
+class JawabanRespondenExport extends DefaultValueBinder implements FromQuery, WithColumnFormatting, WithCustomValueBinder, WithHeadings, WithMapping, WithStyles
 {
     protected array $surveyIds;
 
@@ -179,6 +186,47 @@ class JawabanRespondenExport implements FromQuery, WithHeadings, WithMapping, Wi
         }
 
         return $row;
+    }
+
+    public function bindValue(Cell $cell, $value)
+    {
+        if (is_numeric($value)) {
+            $strVal = (string) $value;
+            // Angka dengan 10 digit atau lebih (misalnya NIK 16 digit, No KK, No HP)
+            // atau diawali angka 0 (misalnya No WA/HP 08..., SLS 001)
+            // wajib diset sebagai DataType::TYPE_STRING agar Excel tidak merubahnya menjadi notasi ilmiah (3.32E+15)
+            // atau memangkas presisi angka dan menghilangkan awalan 0.
+            if (strlen($strVal) >= 10 || (strlen($strVal) > 1 && str_starts_with($strVal, '0'))) {
+                $cell->setValueExplicit($strVal, DataType::TYPE_STRING);
+
+                return true;
+            }
+        }
+
+        return parent::bindValue($cell, $value);
+    }
+
+    public function columnFormats(): array
+    {
+        $formats = [];
+        foreach ($this->selectedFields as $index => $field) {
+            $colLetter = Coordinate::stringFromColumnIndex($index + 1);
+            $fieldLower = strtolower($field);
+
+            if (
+                str_contains($fieldLower, 'nik') ||
+                str_contains($fieldLower, 'kk') ||
+                str_contains($fieldLower, 'hp') ||
+                str_contains($fieldLower, 'wa') ||
+                str_contains($fieldLower, 'telp') ||
+                str_contains($fieldLower, 'sls') ||
+                str_contains($fieldLower, 'kode')
+            ) {
+                $formats[$colLetter] = NumberFormat::FORMAT_TEXT;
+            }
+        }
+
+        return $formats;
     }
 
     public function styles(Worksheet $sheet)
