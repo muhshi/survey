@@ -58,9 +58,9 @@ class ListJawabanResponden extends ListRecords
 
     protected function getTableQuery(): ?Builder
     {
-        $query = parent::getTableQuery();
+        $query = parent::getTableQuery()?->with(['survey.kategori', 'user']);
 
-        if ($this->selectedSurveyId) {
+        if ($this->selectedSurveyId && $query) {
             $query->where('survey_id', $this->selectedSurveyId);
         }
 

@@ -25,6 +25,19 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 
 ## Changelog
 
+### 2026-09-23
+- **Perbaikan Animasi Loading Kolom & Penataan Kolom Tabel Jawaban Responden**:
+  - **Fix Animasi Loading Spinner Menyala Terus**: Memperbaiki deklarasi CSS di `list-jawaban-responden.blade.php` yang sebelumnya menerapkan `display: inline-block !important` pada selector `.srv-wrap svg`. Selector tersebut menimpa atribut `display: none` bawaan Livewire/Filament pada header kolom yang dapat diurutkan (sortable), sehingga menyebabkan ikon loading berputar terus-menerus di semua kolom tabel. CSS kini di-scope secara spesifik hanya pada elemen toolbar, metric cards, dan icon boxes tanpa mengganggu tabel bawaan Filament.
+  - **Penataan Kolom Respon Informatif & Cerdas**:
+    - **Responden / Peserta**: Resolusi nama pintar yang otomatis membaca nama user login, input `nama_lengkap`, atau nama peserta wawancara/kepala keluarga (mengatasi masalah nama selalu muncul "Anonim" pada survei publik seperti SE2026), dilengkapi subtitle identitas dinamis (OPD/Email/NIK/No HP).
+    - **Instansi / OPD (Baru)**: Menampilkan nama instansi/dinas/unit kerja secara langsung di tabel untuk memudahkan pemantauan tanggapan dari OPD.
+    - **Status Respon (Baru)**: Menampilkan badge status pendataan (*Sudah* = hijau, *Belum* = kuning) atau status kepegawaian (*PNS*, *PPPK*).
+    - **Wilayah / Domisili (Baru)**: Kolom opsional (toggleable) untuk menampilkan informasi domisili (Kecamatan / Desa / SLS).
+    - **Skor Kuis**: Menampilkan badge skor persentase hanya pada survei bertipe kuis; untuk survei biasa menampilkan placeholder `-` tanpa badge merah yang membingungkan.
+    - **Waktu Submit**: Menampilkan format tanggal yang rapi dan dilengkapi keterangan waktu relatif (`diffForHumans()`).
+    - **Column Manager**: Mendukung toggle kolom Filament sehingga admin leluasa memilih kolom mana saja yang ingin ditampilkan atau disembunyikan.
+  - **Optimasi Query**: Menambahkan eager loading `['survey.kategori', 'user']` pada `getTableQuery()` di `ListJawabanResponden` untuk mengeliminasi potensi N+1 query.
+
 ### 2026-09-22
 - **Tampilan Jawaban Responden (Filter Per Survei & 2 Tab Interaktif: Grafik Ringkasan vs Tabel Response)**:
   - Menerapkan arsitektur UI/UX Segmented Tabs pada resource Jawaban Responden (`/admin/jawaban-respondens`):

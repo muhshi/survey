@@ -133,7 +133,9 @@ class QuizRecapExport implements FromQuery, WithHeadings, WithMapping, WithStyle
                     } elseif (is_array($val)) {
                         if (isset($choicesMap[$field])) {
                             $mappedArray = array_map(function ($v) use ($choicesMap, $field) {
-                                if (is_array($v) || is_object($v)) return json_encode($v);
+                                if (is_array($v) || is_object($v)) {
+                                    return json_encode($v);
+                                }
                                 $mapped = $choicesMap[$field][$v] ?? $v;
 
                                 return is_string($mapped) ? html_entity_decode($mapped, ENT_QUOTES | ENT_HTML5, 'UTF-8') : $mapped;
@@ -141,7 +143,10 @@ class QuizRecapExport implements FromQuery, WithHeadings, WithMapping, WithStyle
                             $row[] = implode(', ', $mappedArray);
                         } else {
                             $row[] = implode(', ', array_map(function ($v) {
-                                if (is_array($v) || is_object($v)) return json_encode($v);
+                                if (is_array($v) || is_object($v)) {
+                                    return json_encode($v);
+                                }
+
                                 return is_string($v) ? html_entity_decode($v, ENT_QUOTES | ENT_HTML5, 'UTF-8') : $v;
                             }, $val));
                         }

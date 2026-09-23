@@ -77,12 +77,12 @@ class SurveyForm
                                 ->label('Maksimal Percobaan')
                                 ->numeric()
                                 ->minValue(1)
-                                ->visible(fn(Get $get) => (bool) $get('allow_retake'))
-                                ->required(fn(Get $get) => (bool) $get('allow_retake'))
+                                ->visible(fn (Get $get) => (bool) $get('allow_retake'))
+                                ->required(fn (Get $get) => (bool) $get('allow_retake'))
                                 ->helperText('Berapa kali peserta diizinkan mengulang? (Contoh: 2 berarti total percobaan bisa 2 kali)'),
                         ])->columns(2),
                     ])
-                    ->visible(fn(Get $get) => (bool) $get('is_quiz'))
+                    ->visible(fn (Get $get) => (bool) $get('is_quiz'))
                     ->columns(1),
 
                 Section::make('Akses Kontrol')
@@ -100,10 +100,10 @@ class SurveyForm
                             ->columnSpan(1),
                         Select::make('allowed_roles')
                             ->label('Role yang Diizinkan')
-                            ->options(fn() => Role::pluck('name', 'name')->toArray())
+                            ->options(fn () => Role::pluck('name', 'name')->toArray())
                             ->multiple()
-                            ->visible(fn(Get $get) => $get('access_level') === 'role')
-                            ->required(fn(Get $get) => $get('access_level') === 'role')
+                            ->visible(fn (Get $get) => $get('access_level') === 'role')
+                            ->required(fn (Get $get) => $get('access_level') === 'role')
                             ->columnSpan(1),
                     ])
                     ->columns(2),

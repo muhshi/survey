@@ -11,11 +11,13 @@
                 color: #f1f5f9;
             }
 
-            /* Global SVG constraints - prevents oversized icons */
-            .srv-wrap svg {
-                display: inline-block !important;
-                vertical-align: middle !important;
-                flex-shrink: 0 !important;
+            /* SVG constraints for custom widgets only - prevents affecting Filament table and loading indicators */
+            .srv-toolbar svg,
+            .srv-stat-card svg,
+            .srv-icon-box svg,
+            .srv-empty-box svg {
+                vertical-align: middle;
+                flex-shrink: 0;
             }
 
             /* Top Toolbar (Filter + Tabs) */

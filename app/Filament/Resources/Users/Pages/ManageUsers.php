@@ -53,8 +53,8 @@ class ManageUsers extends ManageRecords
                             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                             'application/vnd.ms-excel',
                         ])
-                        ->visible(fn(Get $get) => $get('input_method') === 'excel')
-                        ->required(fn(Get $get) => $get('input_method') === 'excel'),
+                        ->visible(fn (Get $get) => $get('input_method') === 'excel')
+                        ->required(fn (Get $get) => $get('input_method') === 'excel'),
                     Repeater::make('users')
                         ->label('Daftar User')
                         ->schema([
@@ -63,8 +63,8 @@ class ManageUsers extends ManageRecords
                         ])
                         ->columns(2)
                         ->defaultItems(1)
-                        ->visible(fn(Get $get) => $get('input_method') === 'manual')
-                        ->required(fn(Get $get) => $get('input_method') === 'manual'),
+                        ->visible(fn (Get $get) => $get('input_method') === 'manual')
+                        ->required(fn (Get $get) => $get('input_method') === 'manual'),
                 ])
                 ->action(function (array $data) {
                     $roleName = $data['role'];
@@ -73,7 +73,8 @@ class ManageUsers extends ManageRecords
 
                     if ($data['input_method'] === 'excel') {
                         $filePath = Storage::disk('local')->path($data['file']);
-                        $import = new class implements ToArray, WithHeadingRow {
+                        $import = new class implements ToArray, WithHeadingRow
+                        {
                             public $data = [];
 
                             public function array(array $array): void
@@ -120,7 +121,7 @@ class ManageUsers extends ManageRecords
                                 'identity_type' => 'mitra',
                             ]
                         );
-                        if (!$user->hasRole($roleName)) {
+                        if (! $user->hasRole($roleName)) {
                             $user->assignRole($roleName);
                         }
                         $count++;
@@ -142,13 +143,13 @@ class ManageUsers extends ManageRecords
                 ->badge(User::count()),
             'pegawai' => Tab::make('Pegawai')
                 ->badge(User::pegawai()->count())
-                ->modifyQueryUsing(fn($query) => $query->pegawai()),
+                ->modifyQueryUsing(fn ($query) => $query->pegawai()),
             'calon_mitra' => Tab::make('Calon Mitra')
-                ->badge(User::whereHas('roles', fn($q) => $q->where('name', 'calon_petugas'))->count())
-                ->modifyQueryUsing(fn($query) => $query->whereHas('roles', fn($q) => $q->where('name', 'calon_petugas'))),
+                ->badge(User::whereHas('roles', fn ($q) => $q->where('name', 'calon_petugas'))->count())
+                ->modifyQueryUsing(fn ($query) => $query->whereHas('roles', fn ($q) => $q->where('name', 'calon_petugas'))),
             'calon_afirmasi' => Tab::make('Calon Afirmasi')
-                ->badge(User::whereHas('roles', fn($q) => $q->where('name', 'calon_afirmasi'))->count())
-                ->modifyQueryUsing(fn($query) => $query->whereHas('roles', fn($q) => $q->where('name', 'calon_afirmasi'))),
+                ->badge(User::whereHas('roles', fn ($q) => $q->where('name', 'calon_afirmasi'))->count())
+                ->modifyQueryUsing(fn ($query) => $query->whereHas('roles', fn ($q) => $q->where('name', 'calon_afirmasi'))),
         ];
     }
 }

@@ -49,13 +49,13 @@ class JawabanRespondenExport implements FromQuery, WithHeadings, WithMapping, Wi
         return JawabanResponden::query()
             ->with(['user', 'survey'])
             ->whereIn('survey_id', $this->surveyIds)
-            ->when($this->submittedFrom, fn($q, $date) => $q->whereDate('submitted_at', '>=', $date))
-            ->when($this->submittedUntil, fn($q, $date) => $q->whereDate('submitted_at', '<=', $date));
+            ->when($this->submittedFrom, fn ($q, $date) => $q->whereDate('submitted_at', '>=', $date))
+            ->when($this->submittedUntil, fn ($q, $date) => $q->whereDate('submitted_at', '<=', $date));
     }
 
     protected function getParsedSchema()
     {
-        if (!isset($this->parsedSchema)) {
+        if (! isset($this->parsedSchema)) {
             $surveys = Survey::whereIn('id', $this->surveyIds)->get();
             $fields = [];
             $choices = [];
@@ -119,7 +119,7 @@ class JawabanRespondenExport implements FromQuery, WithHeadings, WithMapping, Wi
                     $pesertaId = $payload['nama_peserta'] ?? $payload['pilih_peserta'] ?? null;
                     if ($pesertaId && is_numeric($pesertaId)) {
                         $peserta = $this->getUsersCache()->get($pesertaId);
-                        $row[] = $peserta ? html_entity_decode($peserta->name, ENT_QUOTES | ENT_HTML5, 'UTF-8') : 'Unknown (' . $pesertaId . ')';
+                        $row[] = $peserta ? html_entity_decode($peserta->name, ENT_QUOTES | ENT_HTML5, 'UTF-8') : 'Unknown ('.$pesertaId.')';
                     } elseif ($pesertaId) {
                         $row[] = html_entity_decode((string) $pesertaId, ENT_QUOTES | ENT_HTML5, 'UTF-8');
                     } else {
@@ -144,7 +144,9 @@ class JawabanRespondenExport implements FromQuery, WithHeadings, WithMapping, Wi
                         // Map each item in the array if there are choices defined
                         if (isset($choicesMap[$field])) {
                             $mappedArray = array_map(function ($v) use ($choicesMap, $field) {
-                                if (is_array($v) || is_object($v)) return json_encode($v);
+                                if (is_array($v) || is_object($v)) {
+                                    return json_encode($v);
+                                }
                                 $mapped = $choicesMap[$field][$v] ?? $v;
 
                                 return is_string($mapped) ? html_entity_decode($mapped, ENT_QUOTES | ENT_HTML5, 'UTF-8') : $mapped;
@@ -152,7 +154,10 @@ class JawabanRespondenExport implements FromQuery, WithHeadings, WithMapping, Wi
                             $row[] = implode(', ', $mappedArray);
                         } else {
                             $row[] = implode(', ', array_map(function ($v) {
-                                if (is_array($v) || is_object($v)) return json_encode($v);
+                                if (is_array($v) || is_object($v)) {
+                                    return json_encode($v);
+                                }
+
                                 return is_string($v) ? html_entity_decode($v, ENT_QUOTES | ENT_HTML5, 'UTF-8') : $v;
                             }, $val));
                         }
