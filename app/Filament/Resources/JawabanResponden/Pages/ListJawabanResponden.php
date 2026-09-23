@@ -7,7 +7,6 @@ use App\Filament\Resources\JawabanResponden\JawabanRespondenResource;
 use App\Models\JawabanResponden;
 use App\Models\Survey;
 use Filament\Actions\Action;
-use Filament\Actions\CreateAction;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Select;
 use Filament\Resources\Pages\ListRecords;
@@ -185,12 +184,16 @@ class ListJawabanResponden extends ListRecords
                             $schemaFields = [];
                             $hasQuiz = false;
                             $hasNonQuiz = false;
+                            $hasInterview = false;
 
                             foreach ($surveys as $survey) {
                                 if ($survey->is_quiz) {
                                     $hasQuiz = true;
                                 } else {
                                     $hasNonQuiz = true;
+                                    if ($survey->id == 3) {
+                                        $hasInterview = true;
+                                    }
 
                                     $parsed = $survey->getParsedSchema();
                                     $surveySchemaFields = array_keys($parsed['fields']);
@@ -210,7 +213,7 @@ class ListJawabanResponden extends ListRecords
                             $schemaFields = array_unique($schemaFields);
 
                             $defaultFields = ['survey_title'];
-                            if ($hasNonQuiz) {
+                            if ($hasInterview) {
                                 $defaultFields = array_merge($defaultFields, ['nama_pewawancara', 'nama_peserta', 'email_peserta']);
                             } else {
                                 $defaultFields = array_merge($defaultFields, ['nama_lengkap', 'email_peserta']);
@@ -236,14 +239,34 @@ class ListJawabanResponden extends ListRecords
                                 return [];
                             }
 
+                            $hasQuiz = false;
+                            $hasInterview = false;
+                            foreach ($surveys as $survey) {
+                                if ($survey->is_quiz) {
+                                    $hasQuiz = true;
+                                }
+                                if ($survey->id == 3) {
+                                    $hasInterview = true;
+                                }
+                            }
+
                             $options = [
                                 'survey_title' => 'Judul Survey',
                                 'waktu_submit' => 'Waktu Submit',
-                                'skor_kuis' => 'Skor Kuis',
-                                'nama_pewawancara' => 'Nama Pewawancara',
-                                'nama_peserta' => 'Nama Peserta',
-                                'email_peserta' => 'Email Peserta',
                             ];
+
+                            if ($hasQuiz) {
+                                $options['skor_kuis'] = 'Skor Kuis';
+                            }
+
+                            if ($hasInterview) {
+                                $options['nama_pewawancara'] = 'Nama Pewawancara';
+                                $options['nama_peserta'] = 'Nama Peserta';
+                                $options['email_peserta'] = 'Email Peserta';
+                            } else {
+                                $options['nama_lengkap'] = 'Nama Lengkap';
+                                $options['email_peserta'] = 'Email Peserta';
+                            }
 
                             foreach ($surveys as $survey) {
                                 $parsed = $survey->getParsedSchema();
@@ -284,13 +307,15 @@ class ListJawabanResponden extends ListRecords
 
                             $schemaFields = [];
                             $hasQuiz = false;
-                            $hasNonQuiz = false;
+                            $hasInterview = false;
 
                             foreach ($surveys as $survey) {
                                 if ($survey->is_quiz) {
                                     $hasQuiz = true;
                                 } else {
-                                    $hasNonQuiz = true;
+                                    if ($survey->id == 3) {
+                                        $hasInterview = true;
+                                    }
 
                                     $parsed = $survey->getParsedSchema();
                                     $surveySchemaFields = array_keys($parsed['fields']);
@@ -309,7 +334,7 @@ class ListJawabanResponden extends ListRecords
                             $schemaFields = array_unique($schemaFields);
 
                             $defaultFields = ['survey_title'];
-                            if ($hasNonQuiz) {
+                            if ($hasInterview) {
                                 $defaultFields = array_merge($defaultFields, ['nama_pewawancara', 'nama_peserta', 'email_peserta']);
                             } else {
                                 $defaultFields = array_merge($defaultFields, ['nama_lengkap', 'email_peserta']);
@@ -342,7 +367,6 @@ class ListJawabanResponden extends ListRecords
                         $fileName
                     );
                 }),
-            CreateAction::make(),
         ];
     }
 }

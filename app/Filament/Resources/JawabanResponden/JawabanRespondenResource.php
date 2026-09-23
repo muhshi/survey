@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\JawabanResponden;
 
-use App\Filament\Resources\JawabanResponden\Pages\CreateJawabanResponden;
 use App\Filament\Resources\JawabanResponden\Pages\EditJawabanResponden;
 use App\Filament\Resources\JawabanResponden\Pages\ListJawabanResponden;
 use App\Filament\Resources\JawabanResponden\Schemas\JawabanRespondenForm;
@@ -41,11 +40,15 @@ class JawabanRespondenResource extends Resource
         ];
     }
 
+    public static function canCreate(): bool
+    {
+        return false;
+    }
+
     public static function getPages(): array
     {
         return [
             'index' => ListJawabanResponden::route('/'),
-            'create' => CreateJawabanResponden::route('/create'),
             'edit' => EditJawabanResponden::route('/{record}/edit'),
         ];
     }

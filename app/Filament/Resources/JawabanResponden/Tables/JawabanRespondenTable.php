@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\JawabanResponden\Tables;
 
+use App\Filament\Resources\JawabanResponden\Pages\ListJawabanResponden;
 use App\Models\User;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
@@ -136,6 +137,10 @@ class JawabanRespondenTable
                         default => 'gray',
                     })
                     ->placeholder('-')
+                    ->sortable(query: function (Builder $query, string $direction): Builder {
+                        return $query->orderBy('payload->status_pendataan', $direction)
+                            ->orderBy('payload->status_kepegawaian', $direction);
+                    })
                     ->toggleable(),
 
                 TextColumn::make('wilayah')
@@ -181,6 +186,13 @@ class JawabanRespondenTable
                     ->suffix(fn ($record) => $record->score !== null ? '%' : '')
                     ->placeholder('-')
                     ->sortable()
+                    ->visible(function ($livewire) {
+                        if ($livewire instanceof ListJawabanResponden) {
+                            return (bool) $livewire->currentSurvey?->is_quiz;
+                        }
+
+                        return false;
+                    })
                     ->toggleable(),
 
                 TextColumn::make('submitted_at')
@@ -266,7 +278,7 @@ class JawabanRespondenTable
                                     ->suffix('%')
                                     ->weight('bold')
                                     ->color('primary')
-                                    ->visible(fn ($record) => $record?->survey?->is_quiz || $record?->score !== null),
+                                    ->visible(fn ($record) => (bool) $record?->survey?->is_quiz),
                                 TextEntry::make('metadata.ip')->label('IP Address'),
                             ])->columns(2),
                         Section::make('Data Jawaban')

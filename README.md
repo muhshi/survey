@@ -31,9 +31,10 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
   - **Penataan Kolom Respon Informatif & Cerdas**:
     - **Responden / Peserta**: Resolusi nama pintar yang otomatis membaca nama user login, input `nama_lengkap`, atau nama peserta wawancara/kepala keluarga (mengatasi masalah nama selalu muncul "Anonim" pada survei publik seperti SE2026), dilengkapi subtitle identitas dinamis (OPD/Email/NIK/No HP).
     - **Instansi / OPD (Baru)**: Menampilkan nama instansi/dinas/unit kerja secara langsung di tabel untuk memudahkan pemantauan tanggapan dari OPD.
-    - **Status Respon (Baru)**: Menampilkan badge status pendataan (*Sudah* = hijau, *Belum* = kuning) atau status kepegawaian (*PNS*, *PPPK*).
+    - **Status Respon (Baru)**: Menampilkan badge status pendataan (*Sudah* = hijau, *Belum* = kuning) atau status kepegawaian (*PNS*, *PPPK*), kini dilengkapi kemampuan pengurutan (sortable) langsung dari data JSON payload.
     - **Wilayah / Domisili (Baru)**: Kolom opsional (toggleable) untuk menampilkan informasi domisili (Kecamatan / Desa / SLS).
-    - **Skor Kuis**: Menampilkan badge skor persentase hanya pada survei bertipe kuis; untuk survei biasa menampilkan placeholder `-` tanpa badge merah yang membingungkan.
+    - **Penyembunyian Skor Kuis untuk Non-Kuis**: Kolom skor di tabel, rincian modal view, serta opsi kolom pada modal Export Excel otomatis disembunyikan jika survei yang dipilih bukan bertipe kuis.
+    - **Penghapusan Tombol Buat Tanggapan**: Menghilangkan tombol "New Jawaban Responden" di header dan menonaktifkan izin pembuatan tanggapan manual (`canCreate = false`).
     - **Waktu Submit**: Menampilkan format tanggal yang rapi dan dilengkapi keterangan waktu relatif (`diffForHumans()`).
     - **Column Manager**: Mendukung toggle kolom Filament sehingga admin leluasa memilih kolom mana saja yang ingin ditampilkan atau disembunyikan.
   - **Optimasi Query**: Menambahkan eager loading `['survey.kategori', 'user']` pada `getTableQuery()` di `ListJawabanResponden` untuk mengeliminasi potensi N+1 query.
