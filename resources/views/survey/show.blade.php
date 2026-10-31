@@ -432,6 +432,27 @@
             </div>
         </div>
 
+        <!-- Draft Recovery Alert -->
+        <div id="draft-recovery-alert" class="hidden white-card mb-4 border-l-4 border-amber-500 bg-amber-50/70 p-4 rounded-xl shadow-sm">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <span class="text-2xl">💾</span>
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-sm">Draf Pengisian Tersimpan Ditemukan</h3>
+                        <p class="text-xs text-slate-600 mt-0.5">Sistem mendeteksi jawaban yang tersimpan di perangkat ini. Ingin memulihkan draf?</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 self-end sm:self-auto flex-shrink-0">
+                    <button id="btn-restore-draft" type="button" class="px-3.5 py-1.5 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-lg transition shadow-sm cursor-pointer">
+                        Pulihkan
+                    </button>
+                    <button id="btn-discard-draft" type="button" class="px-3.5 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-semibold rounded-lg transition cursor-pointer">
+                        Abaikan
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- SurveyJS Area -->
         <div id="surveyElement"></div>
 
@@ -561,10 +582,67 @@
                     <div style="text-align: center; padding: 40px;">
                         <h3 style="color: #1e1b4b; font-weight: bold; margin-bottom: 20px;">Berhasil Disimpan!</h3>
                         <p style="color: #64748b; margin-bottom: 30px;">Jawaban responden telah berhasil dikirim ke server.</p>
-                        <button onclick="window.location.reload()" class="sd-btn sd-btn--action" style="background-color: #10b981 !important;">Isi Kuesioner Baru</button>
+                        <button onclick="window.resetSurveyRunner()" class="sd-btn sd-btn--action" style="background-color: #10b981 !important;">Isi Kuesioner Baru</button>
                     </div>
                 `;
             @endif
+
+            // Auto-Save Draft Setup
+            const draftKey = "survey_draft_{{ $survey->id }}_" + ({{ Auth::id() ?? 0 }});
+            const draftAlert = document.getElementById('draft-recovery-alert');
+            const btnRestore = document.getElementById('btn-restore-draft');
+            const btnDiscard = document.getElementById('btn-discard-draft');
+
+            try {
+                const savedDraftStr = localStorage.getItem(draftKey);
+                if (savedDraftStr) {
+                    const savedDraft = JSON.parse(savedDraftStr);
+                    const hasData = Object.keys(savedDraft).some(k => !['nama_lengkap', 'nama', 'name', 'email_peserta', 'email'].includes(k));
+                    if (hasData && draftAlert) {
+                        draftAlert.classList.remove('hidden');
+                        if (btnRestore) {
+                            btnRestore.addEventListener('click', function() {
+                                model.data = Object.assign({}, model.data, savedDraft);
+                                draftAlert.classList.add('hidden');
+                            });
+                        }
+                        if (btnDiscard) {
+                            btnDiscard.addEventListener('click', function() {
+                                localStorage.removeItem(draftKey);
+                                draftAlert.classList.add('hidden');
+                            });
+                        }
+                    }
+                }
+            } catch(e) {
+                console.warn('[AutoSave] Draft read error:', e);
+            }
+
+            // Auto-save on answer change with debounce
+            let autoSaveTimer = null;
+            model.onValueChanged.add(function(sender) {
+                clearTimeout(autoSaveTimer);
+                autoSaveTimer = setTimeout(function() {
+                    try {
+                        localStorage.setItem(draftKey, JSON.stringify(sender.data));
+                    } catch(e) {}
+                }, 400);
+            });
+
+            window.resetSurveyRunner = function() {
+                try { localStorage.removeItem(draftKey); } catch(e) {}
+                model.clear(false);
+                @if(Auth::check())
+                model.data = {
+                    "nama_lengkap": {!! json_encode(Auth::user()->name) !!},
+                    "nama": {!! json_encode(Auth::user()->name) !!},
+                    "name": {!! json_encode(Auth::user()->name) !!},
+                    "email_peserta": {!! json_encode(Auth::user()->email) !!},
+                    "email": {!! json_encode(Auth::user()->email) !!}
+                };
+                @endif
+                model.render("surveyElement");
+            };
 
             model.completeText = "Kirim Jawaban";
             model.pageNextText = "Lanjut";
@@ -583,6 +661,7 @@
                 .then(data => {
                     loading.classList.add('hidden');
                     if (data.success) {
+                        try { localStorage.removeItem(draftKey); } catch(e) {}
                         // Show quiz result modal if this is a quiz
                         if (data.quiz) {
                             showQuizResult(data.quiz);
