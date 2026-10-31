@@ -26,6 +26,23 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 ## Changelog
 
 ### 2026-10-31
+- **Optimalisasi Kinerja Panel Admin & Database**:
+  - **Isolasi Aset SurveyJS Creator**: Memindahkan injeksi library SurveyJS Creator (>1.5 MB) dari seluruh halaman admin panel (`AdminPanelProvider`) agar hanya dimuat secara spesifik ketika membuka halaman `DesignSurvey`, mempercepat *load time* dan navigasi halaman dashboard, users, dsb. lebih dari 50%.
+  - **Database Indexing**: Menambahkan indeks komposit performa pada tabel `master_wilayah` (`['nmkec', 'nmdesa']`, `['kdkec', 'kddesa']`) dan `jawaban_responden` (`['survey_id', 'user_id']`, `['survey_id', 'submitted_at']`) untuk mempercepat cascading dropdown wilayah dan query filtering respon.
+  - **Caching API Wilayah**: Menerapkan caching permanen (`Cache::rememberForever`) pada endpoint `/api/regions/kecamatan`, `/api/regions/desa`, dan `/api/regions/sls` di `RegionController` guna mengeliminasi full table scan pada 8.270 data master wilayah.
+  - **Eliminasi N+1 Query pada Tabel Survei**: Mengoptimalkan perhitungan jumlah responden kelompok pada kolom Jawaban di `SurveyTable` dengan eager loading `groups.users:id` dan pemanfaatan indeks komposit.
+- **Keandalan Runner Survei & Local Asset Bundling**:
+  - **Local SurveyJS Bundle**: Mengunduh dan membundel aset SurveyJS (`survey.core.min.js`, `survey-js-ui.min.js`, `defaultV2.min.css`, dan `indonesian.js`) ke `public/vendor/surveyjs/` dengan mekanisme fallback CDN otomatis sehingga form survei tetap terbuka lancar pada koneksi lambat atau intranet dengan pemblokiran CDN eksternal.
+- **Fitur Baru: Auto-Save & Pemulihan Draf Kuesioner (Draft Recovery)**:
+  - Implementasi auto-save client-side berbasis `localStorage` dengan *debouncing* (400ms) saat responden mengisi jawaban.
+  - Menampilkan banner pemulihan draf elegan ketika responden kembali membuka kuesioner, lengkap dengan opsi *"Pulihkan"* atau *"Abaikan"*.
+  - Pembersihan draf otomatis setelah pengisian sukses terkirim ke server.
+  - Pengoptimalan mode `multi` responden: me-reset isian form secara instan di sisi klien tanpa perlu *reload* halaman penuh.
+- **Fitur Baru: Tanda Terima / Bukti Pengisian (Printable Receipt & PDF) Ber-QR Code**:
+  - Menambahkan halaman bukti tanda terima resmi pengisian kuesioner (`/s/{survey:slug}/receipt/{submission}`) berstandar BPS Demak.
+  - Menyematkan QR Code verifikasi keaslian otomatis berbasis SVG data URI (`chillerlan/php-qrcode`) tanpa ketergantungan API pihak ketiga.
+  - Dilengkapi tombol 1-klik *"Cetak / Simpan PDF"* dengan styling cetak profesional (`@media print`).
+  - Menampilkan tautan cetak bukti pengisian langsung pada layar sukses submit kuesioner dan modal hasil kuis.
 - **Profil & Password Terpusat SIPETRA & Sinkronisasi 1-Klik**:
   - Menambahkan menu "Profil & Password (SIPETRA)" pada dropdown user Filament yang membuka modal pengaturan akun terpusat di `https://bpsdemak.com/account`.
   - Menambahkan opsi "Sinkronkan Profil dari SIPETRA" untuk menyegarkan data nama, NIP, email, jabatan, dan avatar secara instan dari SIPETRA SSO.
