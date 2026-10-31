@@ -35,7 +35,7 @@ class AdminPanelProvider extends PanelProvider
             ->userMenuItems([
                 MenuItem::make()
                     ->label('Profil & Password (SIPETRA)')
-                    ->url(fn (): string => rtrim(config('services.sipetra.base_url', 'https://bpsdemak.com'), '/') . '/account')
+                    ->url(fn (): string => rtrim(config('services.sipetra.base_url', 'https://bpsdemak.com'), '/').'/account')
                     ->icon('heroicon-o-shield-check')
                     ->openUrlInNewTab(),
                 MenuItem::make()
@@ -80,7 +80,12 @@ class AdminPanelProvider extends PanelProvider
             )
             ->renderHook(
                 'panels::head.end',
-                fn () => new HtmlString('
+                function (): HtmlString|string {
+                    if (! request()->routeIs('filament.admin.resources.survey.surveys.design')) {
+                        return '';
+                    }
+
+                    return new HtmlString('
                     <!-- SurveyJS Dependencies -->
                     <script src="https://unpkg.com/knockout/build/output/knockout-latest.js"></script>
                     
@@ -117,7 +122,8 @@ class AdminPanelProvider extends PanelProvider
                             }, 500);
                         });
                     </script>
-                ')
+                ');
+                }
             );
     }
 }
