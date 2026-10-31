@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Http\Responses\SsoLogoutResponse;
+use Filament\Auth\Http\Responses\Contracts\LogoutResponse;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Socialite\Contracts\Factory;
@@ -13,7 +15,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        if (interface_exists(LogoutResponse::class)) {
+            $this->app->singleton(LogoutResponse::class, SsoLogoutResponse::class);
+        }
     }
 
     /**

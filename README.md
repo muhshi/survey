@@ -25,6 +25,11 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 
 ## Changelog
 
+### 2026-10-31
+- **Federated Single Logout (SLO) & Anti Double-Click SSO Button**:
+  - Implementasi `SsoLogoutResponse` pada Filament agar logout pengguna otomatis memutus sesi terpusat di SIPETRA (`/oauth/logout`) dan mencegah login otomatis tanpa kredensial.
+  - Menambahkan animasi loading spinner dan disable state pada tombol "Masuk dengan SIPETRA SSO" untuk mencegah submit ganda.
+
 ### 2026-09-23
 - **Perbaikan Animasi Loading Kolom & Penataan Kolom Tabel Jawaban Responden**:
   - **Fix Animasi Loading Spinner Menyala Terus**: Memperbaiki deklarasi CSS di `list-jawaban-responden.blade.php` yang sebelumnya menerapkan `display: inline-block !important` pada selector `.srv-wrap svg`. Selector tersebut menimpa atribut `display: none` bawaan Livewire/Filament pada header kolom yang dapat diurutkan (sortable), sehingga menyebabkan ikon loading berputar terus-menerus di semua kolom tabel. CSS kini di-scope secara spesifik hanya pada elemen toolbar, metric cards, dan icon boxes tanpa mengganggu tabel bawaan Filament.
