@@ -459,10 +459,21 @@
 @endsection
 
 @section('scripts')
-<script src="https://unpkg.com/survey-core@1.12.14/survey.core.min.js"></script>
-<script src="https://unpkg.com/survey-js-ui@1.12.14/survey-js-ui.min.js"></script>
-<link href="https://unpkg.com/survey-core@1.12.14/defaultV2.min.css" type="text/css" rel="stylesheet">
-<script src="https://unpkg.com/survey-core@1.12.14/i18n/indonesian.js"></script>
+{{-- SurveyJS Assets: Local Bundle with CDN Fallback --}}
+<link href="{{ asset('vendor/surveyjs/defaultV2.min.css') }}" type="text/css" rel="stylesheet" onerror="this.onerror=null;this.href='https://unpkg.com/survey-core@1.12.14/defaultV2.min.css';">
+<script src="{{ asset('vendor/surveyjs/survey.core.min.js') }}"></script>
+<script>
+    if (typeof Survey === 'undefined') {
+        document.write('<script src="https://unpkg.com/survey-core@1.12.14/survey.core.min.js"><\/script>');
+    }
+</script>
+<script src="{{ asset('vendor/surveyjs/survey-js-ui.min.js') }}"></script>
+<script>
+    if (typeof Survey === 'undefined' || typeof Survey.Model === 'undefined') {
+        document.write('<script src="https://unpkg.com/survey-js-ui@1.12.14/survey-js-ui.min.js"><\/script>');
+    }
+</script>
+<script src="{{ asset('vendor/surveyjs/indonesian.js') }}"></script>
 
 <script>
     (function() {
