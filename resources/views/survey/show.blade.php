@@ -467,6 +467,9 @@
         <div class="quiz-result-label" id="quiz-result-label">Selamat, Anda Lulus!</div>
         <div class="quiz-result-passing" id="quiz-result-passing">Nilai standar kelulusan: 0%</div>
         <div class="quiz-result-actions">
+            <a id="btn-receipt" href="#" target="_blank" class="btn-receipt" style="display:none; text-align:center; padding:12px 20px; background:#0284c7; color:#fff; border-radius:10px; font-weight:bold; text-decoration:none; margin-bottom:8px;">
+                📄 Cetak / Unduh Bukti Pengisian
+            </a>
             <a id="btn-retake" href="{{ route('survey.show', $survey) }}" class="btn-retake" style="display:none;">
                 🔄 Ulangi Kuis
             </a>
@@ -664,7 +667,23 @@
                         try { localStorage.removeItem(draftKey); } catch(e) {}
                         // Show quiz result modal if this is a quiz
                         if (data.quiz) {
-                            showQuizResult(data.quiz);
+                            showQuizResult(data.quiz, data.receipt_url);
+                        } else if (data.receipt_url && @json($survey->mode !== App\Enums\SurveyMode::Multi)) {
+                            model.completedHtml = `
+                                <div style="text-align: center; padding: 40px;">
+                                    <div style="font-size: 3rem; margin-bottom: 12px;">✅</div>
+                                    <h3 style="color: #1e1b4b; font-weight: bold; font-size: 1.5rem; margin-bottom: 8px;">Terima Kasih!</h3>
+                                    <p style="color: #64748b; margin-bottom: 24px;">Jawaban survei Anda telah berhasil dikirim dan dicatat oleh sistem.</p>
+                                    <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+                                        <a href="${data.receipt_url}" target="_blank" class="sd-btn sd-btn--action" style="background: linear-gradient(135deg, #0284c7, #0369a1) !important; color: white !important; text-decoration: none; padding: 12px 24px; border-radius: 10px; font-weight: bold; display: inline-flex; align-items: center; gap: 8px;">
+                                            📄 Cetak / Unduh Bukti Pengisian
+                                        </a>
+                                        <a href="{{ route('survey.index') }}" class="sd-btn" style="background: #f1f5f9; color: #475569; text-decoration: none; padding: 12px 20px; border-radius: 10px; font-weight: 600;">
+                                            ← Kembali ke Daftar Survei
+                                        </a>
+                                    </div>
+                                </div>
+                            `;
                         }
                         // Otherwise completedHtml from SurveyJS handles the display
                     } else {
@@ -674,13 +693,14 @@
                 .catch(err => fatal("Koneksi gagal tersambung."));
             });
 
-            function showQuizResult(quiz) {
+            function showQuizResult(quiz, receiptUrl) {
                 const modal   = document.getElementById('quiz-result-modal');
                 const icon    = document.getElementById('quiz-result-icon');
                 const score   = document.getElementById('quiz-result-score');
                 const label   = document.getElementById('quiz-result-label');
                 const passing = document.getElementById('quiz-result-passing');
                 const btnRetake = document.getElementById('btn-retake');
+                const btnReceipt = document.getElementById('btn-receipt');
 
                 const passed = quiz.passed;
                 const scoreVal = parseFloat(quiz.score).toFixed(1);
@@ -702,6 +722,11 @@
                     passing.textContent = 'Nilai standar kelulusan: ' + passingVal + '%';
                 } else {
                     passing.textContent = 'Jawaban Anda telah berhasil disimpan.';
+                }
+
+                if (receiptUrl && btnReceipt) {
+                    btnReceipt.href = receiptUrl;
+                    btnReceipt.style.display = 'block';
                 }
 
                 if (quiz.can_retake) {

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\SsoController;
 use App\Http\Controllers\SurveyController;
+use App\Http\Controllers\SurveyReceiptController;
 use Illuminate\Support\Facades\Route;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Facades\Excel;
@@ -16,6 +17,7 @@ Route::get('/auth/sipetra/callback', [SsoController::class, 'callback']);
 // Public Survey Routes
 Route::get('/survei', [SurveyController::class, 'index'])->name('survey.index');
 Route::get('/s/{survey:slug}', [SurveyController::class, 'show'])->name('survey.show');
+Route::get('/s/{survey:slug}/receipt/{submission}', [SurveyReceiptController::class, 'show'])->name('survey.receipt');
 Route::post('/s/{survey:slug}/submit', [SurveyController::class, 'submit'])->name('survey.submit');
 Route::put('/s/{survey:slug}/edit', [SurveyController::class, 'updateSubmission'])->name('survey.update');
 

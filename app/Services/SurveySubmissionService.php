@@ -171,6 +171,8 @@ class SurveySubmissionService
         $responseData = [
             'success' => true,
             'message' => 'Jawaban Anda telah berhasil disimpan.',
+            'submission_id' => $jawaban->id,
+            'receipt_url' => route('survey.receipt', [$survey, $jawaban]),
         ];
 
         if ($survey->is_quiz && $score !== null) {
