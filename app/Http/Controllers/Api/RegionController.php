@@ -6,24 +6,27 @@ use App\Http\Controllers\Controller;
 use App\Models\JawabanResponden;
 use App\Models\MasterWilayah;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class RegionController extends Controller
 {
     public function kecamatan()
     {
-        $data = MasterWilayah::select('nmkec', 'kdkec')
-            ->distinct()
-            ->orderByRaw('CAST(kdkec AS UNSIGNED) ASC')
-            ->get()
-            ->map(function ($item) {
-                $kode = str_pad($item->kdkec, 3, '0', STR_PAD_LEFT);
-                $nama = ucwords(strtolower($item->nmkec));
+        $data = Cache::rememberForever('regions_kecamatan', function () {
+            return MasterWilayah::select('nmkec', 'kdkec')
+                ->distinct()
+                ->orderByRaw('CAST(kdkec AS UNSIGNED) ASC')
+                ->get()
+                ->map(function ($item) {
+                    $kode = str_pad($item->kdkec, 3, '0', STR_PAD_LEFT);
+                    $nama = ucwords(strtolower($item->nmkec));
 
-                return [
-                    'value' => $item->nmkec, // Tetap menggunakan nmkec sebagai value agar filter desa tidak rusak
-                    'text' => "$kode $nama",
-                ];
-            });
+                    return [
+                        'value' => $item->nmkec, // Tetap menggunakan nmkec sebagai value agar filter desa tidak rusak
+                        'text' => "$kode $nama",
+                    ];
+                });
+        });
 
         return response()->json($data);
     }
@@ -31,21 +34,24 @@ class RegionController extends Controller
     public function desa(Request $request)
     {
         $kecamatan = $request->query('kecamatan');
+        $cacheKey = 'regions_desa_'.($kecamatan ?? 'all');
 
-        $data = MasterWilayah::select('nmdesa', 'kddesa')
-            ->where('nmkec', $kecamatan)
-            ->distinct()
-            ->orderByRaw('CAST(kddesa AS UNSIGNED) ASC')
-            ->get()
-            ->map(function ($item) {
-                $kode = str_pad($item->kddesa, 3, '0', STR_PAD_LEFT);
-                $nama = ucwords(strtolower($item->nmdesa));
+        $data = Cache::rememberForever($cacheKey, function () use ($kecamatan) {
+            return MasterWilayah::select('nmdesa', 'kddesa')
+                ->where('nmkec', $kecamatan)
+                ->distinct()
+                ->orderByRaw('CAST(kddesa AS UNSIGNED) ASC')
+                ->get()
+                ->map(function ($item) {
+                    $kode = str_pad($item->kddesa, 3, '0', STR_PAD_LEFT);
+                    $nama = ucwords(strtolower($item->nmdesa));
 
-                return [
-                    'value' => $item->nmdesa,
-                    'text' => "$kode $nama",
-                ];
-            });
+                    return [
+                        'value' => $item->nmdesa,
+                        'text' => "$kode $nama",
+                    ];
+                });
+        });
 
         return response()->json($data);
     }
@@ -54,26 +60,29 @@ class RegionController extends Controller
     {
         $desa = $request->query('desa');
         $kecamatan = $request->query('kecamatan');
+        $cacheKey = 'regions_sls_'.($kecamatan ?? 'any').'_'.($desa ?? 'any');
 
-        $query = MasterWilayah::select('nmsls', 'kdsls')
-            ->where('nmdesa', $desa);
+        $data = Cache::rememberForever($cacheKey, function () use ($desa, $kecamatan) {
+            $query = MasterWilayah::select('nmsls', 'kdsls')
+                ->where('nmdesa', $desa);
 
-        if ($kecamatan) {
-            $query->where('nmkec', $kecamatan);
-        }
+            if ($kecamatan) {
+                $query->where('nmkec', $kecamatan);
+            }
 
-        $data = $query->distinct()
-            ->orderByRaw('CAST(kdsls AS UNSIGNED) ASC')
-            ->get()
-            ->map(function ($item) {
-                $kode = str_pad((string) $item->kdsls, 4, '0', STR_PAD_LEFT);
-                $nama = $item->nmsls;
+            return $query->distinct()
+                ->orderByRaw('CAST(kdsls AS UNSIGNED) ASC')
+                ->get()
+                ->map(function ($item) {
+                    $kode = str_pad((string) $item->kdsls, 4, '0', STR_PAD_LEFT);
+                    $nama = $item->nmsls;
 
-                return [
-                    'value' => $item->nmsls,
-                    'text' => "$kode $nama",
-                ];
-            });
+                    return [
+                        'value' => $item->nmsls,
+                        'text' => "$kode $nama",
+                    ];
+                });
+        });
 
         return response()->json($data);
     }

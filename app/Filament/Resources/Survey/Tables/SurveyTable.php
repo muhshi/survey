@@ -24,7 +24,6 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 
 class SurveyTable
@@ -32,7 +31,7 @@ class SurveyTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn ($query) => $query->withCount('jawabanRespondens')->with(['groups', 'kategori'])->orderByDesc('is_active')->orderByDesc('created_at'))
+            ->modifyQueryUsing(fn ($query) => $query->withCount('jawabanRespondens')->with(['groups.users:id', 'kategori'])->orderByDesc('is_active')->orderByDesc('created_at'))
             ->recordUrl(null)
             ->columns([
                 TextColumn::make('title')
@@ -121,23 +120,15 @@ class SurveyTable
                             return $record->jawaban_respondens_count;
                         }
 
-                        $groupIds = $groups->pluck('id')->all();
-
-                        $totalGroupUsers = DB::table('group_user')
-                            ->whereIn('group_id', $groupIds)
-                            ->distinct('user_id')
-                            ->count('user_id');
+                        $allGroupUserIds = $groups->flatMap(fn ($g) => $g->users->pluck('id'))->unique()->values();
+                        $totalGroupUsers = $allGroupUserIds->count();
 
                         if ($totalGroupUsers === 0) {
                             return $record->jawaban_respondens_count;
                         }
 
                         $submittedGroupUsers = $record->jawabanRespondens()
-                            ->whereIn('user_id', function ($query) use ($groupIds) {
-                                $query->select('user_id')
-                                    ->from('group_user')
-                                    ->whereIn('group_id', $groupIds);
-                            })
+                            ->whereIn('user_id', $allGroupUserIds)
                             ->distinct('user_id')
                             ->count('user_id');
 
