@@ -56,6 +56,7 @@ class MySurveyPage extends Page
                 return [
                     'id' => $jawaban->id,
                     'survey' => $survey,
+                    'receipt_url' => $survey ? route('survey.receipt', [$survey, $jawaban->id]) : null,
                     'submitted_at' => $jawaban->submitted_at,
                     'score' => $score,
                     'passing_score' => $passingScore,
@@ -85,6 +86,8 @@ class MySurveyPage extends Page
 
                 return [
                     'survey' => $latest['survey'],
+                    'latest_submission_id' => $latest['id'],
+                    'receipt_url' => $latest['receipt_url'],
                     'latest_submitted_at' => $latest['submitted_at'],
                     'latest_score' => $latest['score'],
                     'best_score' => $bestScore,

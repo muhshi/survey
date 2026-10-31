@@ -56,10 +56,10 @@
             position: sticky;
             top: 0;
             z-index: 100;
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(15, 23, 42, 0.85);
             backdrop-filter: blur(20px) saturate(1.8);
             -webkit-backdrop-filter: blur(20px) saturate(1.8);
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             padding: 0 2rem;
         }
         .navbar-inner {
@@ -77,7 +77,7 @@
             font-family: 'Outfit', sans-serif;
             font-weight: 700;
             font-size: 1.15rem;
-            color: var(--text-primary);
+            color: #ffffff;
         }
         .navbar-brand .logo-icon {
             width: 36px;
@@ -90,6 +90,7 @@
             color: white;
             font-weight: 800;
             font-size: 0.85rem;
+            box-shadow: 0 2px 8px rgba(2, 132, 199, 0.3);
         }
         .navbar-links {
             display: flex;
@@ -106,18 +107,19 @@
             transition: all 0.2s ease;
         }
         .navbar-links a:hover {
-            background: rgba(0,0,0,0.04);
-            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
         }
         .navbar-links .btn-primary {
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: white;
             padding: 8px 20px;
             font-weight: 600;
+            box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
         }
         .navbar-links .btn-primary:hover {
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3);
+            box-shadow: 0 6px 18px rgba(2, 132, 199, 0.45);
         }
 
         /* === MAIN CONTENT === */

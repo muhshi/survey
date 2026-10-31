@@ -26,6 +26,17 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 ## Changelog
 
 ### 2026-10-31
+- **Penyempurnaan UI/UX, Aksesibilitas & Integrasi Tanda Terima**:
+  - **Perbaikan Kontras Tombol Halaman Survei Ditutup**: Memperbaiki teks tombol *"Kembali ke Beranda"* pada `survey/closed.blade.php` dengan latar belakang gradien primer BPS (`var(--primary)`, `var(--primary-dark)`) dan teks putih berbayang halus yang mudah dibaca.
+  - **Penyelarasan Tema Navbar & Runner Survei**:
+    - Memperbarui navbar publik (`layouts/survey.blade.php`) menggunakan gaya *dark glassmorphism* (`rgba(15, 23, 42, 0.85)`) berlatar navy pekat dengan teks putih terang agar konsisten dengan tema dark modern.
+    - Menyelaraskan gradien latar belakang runner survei (`survey/show.blade.php`) dengan palet BPS Navy & Sky Blue (`#0284c7`, `#0f172a`).
+  - **Pencarian Real-Time & Badge Status Daftar Survei**:
+    - Menambahkan fitur pencarian instan kuesioner (`#surveySearchInput`) di halaman publik `/survei` yang memfilter judul dan deskripsi secara real-time tanpa refresh halaman.
+    - Menambahkan badge jenis survei (*Kuis / Ujian*), tanggal batas waktu pengisian, dan status batas waktu (*Sedang Berjalan* / *Berakhir*).
+  - **Integrasi Tombol Cetak Tanda Terima di Panel Admin & Halaman Pengguna**:
+    - Menambahkan tombol *"Tanda Terima"* langsung pada footer kartu survei yang telah diisi dan tabel riwayat pengisian di halaman *My Survey* pengguna (`/admin/my-surveys`).
+    - Menambahkan aksi *"Tanda Terima"* pada tabel *Jawaban Responden* (`JawabanRespondenTable`) dan halaman *View Submissions* per survei (`ViewSubmissions`), memudahkan admin/operator mencetak atau mengunduh PDF bukti pengisian kapan saja.
 - **Optimalisasi Kinerja Panel Admin & Database**:
   - **Isolasi Aset SurveyJS Creator**: Memindahkan injeksi library SurveyJS Creator (>1.5 MB) dari seluruh halaman admin panel (`AdminPanelProvider`) agar hanya dimuat secara spesifik ketika membuka halaman `DesignSurvey`, mempercepat *load time* dan navigasi halaman dashboard, users, dsb. lebih dari 50%.
   - **Database Indexing**: Menambahkan indeks komposit performa pada tabel `master_wilayah` (`['nmkec', 'nmdesa']`, `['kdkec', 'kddesa']`) dan `jawaban_responden` (`['survey_id', 'user_id']`, `['survey_id', 'submitted_at']`) untuk mempercepat cascading dropdown wilayah dan query filtering respon.

@@ -212,6 +212,19 @@
         <p>Ikuti survei yang tersedia dan berkontribusi dalam pengumpulan data statistik untuk pembangunan daerah.</p>
     </section>
 
+    <!-- Search Input -->
+    <div style="max-width: 500px; margin: 0 auto 1.5rem; position: relative;">
+        <input 
+            type="text" 
+            id="surveySearchInput" 
+            placeholder="🔍 Cari judul atau topik survei..." 
+            oninput="handleSearch(this.value)"
+            style="width: 100%; padding: 14px 24px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 50px; color: #ffffff; font-size: 0.95rem; outline: none; transition: all 0.2s;"
+            onfocus="this.style.borderColor='#38bdf8'; this.style.boxShadow='0 0 0 3px rgba(56, 189, 248, 0.2)';"
+            onblur="this.style.borderColor='rgba(255, 255, 255, 0.15)'; this.style.boxShadow='none';"
+        >
+    </div>
+
     <!-- Category Filter -->
     @if($categories->isNotEmpty())
     <div class="filter-bar" id="filterBar">
@@ -232,13 +245,19 @@
             <p>Saat ini belum ada survei yang aktif. Silakan cek kembali nanti.</p>
         </div>
     @else
-        <div class="survey-grid">
+        <div class="survey-grid" id="surveyGrid">
             @foreach($surveys as $survey)
-                <article class="survey-card" data-category="{{ $survey->kategori?->slug ?? 'uncategorized' }}">
+                <article class="survey-card" data-category="{{ $survey->kategori?->slug ?? 'uncategorized' }}" data-title="{{ strtolower($survey->title) }}" data-desc="{{ strtolower($survey->description ?? '') }}">
                     <div class="card-category">{{ $survey->kategori?->name ?? 'Umum' }}</div>
                     <h2 class="card-title">{{ $survey->title }}</h2>
                     <p class="card-desc">{{ $survey->description ?: 'Silakan isi survei ini untuk berkontribusi dalam pengumpulan data.' }}</p>
                     <div class="card-meta">
+                        @if($survey->is_quiz)
+                            <span class="badge" style="background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3);">
+                                🎯 Kuis
+                            </span>
+                        @endif
+
                         @switch($survey->mode->value)
                             @case('single')
                                 <span class="badge badge-blue">Sekali Isi</span>
@@ -262,6 +281,17 @@
                                 Perlu Login
                             </span>
                         @endif
+
+                        @if($survey->ends_at)
+                            @php
+                                $daysLeft = (int) now()->diffInDays($survey->ends_at, false);
+                            @endphp
+                            @if($daysLeft >= 0 && $daysLeft <= 3)
+                                <span class="badge" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3);">
+                                    ⏳ {{ $daysLeft == 0 ? 'Hari Terakhir' : $daysLeft . ' hari lagi' }}
+                                </span>
+                            @endif
+                        @endif
                     </div>
                     <div class="card-footer">
                         <span class="card-date">
@@ -284,20 +314,52 @@
 
 @section('scripts')
 <script>
-    function filterSurveys(category, btn) {
-        // Update active button
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
+    let currentCategory = 'all';
+    let searchQuery = '';
 
-        // Filter cards
+    function applyFilters() {
+        const query = searchQuery.trim().toLowerCase();
+        let visibleCount = 0;
+
         document.querySelectorAll('.survey-card').forEach(card => {
-            if (category === 'all' || card.dataset.category === category) {
+            const cat = card.dataset.category || '';
+            const title = card.dataset.title || '';
+            const desc = card.dataset.desc || '';
+
+            const matchCat = (currentCategory === 'all' || cat === currentCategory);
+            const matchSearch = (!query || title.includes(query) || desc.includes(query));
+
+            if (matchCat && matchSearch) {
                 card.style.display = '';
-                card.style.animation = 'fadeIn 0.3s ease';
+                card.style.animation = 'fadeIn 0.25s ease';
+                visibleCount++;
             } else {
                 card.style.display = 'none';
             }
         });
+
+        let noResultMsg = document.getElementById('noSearchResultMsg');
+        if (!noResultMsg) {
+            noResultMsg = document.createElement('div');
+            noResultMsg.id = 'noSearchResultMsg';
+            noResultMsg.className = 'empty-state';
+            noResultMsg.innerHTML = '<p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 1rem;">Tidak ada survei yang cocok dengan pencarian Anda.</p>';
+            const grid = document.getElementById('surveyGrid');
+            if (grid) grid.parentNode.insertBefore(noResultMsg, grid.nextSibling);
+        }
+        noResultMsg.style.display = (visibleCount === 0) ? 'block' : 'none';
+    }
+
+    function filterSurveys(category, btn) {
+        currentCategory = category;
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        applyFilters();
+    }
+
+    function handleSearch(val) {
+        searchQuery = val;
+        applyFilters();
     }
 </script>
 <style>

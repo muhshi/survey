@@ -42,16 +42,18 @@
         align-items: center;
         gap: 8px;
         padding: 12px 28px;
-        background: var(--text-primary);
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
         color: white;
         border-radius: 12px;
         font-weight: 600;
         font-size: 0.9rem;
         transition: all 0.2s ease;
+        box-shadow: 0 4px 14px rgba(2, 132, 199, 0.3);
     }
     .btn-back:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(2, 132, 199, 0.4);
+        color: white;
     }
 </style>
 @endsection

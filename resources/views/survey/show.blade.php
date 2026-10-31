@@ -6,8 +6,13 @@
 <style>
     /* CLEAN LIGHT THEME - FINAL ISOLATION */
     #survey-runner-wrapper {
-        background-color: #6366f1; /* Vibrant Indigo */
-        background-image: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+        background-color: #0f172a;
+        background-image: 
+            radial-gradient(at 0% 0%, hsla(210,100%,20%,1) 0, transparent 50%), 
+            radial-gradient(at 50% 0%, hsla(220,100%,15%,1) 0, transparent 50%), 
+            radial-gradient(at 100% 0%, hsla(190,100%,20%,1) 0, transparent 50%),
+            radial-gradient(at 50% 100%, hsla(220,100%,10%,1) 0, transparent 50%),
+            linear-gradient(135deg, #0284c7 0%, #0f172a 100%);
         min-height: 100vh;
         width: 100%;
         position: absolute;
@@ -15,7 +20,7 @@
         left: 0;
         padding: 40px 20px;
         z-index: 10;
-        color: #1e1b4b; /* Dark Indigo Text */
+        color: #0f172a;
     }
 
     .survey-centered-container {

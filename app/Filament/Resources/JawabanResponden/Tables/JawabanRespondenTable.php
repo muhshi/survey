@@ -4,6 +4,7 @@ namespace App\Filament\Resources\JawabanResponden\Tables;
 
 use App\Filament\Resources\JawabanResponden\Pages\ListJawabanResponden;
 use App\Models\User;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -291,6 +292,13 @@ class JawabanRespondenTable
                             ])
                             ->collapsed(),
                     ]),
+                Action::make('receipt')
+                    ->label('Tanda Terima')
+                    ->icon('heroicon-o-document-text')
+                    ->color('info')
+                    ->tooltip('Buka / Cetak Bukti Tanda Terima')
+                    ->url(fn ($record) => route('survey.receipt', [$record->survey, $record]))
+                    ->openUrlInNewTab(),
                 EditAction::make(),
                 DeleteAction::make(),
             ])

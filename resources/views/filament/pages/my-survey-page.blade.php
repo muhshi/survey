@@ -130,6 +130,7 @@
                                                 <th style="padding: 8px 20px; text-align: left; font-weight: 600; color: #6b7280;">Waktu Submit</th>
                                                 <th style="padding: 8px 20px; text-align: right; font-weight: 600; color: #6b7280;">Skor</th>
                                                 <th style="padding: 8px 20px; text-align: center; font-weight: 600; color: #6b7280;">Status</th>
+                                                <th style="padding: 8px 20px; text-align: center; font-weight: 600; color: #6b7280;">Tanda Terima</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -151,6 +152,13 @@
                                                             <span style="color: #94a3b8;">-</span>
                                                         @endif
                                                     </td>
+                                                    <td style="padding: 8px 20px; text-align: center;">
+                                                        @if(!empty($attempt['receipt_url']))
+                                                            <a href="{{ $attempt['receipt_url'] }}" target="_blank" style="color: #0284c7; font-weight: 600; text-decoration: none;">
+                                                                📄 Lihat
+                                                            </a>
+                                                        @endif
+                                                    </td>
                                                 </tr>
                                             @endforeach
                                         </tbody>
@@ -168,7 +176,14 @@
                                     Mode: {{ $survey->mode?->label() ?? '-' }}
                                 @endif
                             </span>
-                            <div style="display: flex; align-items: center; gap: 8px;">
+                            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                                @if(!empty($item['receipt_url']))
+                                    <a href="{{ $item['receipt_url'] }}" target="_blank"
+                                       style="display: inline-flex; align-items: center; gap: 4px; background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; padding: 6px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 600; text-decoration: none; transition: all 0.2s;">
+                                        📄 Tanda Terima
+                                    </a>
+                                @endif
+
                                 @if($canRetake && $survey)
                                     @if($passed)
                                         <a href="{{ route('survey.show', $survey) }}"

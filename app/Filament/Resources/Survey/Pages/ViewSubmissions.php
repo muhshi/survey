@@ -122,6 +122,12 @@ class ViewSubmissions extends Page implements HasSchemas, HasTable
                     }),
             ])
             ->actions([
+                Action::make('receipt')
+                    ->label('Tanda Terima')
+                    ->icon('heroicon-o-document-text')
+                    ->color(Color::Sky)
+                    ->url(fn (JawabanResponden $record) => route('survey.receipt', [$this->record, $record]))
+                    ->openUrlInNewTab(),
                 ViewAction::make()
                     ->label('Lihat Jawaban')
                     ->modalHeading('Detail Jawaban Lengkap')
