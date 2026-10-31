@@ -7,6 +7,7 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\MenuItem;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -31,6 +32,17 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->brandName('Survey BPS')
             ->login()
+            ->userMenuItems([
+                MenuItem::make()
+                    ->label('Profil & Password (SIPETRA)')
+                    ->url(fn (): string => rtrim(config('services.sipetra.base_url', 'https://bpsdemak.com'), '/') . '/account')
+                    ->icon('heroicon-o-shield-check')
+                    ->openUrlInNewTab(),
+                MenuItem::make()
+                    ->label('Sinkronkan Profil dari SIPETRA')
+                    ->url(fn (): string => route('sipetra.login'))
+                    ->icon('heroicon-o-arrow-path'),
+            ])
             ->maxContentWidth('full')
             ->colors([
                 'primary' => Color::Sky,
