@@ -22,11 +22,11 @@ class Login extends BaseLogin
 
     public function getHeading(): string|Htmlable
     {
-        return 'Masuk ke '.config('app.name', 'Survey BPS');
+        return 'Masuk ke Survey BPS';
     }
 
     public function getSubheading(): string|Htmlable|null
     {
-        return 'Gunakan akun Single Sign-On (SSO) BPS Kabupaten Demak untuk melanjutkan.';
+        return 'Sistem Manajemen Survei & Kuis BPS Kabupaten Demak';
     }
 }

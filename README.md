@@ -28,6 +28,8 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 ### 2026-11-21
 - **Implementasi Login Tunggal SIPETRA SSO (Single Sign-On BPS Kab. Demak)**:
   - **Single Button Heroik & Antarmuka Login Baru**: Mengganti form login default dengan halaman autentikasi terpadu (`App\Filament\Pages\Auth\Login` dan `filament.pages.auth.login`) menampilkan tombol tunggal heroik SIPETRA SSO (#005596, badge logo BPS, teks tebal, spinner interaktif saat diklik, dan pencegahan double-click).
+  - **Perbaikan Tampilan & Styling Terisolasi (Filament v5)**: Menyematkan styling CSS mandiri berprioritas tinggi agar elemen hero SSO button, badge logo BPS, flash session alerts, dan accordion opsi darurat tertata rapi, presisi, dan proporsional di seluruh ukuran layar.
+  - **Penyelarasan Identitas Aplikasi**: Mengatur heading login menjadi *"Masuk ke Survey BPS"* dan subjudul *"Sistem Manajemen Survei & Kuis BPS Kabupaten Demak"*.
   - **Opsi Darurat / Pengembang**: Menyediakan accordion tersembunyi "Opsi Darurat / Pengembang" menggunakan Alpine.js (`?fallback=1` atau klik accordion) untuk mengakses form email & kata sandi lokal standar Filament saat pemeliharaan sistem atau server SSO offline.
   - **Pembersihan Route & Hook Legacy**: Menghapus render hook lama `panels::auth.login.form.after` dan menonaktifkan registrasi mandiri lokal publik (`registration()`).
   - **Penanganan Callback SSO Terpadu**: Menyempurnakan `SsoController` dengan penanganan error ramah (redirect ke login disertai alert flash error tanpa risiko infinite loop) dan otomatisasi pembuatan akun lokal dengan penetapan default role `pegawai`.
