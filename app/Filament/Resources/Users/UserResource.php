@@ -50,7 +50,8 @@ class UserResource extends Resource
                             TextInput::make('password')
                                 ->password()
                                 ->dehydrated(fn ($state) => filled($state))
-                                ->required(fn (string $context): bool => $context === 'create'),
+                                ->required(fn (string $context): bool => $context === 'create')
+                                ->helperText('Kredensial dan kata sandi utama akun pegawai dikelola terpusat di SIPETRA SSO.'),
                             Select::make('roles')
                                 ->relationship('roles', 'name')
                                 ->multiple()

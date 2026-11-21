@@ -25,6 +25,15 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 
 ## Changelog
 
+### 2026-11-21
+- **Implementasi Login Tunggal SIPETRA SSO (Single Sign-On BPS Kab. Demak)**:
+  - **Single Button Heroik & Antarmuka Login Baru**: Mengganti form login default dengan halaman autentikasi terpadu (`App\Filament\Pages\Auth\Login` dan `filament.pages.auth.login`) menampilkan tombol tunggal heroik SIPETRA SSO (#005596, badge logo BPS, teks tebal, spinner interaktif saat diklik, dan pencegahan double-click).
+  - **Opsi Darurat / Pengembang**: Menyediakan accordion tersembunyi "Opsi Darurat / Pengembang" menggunakan Alpine.js (`?fallback=1` atau klik accordion) untuk mengakses form email & kata sandi lokal standar Filament saat pemeliharaan sistem atau server SSO offline.
+  - **Pembersihan Route & Hook Legacy**: Menghapus render hook lama `panels::auth.login.form.after` dan menonaktifkan registrasi mandiri lokal publik (`registration()`).
+  - **Penanganan Callback SSO Terpadu**: Menyempurnakan `SsoController` dengan penanganan error ramah (redirect ke login disertai alert flash error tanpa risiko infinite loop) dan otomatisasi pembuatan akun lokal dengan penetapan default role `pegawai`.
+  - **Harmonisasi Pengelolaan Kredensial**: Menambahkan helper text pada pengelolaan pengguna bahwa kata sandi dan kredensial utama pegawai dikelola terpusat di SIPETRA SSO.
+  - **Suite Pengujian Otomatis**: Menambahkan Feature Test Pest (`tests/Feature/SsoLoginTest.php`) untuk memverifikasi rendering login SSO, parameter fallback, penanganan error callback, dan penetapan role pengguna baru.
+
 ### 2026-10-31
 - **Penyempurnaan UI/UX, Aksesibilitas & Integrasi Tanda Terima**:
   - **Perbaikan Kontras Tombol Halaman Survei Ditutup**: Memperbaiki teks tombol *"Kembali ke Beranda"* pada `survey/closed.blade.php` dengan latar belakang gradien primer BPS (`var(--primary)`, `var(--primary-dark)`) dan teks putih berbayang halus yang mudah dibaca.

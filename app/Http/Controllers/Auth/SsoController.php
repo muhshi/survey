@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Filament\Notifications\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
@@ -18,24 +19,30 @@ class SsoController extends Controller
     public function callback(Request $request)
     {
         if ($request->has('error')) {
-            return redirect()->route('filament.admin.auth.login')->with('error', 'Login SSO Dibatalkan');
+            $errorDescription = $request->get('error_description') ?: $request->get('error') ?: 'Proses login dibatalkan.';
+
+            return redirect()->route('filament.admin.auth.login')->with('error', 'Login SSO dibatalkan: '.$errorDescription);
         }
 
         try {
             $ssoUser = Socialite::driver('sipetra')->user();
-        } catch (\Exception $e) {
-            return redirect()->route('filament.admin.auth.login')->with('error', 'Gagal mengambil data user');
+        } catch (\Throwable $e) {
+            return redirect()->route('filament.admin.auth.login')->with('error', 'Gagal memverifikasi akun ke server SIPETRA: '.$e->getMessage());
+        }
+
+        if (! $ssoUser || ! $ssoUser->getId()) {
+            return redirect()->route('filament.admin.auth.login')->with('error', 'Data pengguna dari SIPETRA tidak valid atau tidak lengkap.');
         }
 
         $rawData = $ssoUser->getRaw();
 
         // Cari user berdasarkan sipetra_id atau email
         $user = User::where('sipetra_id', $ssoUser->getId())->first()
-            ?? User::where('email', $ssoUser->getEmail())->first();
+            ?? ($ssoUser->getEmail() ? User::where('email', $ssoUser->getEmail())->first() : null);
 
         $data = [
             'sipetra_id' => $ssoUser->getId(),
-            'name' => $ssoUser->getName(),
+            'name' => $ssoUser->getName() ?: 'Pengguna SIPETRA',
             'email' => $ssoUser->getEmail(),
             'sipetra_token' => $ssoUser->token,
             'nip' => $rawData['nip'] ?? null,
@@ -48,6 +55,7 @@ class SsoController extends Controller
             'jenis_kelamin' => $rawData['gender'] ?? null,
             'identity_type' => $rawData['identity_type'] ?? null,
             'avatar_url' => $rawData['avatar_url'] ?? $ssoUser->getAvatar(),
+            'is_active' => true,
         ];
 
         if ($user) {
@@ -62,9 +70,18 @@ class SsoController extends Controller
             }
         }
 
+        // Pastikan user memiliki minimal satu role jika belum ada
+        if (method_exists($user, 'roles') && $user->roles()->count() === 0 && method_exists($user, 'assignRole')) {
+            $user->assignRole('pegawai');
+        }
+
+        if (! ($user->is_active ?? true)) {
+            return redirect()->route('filament.admin.auth.login')->with('error', 'Akun Anda sedang dinonaktifkan. Silakan hubungi administrator.');
+        }
+
         Auth::login($user);
 
-        \Filament\Notifications\Notification::make()
+        Notification::make()
             ->title('Profil Berhasil Disinkronkan dari SIPETRA')
             ->success()
             ->send();
