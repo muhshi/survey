@@ -26,6 +26,10 @@ Platform survei dinamis yang memungkinkan pembuatan kuesioner kompleks menggunak
 ## Changelog
 
 ### 2026-11-21
+- **Penyempurnaan Styling Accordion & Opsi Darurat / Pengembang**:
+  - **Perbaikan Bug CSS Accordion Chevron**: Menghapus konflik inline binding `:style` Alpine.js yang menyebabkan SVG icon chevron membesar tidak wajar (*giant chevron*), beralih ke class CSS scoped `.sso-fallback-chevron` dan state `.is-open` untuk rotasi 180 derajat yang mulus.
+  - **Penyempurnaan Kontrol Accordion & Animasi**: Menghapus `display: flex !important` pada `.sso-fallback-content` agar directive `x-show="show"` dan `x-collapse` dapat menyembunyikan dan membuka accordion login lokal secara proporsional.
+  - **Perapian Tata Letak Opsi Pengembang**: Menyelaraskan tombol toggle opsi darurat di tengah dengan ikon gembok aman (`sso-toggle-lead-icon`), margin yang seimbang, dan banner peringatan ramah.
 - **Implementasi Login Tunggal SIPETRA SSO (Single Sign-On BPS Kab. Demak)**:
   - **Single Button Heroik & Antarmuka Login Baru**: Mengganti form login default dengan halaman autentikasi terpadu (`App\Filament\Pages\Auth\Login` dan `filament.pages.auth.login`) menampilkan tombol tunggal heroik SIPETRA SSO (#005596, badge logo BPS, teks tebal, spinner interaktif saat diklik, dan pencegahan double-click).
   - **Perbaikan Tampilan & Styling Terisolasi (Filament v5)**: Menyematkan styling CSS mandiri berprioritas tinggi agar elemen hero SSO button, badge logo BPS, flash session alerts, dan accordion opsi darurat tertata rapi, presisi, dan proporsional di seluruh ukuran layar.

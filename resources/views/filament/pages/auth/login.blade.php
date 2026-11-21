@@ -150,33 +150,53 @@
             display: inline-flex !important;
             align-items: center !important;
             justify-content: center !important;
-            gap: 0.375rem !important;
-            width: 100% !important;
-            background: none !important;
+            gap: 0.5rem !important;
+            background: transparent !important;
             border: none !important;
-            font-size: 0.75rem !important;
+            font-size: 0.8125rem !important;
             font-weight: 500 !important;
-            color: #94a3b8 !important;
+            color: #64748b !important;
             cursor: pointer !important;
-            padding: 0.25rem 0 !important;
-            transition: color 0.15s ease !important;
+            padding: 0.375rem 0.75rem !important;
+            border-radius: 0.375rem !important;
+            transition: all 0.15s ease !important;
+            text-decoration: none !important;
+            white-space: nowrap !important;
         }
         .sso-fallback-toggle:hover {
-            color: #475569 !important;
+            color: #334155 !important;
+            background-color: rgba(0, 0, 0, 0.04) !important;
+        }
+        .dark .sso-fallback-toggle {
+            color: #94a3b8 !important;
         }
         .dark .sso-fallback-toggle:hover {
-            color: #cbd5e1 !important;
+            color: #e2e8f0 !important;
+            background-color: rgba(255, 255, 255, 0.05) !important;
+        }
+        .sso-toggle-lead-icon {
+            width: 0.875rem !important;
+            height: 0.875rem !important;
+            flex-shrink: 0 !important;
+            opacity: 0.85 !important;
+        }
+        .sso-fallback-chevron {
+            width: 0.875rem !important;
+            height: 0.875rem !important;
+            flex-shrink: 0 !important;
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+        .sso-fallback-chevron.is-open {
+            transform: rotate(180deg) !important;
         }
         .sso-fallback-content {
-            margin-top: 1.25rem !important;
-            display: flex !important;
-            flex-direction: column !important;
-            gap: 1rem !important;
+            margin-top: 1.25rem;
+            width: 100%;
         }
         .sso-fallback-notice {
             display: flex !important;
             align-items: flex-start !important;
-            gap: 0.5rem !important;
+            gap: 0.625rem !important;
             padding: 0.75rem 0.875rem !important;
             border-radius: 0.5rem !important;
             background-color: #fffbeb !important;
@@ -184,6 +204,7 @@
             color: #92400e !important;
             font-size: 0.75rem !important;
             line-height: 1.4 !important;
+            margin-bottom: 1.25rem !important;
             box-sizing: border-box !important;
         }
         .dark .sso-fallback-notice {
@@ -259,22 +280,22 @@
                     @click="show = !show"
                     class="sso-fallback-toggle"
                 >
-                    <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    <svg class="sso-toggle-lead-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                     </svg>
                     <span>Opsi Darurat / Pengembang</span>
-                    <svg style="width: 0.875rem; height: 0.875rem; transition: transform 0.2s;" :style="show ? 'transform: rotate(180deg)' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    <svg :class="{ 'is-open': show }" class="sso-fallback-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
                     </svg>
                 </button>
             </div>
 
-            <div x-show="show" x-cloak class="sso-fallback-content">
+            <div x-show="show" x-collapse x-cloak class="sso-fallback-content">
                 <div class="sso-fallback-notice">
                     <svg style="width: 1rem; height: 1rem; flex-shrink: 0; margin-top: 0.125rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <span>Akses darurat menggunakan akun email dan kata sandi lokal pengembang / administrator.</span>
+                    <span>Mode darurat hanya digunakan saat server SIPETRA tidak dapat diakses atau untuk pengujian lokal developer.</span>
                 </div>
 
                 {{ $this->content }}
