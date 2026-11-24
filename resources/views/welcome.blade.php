@@ -1,158 +1,353 @@
 @extends('layouts.survey')
 
-@section('title', 'Platform Survei Digital')
-@section('meta_description', 'Platform survei digital BPS Kabupaten Demak — Kumpulkan data, bangun informasi, gerakkan pembangunan.')
+@section('title', 'Platform Form Digital')
+@section('meta_description', 'Platform form digital BPS Kabupaten Demak — rekrutmen petugas, kuis pelatihan, evaluasi kegiatan, dan pendataan lapangan.')
 
 @section('styles')
 <style>
-    /* === HERO === */
-    .landing-hero {
-        text-align: center;
-        padding: 4rem 0 3rem;
+    /* ============ LANDING PAGE ============ */
+    .lp-hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+        align-items: center;
+        gap: 56px;
+        padding: 64px 0 48px;
         position: relative;
     }
-    .landing-hero::before {
+
+    .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 14px 7px 10px;
+        border-radius: 999px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-sm);
+        font-size: 0.76rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        color: var(--text-2);
+        text-transform: uppercase;
+    }
+    .eyebrow::before {
+        content: '';
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--success);
+        box-shadow: 0 0 0 3px var(--success-50);
+    }
+
+    .lp-hero h1 {
+        margin-top: 22px;
+        font-size: clamp(2.3rem, 4.6vw, 3.55rem);
+        font-weight: 800;
+        line-height: 1.06;
+        letter-spacing: -0.032em;
+        text-wrap: balance;
+    }
+    .lp-hero h1 .highlight {
+        color: var(--primary);
+        position: relative;
+        white-space: nowrap;
+    }
+    .lp-hero h1 .highlight::after {
         content: '';
         position: absolute;
-        top: -64px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 600px;
-        height: 600px;
-        background: radial-gradient(circle, rgba(251,191,36,0.12) 0%, transparent 70%);
-        pointer-events: none;
+        left: 2px;
+        right: 2px;
+        bottom: 0.06em;
+        height: 0.18em;
+        border-radius: 3px;
+        background: linear-gradient(90deg, var(--accent) 0%, rgba(245, 158, 11, 0.25) 100%);
         z-index: -1;
     }
-    .hero-label {
+
+    .lp-hero .lede {
+        margin-top: 18px;
+        max-width: 52ch;
+        font-size: 1.06rem;
+        line-height: 1.68;
+        color: var(--text-2);
+    }
+
+    .lp-hero__actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 28px;
+    }
+    .lp-hero__actions .btn { padding: 13px 24px; font-size: 0.95rem; }
+
+    .lp-points {
+        list-style: none;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 22px;
+        margin-top: 26px;
+    }
+    .lp-points li {
         display: inline-flex;
         align-items: center;
-        gap: 8px;
-        padding: 8px 18px;
-        background: rgba(2, 132, 199, 0.1);
-        border: 1px solid rgba(125, 211, 252, 0.2);
-        border-radius: 50px;
-        font-size: 0.78rem;
-        font-weight: 700;
-        color: #7dd3fc; /* Sky 300 - better on dark */
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        margin-bottom: 1.5rem;
+        gap: 7px;
+        font-size: 0.83rem;
+        font-weight: 500;
+        color: var(--text-2);
     }
-    .landing-hero h1 {
-        font-size: clamp(2.25rem, 6vw, 3.5rem);
-        font-weight: 800;
-        line-height: 1.1;
-        color: var(--text-primary);
-        margin-bottom: 1rem;
+    .lp-points svg { width: 15px; height: 15px; color: var(--success); flex-shrink: 0; }
+
+    /* --- Hero visual --- */
+    .lp-hero__visual {
+        position: relative;
+        padding: 8px 0 20px;
     }
-    .landing-hero h1 .gradient-text {
-        background: linear-gradient(135deg, var(--primary), #ea580c);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
+    .lp-hero__visual::before {
+        content: '';
+        position: absolute;
+        inset: -8% -6% 0 -6%;
+        background:
+            radial-gradient(circle at 78% 18%, var(--primary-50) 0%, transparent 62%),
+            radial-gradient(circle at 18% 90%, var(--accent-50) 0%, transparent 58%);
+        filter: blur(2px);
+        z-index: 0;
     }
-    .landing-hero .hero-desc {
-        font-size: 1.15rem;
-        color: var(--text-secondary);
-        max-width: 620px;
-        margin: 0 auto 2rem;
-        line-height: 1.6;
+
+    .preview-card {
+        position: relative;
+        z-index: 1;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-xl);
+        padding: 22px;
+        box-shadow: var(--shadow-lg);
     }
-    .hero-actions {
+    .preview-head {
         display: flex;
+        align-items: center;
+        justify-content: space-between;
         gap: 12px;
-        justify-content: center;
-        flex-wrap: wrap;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--border);
     }
-    .btn-hero {
-        padding: 14px 32px;
-        border-radius: 14px;
+    .preview-head .ph-title {
+        font-family: var(--font-display);
+        font-size: 0.98rem;
+        font-weight: 700;
+    }
+    .preview-head .ph-title span {
+        display: block;
+        font-family: var(--font-sans);
+        font-size: 0.72rem;
+        font-weight: 500;
+        color: var(--text-3);
+        margin-top: 2px;
+        letter-spacing: 0.02em;
+    }
+    .ph-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 10px;
+        border-radius: 999px;
+        background: var(--success-50);
+        color: var(--success);
+        font-size: 0.68rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        white-space: nowrap;
+    }
+    .ph-pill::before {
+        content: '';
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .preview-question {
+        padding: 18px 2px 4px;
+    }
+    .preview-question .pq-label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--text-3);
+    }
+    .preview-question .pq-text {
+        margin-top: 8px;
         font-size: 0.95rem;
         font-weight: 600;
-        transition: all 0.25s ease;
+        line-height: 1.5;
+        color: var(--text);
+    }
+    .pq-options { display: grid; gap: 8px; margin-top: 14px; }
+    .pq-option {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        border: 1px solid var(--border);
+        border-radius: 11px;
+        background: var(--surface-2);
+        font-size: 0.84rem;
+        color: var(--text-2);
+    }
+    .pq-option .dot {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        border: 1.5px solid var(--border-strong);
+        flex-shrink: 0;
+    }
+    .pq-option.is-selected {
+        border-color: var(--primary);
+        background: var(--primary-50);
+        color: var(--text);
+        font-weight: 600;
+    }
+    .pq-option.is-selected .dot {
+        border-color: var(--primary);
+        background: var(--primary);
+        box-shadow: inset 0 0 0 3px var(--surface);
+    }
+    .preview-foot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 16px;
+        padding-top: 14px;
+        border-top: 1px solid var(--border);
+    }
+    .preview-foot .pf-note {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.72rem;
+        color: var(--text-3);
+    }
+    .preview-foot .pf-note svg { width: 13px; height: 13px; color: var(--success); }
+    .preview-foot .pf-btn {
+        padding: 8px 16px;
+        border-radius: 9px;
+        background: var(--primary);
+        color: #fff;
+        font-size: 0.76rem;
+        font-weight: 700;
+    }
+    [data-theme="dark"] .preview-foot .pf-btn { color: #04121f; }
+
+    .float-chip {
+        position: absolute;
+        z-index: 2;
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        border: none;
-        cursor: pointer;
-    }
-    .btn-hero-primary {
-        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-        color: white;
-        box-shadow: 0 4px 16px rgba(217,119,6,0.25);
-    }
-    .btn-hero-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(217,119,6,0.35);
-    }
-    .btn-hero-secondary {
-        background: white;
-        color: #0f172a !important; /* Force dark text for visibility on white bg */
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        box-shadow: var(--shadow-sm);
-    }
-    .btn-hero-secondary:hover {
-        background: #f8fafc;
-        transform: translateY(-1px);
+        padding: 9px 14px;
+        border-radius: 12px;
+        background: var(--surface);
+        border: 1px solid var(--border);
         box-shadow: var(--shadow-md);
+        font-size: 0.76rem;
+        font-weight: 600;
+        color: var(--text-2);
     }
+    .float-chip svg { width: 15px; height: 15px; }
+    .float-chip.fc-top { top: -6px; right: -10px; color: var(--primary); }
+    .float-chip.fc-bottom { bottom: 2px; left: -14px; color: var(--accent-600); }
 
-    /* === STATS === */
-    .stats-bar {
+    /* --- Stats --- */
+    .lp-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-md);
+        overflow: hidden;
+    }
+    .stat {
         display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 22px 26px;
+    }
+    .stat + .stat { border-left: 1px solid var(--border); }
+    .stat-icon {
+        width: 42px;
+        height: 42px;
+        flex-shrink: 0;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
         justify-content: center;
-        gap: 2rem;
-        padding: 2rem 0;
-        flex-wrap: wrap;
-    }
-    .stat-item {
-        text-align: center;
-    }
-    .stat-num {
-        font-family: 'Outfit', sans-serif;
-        font-size: 2rem;
-        font-weight: 800;
+        background: var(--primary-50);
         color: var(--primary);
+    }
+    .stat-icon svg { width: 20px; height: 20px; }
+    .stat:nth-child(2) .stat-icon { background: var(--accent-50); color: var(--accent-600); }
+    .stat:nth-child(3) .stat-icon { background: var(--success-50); color: var(--success); }
+    .stat-num {
+        font-family: var(--font-display);
+        font-size: 1.6rem;
+        font-weight: 800;
         line-height: 1;
+        letter-spacing: -0.02em;
     }
     .stat-label {
-        font-size: 0.8rem;
-        color: var(--text-muted);
-        font-weight: 500;
         margin-top: 4px;
+        font-size: 0.78rem;
+        font-weight: 500;
+        color: var(--text-3);
     }
 
-    /* === FEATURES === */
-    .features-section {
-        padding: 2rem 0;
-    }
-    .features-section h2 {
-        text-align: center;
-        font-size: 1.75rem;
+    /* --- Sections --- */
+    .lp-section { padding-top: 72px; }
+    .section-head { max-width: 640px; margin-bottom: 30px; }
+    .section-head .kicker {
+        font-size: 0.74rem;
         font-weight: 700;
-        margin-bottom: 0.5rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--primary);
     }
-    .features-section .section-desc {
-        text-align: center;
-        color: var(--text-secondary);
-        margin-bottom: 2rem;
-        font-size: 0.95rem;
+    .section-head h2 {
+        margin-top: 10px;
+        font-size: clamp(1.65rem, 3vw, 2.15rem);
+        font-weight: 800;
+        letter-spacing: -0.025em;
+        line-height: 1.15;
+        text-wrap: balance;
     }
-    .features-grid {
+    .section-head p {
+        margin-top: 10px;
+        font-size: 0.98rem;
+        line-height: 1.65;
+        color: var(--text-2);
+    }
+
+    /* --- Features --- */
+    .feature-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 1.25rem;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
     }
     .feature-card {
         background: var(--surface);
         border: 1px solid var(--border);
         border-radius: var(--radius-lg);
-        padding: 1.75rem;
-        transition: all 0.25s ease;
+        padding: 26px;
+        box-shadow: var(--shadow-sm);
+        transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
     }
     .feature-card:hover {
         transform: translateY(-3px);
         box-shadow: var(--shadow-md);
+        border-color: var(--border-strong);
     }
     .feature-icon {
         width: 44px;
@@ -161,230 +356,468 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-bottom: 1rem;
+        margin-bottom: 18px;
+        background: var(--primary-50);
+        color: var(--primary);
     }
-    .feature-icon svg { width: 22px; height: 22px; color: white; }
-    .feature-icon.amber { background: linear-gradient(135deg, #fbbf24, #d97706); }
-    .feature-icon.blue { background: linear-gradient(135deg, #60a5fa, #2563eb); }
-    .feature-icon.green { background: linear-gradient(135deg, #34d399, #059669); }
-    .feature-icon.purple { background: linear-gradient(135deg, #a78bfa, #7c3aed); }
+    .feature-icon svg { width: 21px; height: 21px; }
+    .feature-card:nth-child(2) .feature-icon { background: var(--accent-50); color: var(--accent-600); }
+    .feature-card:nth-child(3) .feature-icon { background: var(--success-50); color: var(--success); }
+    .feature-card:nth-child(4) .feature-icon { background: #f1ecff; color: #7c3aed; }
+    [data-theme="dark"] .feature-card:nth-child(4) .feature-icon { background: #241a3d; color: #c4a7ff; }
     .feature-card h3 {
         font-size: 1.05rem;
         font-weight: 700;
-        margin-bottom: 0.4rem;
+        letter-spacing: -0.01em;
+        margin-bottom: 7px;
     }
     .feature-card p {
-        font-size: 0.85rem;
-        color: var(--text-secondary);
-        line-height: 1.55;
+        font-size: 0.875rem;
+        line-height: 1.62;
+        color: var(--text-2);
     }
 
-    /* === RECENT SURVEYS === */
-    .recent-section {
-        padding: 3rem 0 1rem;
+    /* --- Steps --- */
+    .steps {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+        counter-reset: step;
     }
-    .recent-section h2 {
-        font-size: 1.75rem;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
+    .step {
+        position: relative;
+        padding: 24px;
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--border);
+        background: linear-gradient(180deg, var(--surface) 0%, var(--surface-2) 100%);
+        box-shadow: var(--shadow-sm);
     }
-    .section-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 1.5rem;
-        flex-wrap: wrap;
-        gap: 1rem;
-    }
-    .see-all {
-        font-size: 0.9rem;
-        font-weight: 600;
-        color: var(--primary);
+    .step-num {
+        width: 34px;
+        height: 34px;
         display: inline-flex;
         align-items: center;
-        gap: 4px;
+        justify-content: center;
+        border-radius: 10px;
+        background: var(--primary);
+        color: #fff;
+        font-family: var(--font-display);
+        font-size: 0.95rem;
+        font-weight: 800;
+        margin-bottom: 16px;
     }
-    .see-all:hover { text-decoration: underline; }
+    [data-theme="dark"] .step-num { color: #04121f; }
+    .step h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        margin-bottom: 6px;
+    }
+    .step p {
+        font-size: 0.85rem;
+        line-height: 1.6;
+        color: var(--text-2);
+    }
 
-    /* Reuse card styles from index */
-    .mini-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-        gap: 1.25rem;
+    /* --- Recent surveys --- */
+    .recent-head {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 18px;
+        flex-wrap: wrap;
+        margin-bottom: 28px;
     }
-    .mini-card {
+    .link-arrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--primary);
+    }
+    .link-arrow svg { width: 15px; height: 15px; transition: transform 0.18s ease; }
+    .link-arrow:hover svg { transform: translateX(3px); }
+
+    .survey-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+    }
+    .survey-card {
+        display: flex;
+        flex-direction: column;
         background: var(--surface);
         border: 1px solid var(--border);
         border-radius: var(--radius-lg);
-        padding: 1.5rem;
-        transition: all 0.3s ease;
+        padding: 24px;
+        box-shadow: var(--shadow-sm);
+        transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
     }
-    .mini-card:hover {
+    .survey-card:hover {
         transform: translateY(-3px);
-        box-shadow: var(--shadow-lg);
+        box-shadow: var(--shadow-md);
+        border-color: var(--border-strong);
     }
-    .mini-card .mc-category {
-        font-size: 0.72rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-        color: var(--primary);
-        margin-bottom: 0.4rem;
-    }
-    .mini-card .mc-title {
-        font-family: 'Outfit', sans-serif;
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: var(--text-primary);
-        margin-bottom: 0.75rem;
-    }
-    .mini-card .mc-footer {
+    .sc-top {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 14px;
     }
-    .mini-card .mc-badge {
-        display: inline-block;
-        padding: 3px 10px;
-        border-radius: 50px;
-        font-size: 0.7rem;
-        font-weight: 600;
-    }
-    .mc-btn {
-        font-size: 0.82rem;
-        font-weight: 600;
+    .sc-category {
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
         color: var(--primary);
+    }
+    .survey-card h3 {
+        font-size: 1.06rem;
+        font-weight: 700;
+        line-height: 1.35;
+        letter-spacing: -0.01em;
+        margin-bottom: 8px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    .survey-card .sc-desc {
+        font-size: 0.84rem;
+        line-height: 1.6;
+        color: var(--text-2);
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        flex: 1;
+    }
+    .sc-meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-top: 20px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+    }
+    .sc-date {
+        font-size: 0.75rem;
+        color: var(--text-3);
+    }
+    .sc-cta {
         display: inline-flex;
         align-items: center;
-        gap: 4px;
+        gap: 5px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: var(--primary);
     }
-    .mc-btn svg { width: 14px; height: 14px; }
+    .sc-cta svg { width: 14px; height: 14px; }
 
-    @media (max-width: 768px) {
-        .landing-hero { padding: 2rem 0; }
-        .stats-bar { gap: 1.5rem; }
-        .mini-grid { grid-template-columns: 1fr; }
+    .empty-panel {
+        padding: 44px 24px;
+        text-align: center;
+        border: 1px dashed var(--border-strong);
+        border-radius: var(--radius-lg);
+        background: var(--surface);
+        color: var(--text-2);
+        font-size: 0.9rem;
+    }
+
+    /* --- CTA --- */
+    .lp-cta {
+        margin-top: 72px;
+        border-radius: var(--radius-xl);
+        padding: 44px 40px;
+        background:
+            radial-gradient(circle at 88% 12%, rgba(255, 255, 255, 0.16) 0%, transparent 46%),
+            linear-gradient(120deg, #0a4f8c 0%, #0b6bbd 52%, #0a5a9e 100%);
+        color: #eaf4ff;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 28px;
+        flex-wrap: wrap;
+        box-shadow: 0 30px 70px -34px rgba(10, 79, 140, 0.7);
+    }
+    .lp-cta h2 {
+        color: #fff;
+        font-size: clamp(1.5rem, 2.6vw, 1.95rem);
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        line-height: 1.15;
+    }
+    .lp-cta p {
+        margin-top: 8px;
+        font-size: 0.94rem;
+        line-height: 1.6;
+        color: rgba(234, 244, 255, 0.82);
+        max-width: 52ch;
+    }
+    .lp-cta .btn-light {
+        background: #fff;
+        color: #08497f;
+        padding: 13px 26px;
+        font-size: 0.92rem;
+        box-shadow: 0 12px 28px -12px rgba(0, 0, 0, 0.5);
+    }
+    .lp-cta .btn-light:hover { transform: translateY(-1px); }
+
+    @media (max-width: 980px) {
+        .lp-hero {
+            grid-template-columns: 1fr;
+            gap: 44px;
+            padding-top: 44px;
+        }
+        .lp-hero__visual { max-width: 520px; }
+        .feature-grid, .steps, .survey-grid { grid-template-columns: 1fr 1fr; }
+        .survey-grid .survey-card:last-child { display: none; }
+    }
+
+    @media (max-width: 680px) {
+        .lp-hero { padding: 32px 0 36px; gap: 32px; }
+        .lp-hero h1 { font-size: clamp(2rem, 9vw, 2.6rem); }
+        .lp-hero .lede { font-size: 0.98rem; }
+        .lp-hero__actions .btn { width: 100%; }
+        .lp-points { gap: 8px 16px; }
+        .lp-stats { grid-template-columns: 1fr; }
+        .stat { padding: 18px 22px; }
+        .stat + .stat { border-left: 0; border-top: 1px solid var(--border); }
+        .feature-grid, .steps, .survey-grid { grid-template-columns: 1fr; }
+        .survey-grid .survey-card:last-child { display: flex; }
+        .lp-section { padding-top: 56px; }
+        .lp-cta { margin-top: 56px; padding: 32px 24px; }
+        .lp-cta .btn-light { width: 100%; }
+        .float-chip.fc-top { right: 0; }
+        .float-chip.fc-bottom { left: 0; }
+        .preview-card { padding: 18px; }
     }
 </style>
 @endsection
 
 @section('content')
     <!-- Hero -->
-    <section class="landing-hero">
-        <span class="hero-label">
-            ◆ BPS Kabupaten Demak
-        </span>
-        <h1>
-            Platform <span class="gradient-text">Survei Digital</span><br>
-            untuk Pembangunan
-        </h1>
-        <p class="hero-desc">
-            Kumpulkan data, bangun informasi, gerakkan pembangunan. Ikuti survei yang tersedia dan berkontribusi dalam pendataan statistik.
-        </p>
-        <div class="hero-actions">
-            <a href="{{ route('survey.index') }}" class="btn-hero btn-hero-primary">
-                Lihat Survei
-                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
-            </a>
-            @auth
-                <a href="{{ url('/admin') }}" class="btn-hero btn-hero-secondary">
-                    Dashboard Admin
+    <section class="lp-hero">
+        <div class="lp-hero__copy">
+            <span class="eyebrow">Platform Resmi BPS Kabupaten Demak</span>
+            <h1>Dari biodata sampai evaluasi, <span class="highlight">semuanya di sini.</span></h1>
+            <p class="lede">
+                Isi formulir rekrutmen petugas, ikuti kuis pelatihan, sampaikan evaluasi kegiatan, atau bantu pendataan lapangan.
+                Dipakai pegawai, mitra, dan calon mitra BPS Kabupaten Demak.
+            </p>
+            <div class="lp-hero__actions">
+                <a href="{{ route('survey.index') }}" class="btn btn-primary">
+                    Lihat Form Tersedia
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 7l5 5-5 5M18 12H5"/></svg>
                 </a>
-            @else
-                <a href="{{ route('filament.admin.auth.login') }}" class="btn-hero btn-hero-secondary">
-                    Masuk ke Sistem
-                </a>
-            @endauth
+                @auth
+                    <a href="{{ url('/admin') }}" class="btn btn-outline">Buka Dashboard</a>
+                @else
+                    <a href="{{ route('filament.admin.auth.login') }}" class="btn btn-outline">Masuk ke Sistem</a>
+                @endauth
+            </div>
+            <ul class="lp-points">
+                <li>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                    Terintegrasi SSO SIPETRA
+                </li>
+                <li>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                    Bukti pengisian digital
+                </li>
+                <li>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                    Draf tersimpan otomatis
+                </li>
+            </ul>
+        </div>
+
+        <div class="lp-hero__visual" aria-hidden="true">
+            <div class="float-chip fc-top">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0114 0"/></svg>
+                Login SSO SIPETRA
+            </div>
+            <div class="preview-card">
+                <div class="preview-head">
+                    <div class="ph-title">
+                        Pratinjau Formulir
+                        <span>Contoh tampilan saat mengisi form</span>
+                    </div>
+                    <span class="ph-pill">Aktif</span>
+                </div>
+                <div class="preview-question">
+                    <div class="pq-label">Pertanyaan 1</div>
+                    <div class="pq-text">Seberapa mudah Anda menggunakan form digital ini?</div>
+                    <div class="pq-options">
+                        <div class="pq-option is-selected"><span class="dot"></span> Sangat mudah</div>
+                        <div class="pq-option"><span class="dot"></span> Cukup mudah</div>
+                        <div class="pq-option"><span class="dot"></span> Perlu penyempurnaan</div>
+                    </div>
+                </div>
+                <div class="preview-foot">
+                    <span class="pf-note">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                        Jawaban tersimpan otomatis
+                    </span>
+                    <span class="pf-btn">Lanjut</span>
+                </div>
+            </div>
+            <div class="float-chip fc-bottom">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H7a2 2 0 00-2 2v16a2 2 0 002 2h10a2 2 0 002-2V7z"/><path d="M14 2v5h5M9 13h6M9 17h4"/></svg>
+                Bukti pengisian
+            </div>
         </div>
     </section>
 
     <!-- Stats -->
-    <section class="stats-bar">
-        <div class="stat-item">
-            <div class="stat-num">{{ $totalSurveys }}</div>
-            <div class="stat-label">Survei Aktif</div>
+    <section class="lp-stats" aria-label="Ringkasan platform">
+        <div class="stat">
+            <span class="stat-icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
+            </span>
+            <div>
+                <div class="stat-num">{{ number_format($totalSurveys) }}</div>
+                <div class="stat-label">Form aktif</div>
+            </div>
         </div>
-        <div class="stat-item">
-            <div class="stat-num">{{ $totalResponses }}</div>
-            <div class="stat-label">Jawaban Masuk</div>
+        <div class="stat">
+            <span class="stat-icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg>
+            </span>
+            <div>
+                <div class="stat-num">{{ number_format($totalResponses) }}</div>
+                <div class="stat-label">Jawaban masuk</div>
+            </div>
         </div>
-        <div class="stat-item">
-            <div class="stat-num">{{ $totalCategories }}</div>
-            <div class="stat-label">Kategori</div>
+        <div class="stat">
+            <span class="stat-icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
+            </span>
+            <div>
+                <div class="stat-num">{{ number_format($totalCategories) }}</div>
+                <div class="stat-label">Kategori form</div>
+            </div>
         </div>
     </section>
 
     <!-- Features -->
-    <section class="features-section">
-        <h2>Kenapa Platform Ini?</h2>
-        <p class="section-desc">Teknologi modern untuk pendataan yang lebih akurat dan efisien.</p>
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon amber">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+    <section class="lp-section">
+        <div class="section-head">
+            <div class="kicker">Kenapa platform ini</div>
+            <h2>Satu sistem untuk berbagai kebutuhan kerja.</h2>
+            <p>Mulai dari pendaftaran calon petugas, kuis pelatihan, evaluasi kegiatan, hingga pendataan lapangan.</p>
+        </div>
+        <div class="feature-grid">
+            <article class="feature-card">
+                <div class="feature-icon">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5"/><path d="M18.4 2.6a2 2 0 012.8 2.8L11.8 15H9v-2.8z"/></svg>
                 </div>
-                <h3>Kuesioner Dinamis</h3>
-                <p>Desain survei dengan drag-and-drop: multi-halaman, logika kondisional, dan validasi otomatis.</p>
+                <h3>Formulir dinamis</h3>
+                <p>Susun form dengan logika kondisional, validasi otomatis, dan berbagai tipe pertanyaan.</p>
+            </article>
+            <article class="feature-card">
+                <div class="feature-icon">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>
+                </div>
+                <h3>Akses terkontrol</h3>
+                <p>Buka form untuk umum, batasi dengan login, atau atur peserta melalui kelompok.</p>
+            </article>
+            <article class="feature-card">
+                <div class="feature-icon">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7"/><path d="M3 20h18"/></svg>
+                </div>
+                <h3>Rekap dan analitik</h3>
+                <p>Pantau jawaban yang masuk, lihat rekap nilai kuis, dan unduh hasilnya dalam satu tempat.</p>
+            </article>
+            <article class="feature-card">
+                <div class="feature-icon">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2.5"/><path d="M11 18h2"/></svg>
+                </div>
+                <h3>Nyaman di semua perangkat</h3>
+                <p>Isi form dari ponsel, tablet, atau komputer. Tampilan menyesuaikan ukuran layar secara otomatis.</p>
+            </article>
+        </div>
+    </section>
+
+    <!-- Steps -->
+    <section class="lp-section">
+        <div class="section-head">
+            <div class="kicker">Cara mengisi</div>
+            <h2>Tiga langkah, selesai.</h2>
+        </div>
+        <div class="steps">
+            <div class="step">
+                <span class="step-num">1</span>
+                <h3>Pilih form</h3>
+                <p>Buka daftar form dan pilih yang ditujukan untuk Anda. Beberapa form memerlukan login SIPETRA.</p>
             </div>
-            <div class="feature-card">
-                <div class="feature-icon blue">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-                </div>
-                <h3>Akses Terkontrol</h3>
-                <p>Buka survei untuk umum, batasi dengan login, atau atur berdasarkan role pengguna.</p>
+            <div class="step">
+                <span class="step-num">2</span>
+                <h3>Isi formulir</h3>
+                <p>Jawab pertanyaan per halaman. Draf jawaban tersimpan otomatis di perangkat Anda.</p>
             </div>
-            <div class="feature-card">
-                <div class="feature-icon green">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-                </div>
-                <h3>Analitik Real-Time</h3>
-                <p>Pantau hasil pendataan secara langsung dengan dashboard dan visualisasi data.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon purple">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
-                </div>
-                <h3>Mobile-Friendly</h3>
-                <p>Akses dan isi survei dari perangkat apapun — smartphone, tablet, atau desktop.</p>
+            <div class="step">
+                <span class="step-num">3</span>
+                <h3>Dapatkan bukti</h3>
+                <p>Setelah terkirim, unduh tanda terima pengisian atau lihat hasil kuis Anda.</p>
             </div>
         </div>
     </section>
 
     <!-- Recent Surveys -->
     @if($recentSurveys->isNotEmpty())
-    <section class="recent-section">
-        <div class="section-header">
-            <h2>Survei Terbaru</h2>
-            <a href="{{ route('survey.index') }}" class="see-all">
-                Lihat Semua
-                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-            </a>
-        </div>
-        <div class="mini-grid">
-            @foreach($recentSurveys as $survey)
-                <a href="{{ route('survey.show', $survey) }}" class="mini-card">
-                    <div class="mc-category">{{ $survey->kategori?->name ?? 'Umum' }}</div>
-                    <div class="mc-title">{{ $survey->title }}</div>
-                    <div class="mc-footer">
-                        @switch($survey->mode->value)
-                            @case('single')
-                                <span class="mc-badge badge-blue">Sekali Isi</span>
-                                @break
-                            @case('editable')
-                                <span class="mc-badge badge-green">Bisa Diedit</span>
-                                @break
-                            @case('multi')
-                                <span class="mc-badge badge-purple">Multi-Submit</span>
-                                @break
-                        @endswitch
-                        <span class="mc-btn">
-                            Isi Survei
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
-                        </span>
-                    </div>
+        <section class="lp-section">
+            <div class="recent-head">
+                <div class="section-head" style="margin-bottom: 0;">
+                    <div class="kicker">Baru dibuka</div>
+                    <h2>Form terbaru</h2>
+                </div>
+                <a href="{{ route('survey.index') }}" class="link-arrow">
+                    Lihat semua form
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 7l5 5-5 5"/></svg>
                 </a>
-            @endforeach
-        </div>
-    </section>
+            </div>
+            <div class="survey-grid">
+                @foreach($recentSurveys as $survey)
+                    <a href="{{ route('survey.show', $survey) }}" class="survey-card">
+                        <div class="sc-top">
+                            <span class="sc-category">{{ $survey->kategori?->nama ?? 'Umum' }}</span>
+                            @if($survey->is_quiz)
+                                <span class="badge badge-violet">Kuis</span>
+                            @endif
+                        </div>
+                        <h3>{{ $survey->title }}</h3>
+                        <p class="sc-desc">{{ $survey->description ?: 'Silakan isi form ini sesuai petunjuk yang diberikan.' }}</p>
+                        <div class="sc-meta">
+                            <span class="sc-date">
+                                @if($survey->ends_at)
+                                    Hingga {{ $survey->ends_at->format('d M Y') }}
+                                @else
+                                    Tanpa batas waktu
+                                @endif
+                            </span>
+                            <span class="sc-cta">
+                                Isi form
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 7l5 5-5 5"/></svg>
+                            </span>
+                        </div>
+                    </a>
+                @endforeach
+            </div>
+        </section>
     @endif
+
+    <!-- CTA -->
+    <section class="lp-cta">
+        <div>
+            <h2>Butuh mengisi form? Mulai dari sini.</h2>
+            <p>Pilih form rekrutmen petugas, kuis pelatihan, evaluasi kegiatan, atau pendataan yang tersedia untuk Anda.</p>
+        </div>
+        <a href="{{ route('survey.index') }}" class="btn btn-light">
+            Lihat form tersedia
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 7l5 5-5 5"/></svg>
+        </a>
+    </section>
 @endsection

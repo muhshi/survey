@@ -1,356 +1,529 @@
 @extends('layouts.survey')
 
 @section('title', $survey->title)
+@section('body_class', 'survey-page')
+@section('hide_footer', true)
+
+@php
+    $schemaPages = $survey->schema['pages'] ?? [];
+    $questionCount = collect($schemaPages)->sum(function ($page) {
+        return collect($page['elements'] ?? [])->sum(function ($element) {
+            return isset($element['elements']) ? count($element['elements']) : 1;
+        });
+    });
+    $modeLabel = match ($survey->mode?->value) {
+        'single' => 'Sekali isi',
+        'editable' => 'Bisa diedit',
+        'multi' => 'Bisa diisi berulang',
+        default => 'Form',
+    };
+@endphp
 
 @section('head')
 <style>
-    /* CLEAN LIGHT THEME - FINAL ISOLATION */
-    #survey-runner-wrapper {
-        background-color: #0f172a;
-        background-image: 
-            radial-gradient(at 0% 0%, hsla(210,100%,20%,1) 0, transparent 50%), 
-            radial-gradient(at 50% 0%, hsla(220,100%,15%,1) 0, transparent 50%), 
-            radial-gradient(at 100% 0%, hsla(190,100%,20%,1) 0, transparent 50%),
-            radial-gradient(at 50% 100%, hsla(220,100%,10%,1) 0, transparent 50%),
-            linear-gradient(135deg, #0284c7 0%, #0f172a 100%);
-        min-height: 100vh;
-        width: 100%;
-        position: absolute;
-        top: 0;
-        left: 0;
-        padding: 88px 20px 40px 20px;
-        z-index: 10;
-        color: #0f172a;
+    /* ================= SURVEY RUNNER ================= */
+    .survey-page .main-content {
+        max-width: none;
+        padding: 0;
     }
 
-    @media (max-width: 640px) {
-        #survey-runner-wrapper {
-            padding: 80px 12px 32px 12px;
-        }
-    }
-
-    .survey-centered-container {
-        max-width: 800px;
+    .runner {
+        max-width: 880px;
         margin: 0 auto;
-        position: relative;
+        padding: 26px 24px 72px;
     }
 
-    /* HEADER */
-    .simple-header {
-        text-align: center;
-        color: white;
-        margin-bottom: 24px; /* Reduced from 40px */
-    }
-    .simple-header h2 {
-        font-size: 1.125rem;
-        font-weight: 700;
-        margin: 0;
+    .runner-bar {
         display: flex;
         align-items: center;
-        justify-content: center;
-        gap: 8px;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 20px;
     }
-    .simple-header p {
-        font-size: 0.8125rem;
-        opacity: 0.9;
-        margin-top: 4px;
+    .runner-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.84rem;
+        font-weight: 600;
+        color: var(--text-2);
+        transition: color 0.18s ease;
     }
-
-    /* WHITE CARDS */
-    .white-card {
-        background: #ffffff !important;
-        border-radius: 16px !important; /* Matches others */
-        padding: 32px !important; /* Smaller padding */
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
-        margin-bottom: 16px !important; /* Matches others */
-        color: #1e1b4b !important;
-    }
-
-    .title-card h1 {
-        font-size: 1.875rem;
-        font-weight: 800;
-        color: #1e1b4b;
-        margin: 0 0 16px 0;
-        text-transform: capitalize;
-    }
-    .badge-category {
-        background: #dcfce7;
-        color: #166534;
-        font-size: 0.7rem;
-        font-weight: 800;
-        padding: 4px 10px;
-        border-radius: 6px;
-        text-transform: uppercase;
-        letter-spacing: 0.025em;
-    }
-    .meta-text {
-        font-size: 0.8125rem;
-        color: #94a3b8;
+    .runner-back:hover { color: var(--primary); }
+    .runner-back svg { width: 16px; height: 16px; }
+    .runner-secure {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.75rem;
         font-weight: 500;
+        color: var(--text-3);
+    }
+    .runner-secure svg { width: 14px; height: 14px; color: var(--success); }
+
+    /* --- Preview notice --- */
+    .preview-banner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        flex-wrap: wrap;
+        padding: 13px 16px;
+        margin-bottom: 18px;
+        border: 1px solid var(--primary-100);
+        background: var(--primary-50);
+        border-radius: var(--radius-md);
+    }
+    .preview-banner__main {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        font-size: 0.82rem;
+        line-height: 1.5;
+        color: var(--text-2);
+    }
+    .preview-banner__main strong { color: var(--text); }
+    .pb-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--primary);
+        margin-top: 5px;
+        flex-shrink: 0;
+        box-shadow: 0 0 0 3px var(--primary-100);
+    }
+    .preview-banner__link {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--primary);
+        white-space: nowrap;
+    }
+    .preview-banner__link:hover { text-decoration: underline; }
+
+    /* --- Survey header --- */
+    .head-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 30px 32px;
+        box-shadow: var(--shadow-md);
+    }
+    .head-chips {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 14px;
+    }
+    .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 11px;
+        border-radius: 999px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        background: var(--surface-3);
+        color: var(--text-2);
+    }
+    .chip svg { width: 12px; height: 12px; }
+    .chip-primary { background: var(--primary-50); color: var(--primary); }
+    .chip-accent { background: var(--accent-50); color: var(--accent-600); }
+    .chip-success { background: var(--success-50); color: var(--success); }
+
+    .head-card h1 {
+        font-size: clamp(1.55rem, 3.2vw, 2.05rem);
+        font-weight: 800;
+        line-height: 1.18;
+        letter-spacing: -0.025em;
+        text-wrap: balance;
+    }
+    .head-desc {
+        margin-top: 12px;
+        font-size: 0.95rem;
+        line-height: 1.7;
+        color: var(--text-2);
+        max-width: 68ch;
+        white-space: pre-line;
+    }
+    .head-meta {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px 20px;
+        margin-top: 22px;
+        padding-top: 18px;
+        border-top: 1px solid var(--border);
+    }
+    .head-meta span {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.78rem;
+        font-weight: 500;
+        color: var(--text-3);
+    }
+    .head-meta svg { width: 14px; height: 14px; }
+
+    /* --- Draft alert --- */
+    .draft-alert {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        flex-wrap: wrap;
+        margin-top: 16px;
+        padding: 14px 16px;
+        background: var(--accent-50);
+        border: 1px solid var(--accent-50);
+        border-left: 3px solid var(--accent);
+        border-radius: var(--radius-md);
+    }
+    .draft-icon { font-size: 1.2rem; line-height: 1; }
+    .draft-text { flex: 1; min-width: 200px; }
+    .draft-text strong {
+        display: block;
+        font-size: 0.845rem;
+        font-weight: 700;
+        color: var(--text);
+    }
+    .draft-text span {
+        display: block;
+        margin-top: 2px;
+        font-size: 0.78rem;
+        line-height: 1.5;
+        color: var(--text-2);
+    }
+    .draft-actions { display: flex; gap: 8px; }
+    .btn-mini {
+        padding: 7px 14px;
+        border-radius: 9px;
+        border: 1px solid transparent;
+        font-size: 0.76rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background-color 0.18s ease, color 0.18s ease;
+    }
+    .btn-mini-primary { background: var(--accent); color: #422006; }
+    .btn-mini-primary:hover { background: var(--accent-600); }
+    .btn-mini-ghost {
+        background: var(--surface);
+        border-color: var(--border-strong);
+        color: var(--text-2);
+    }
+    .btn-mini-ghost:hover { color: var(--text); }
+
+    /* --- Loading & error --- */
+    .state-panel {
+        margin-top: 18px;
+        padding: 44px 24px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-md);
+        text-align: center;
+    }
+    .spinner {
+        width: 34px;
+        height: 34px;
+        margin: 0 auto 14px;
+        border-radius: 50%;
+        border: 3px solid var(--primary-100);
+        border-top-color: var(--primary);
+        animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .state-panel p {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--text-2);
+    }
+    .state-panel.error h2 {
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: var(--danger);
+        margin-bottom: 10px;
+    }
+    .state-panel.error #error-msg {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.78rem;
+        font-weight: 400;
+        color: var(--text-2);
+        line-height: 1.55;
+        margin-bottom: 18px;
+        word-break: break-word;
     }
 
-    /* SURVEYJS DEFAULT V2 CUSTOMIZATION */
+    .hidden { display: none !important; }
+
+    /* --- SurveyJS surface --- */
+    #surveyElement {
+        margin-top: 18px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 30px 32px 18px;
+        box-shadow: var(--shadow-md);
+        color: var(--text);
+    }
+    #surveyElement:empty { display: none; }
+
     .sd-root-modern, .sd-root-modern--full-container, .sd-container-modern {
         background: transparent !important;
+        font-family: var(--font-sans) !important;
     }
-    
-    /* SINGLE COHESIVE CARD DESIGN (UNIFIED) */
-    #surveyElement {
-        background-color: #ffffff !important;
-        border-radius: 16px !important;
-        padding: 32px !important;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05) !important;
-        margin-top: 8px;
-    }
+    .sd-root-modern { --sd-base-padding: 0; }
 
-    /* Remove individual card styles to eliminate gaps */
-    .sd-element, .sd-question, .sd-panel, .sd-page__title, .sd-page__description {
-        background-color: transparent !important;
-        border-radius: 0 !important;
-        padding: 12px 0 !important; /* Thinner padding */
-        margin-bottom: 0 !important; /* No gaps */
-        box-shadow: none !important;
-        border: none !important;
-        color: #1e1b4b !important;
-        display: block !important;
-    }
-
-    /* Subtle divider between questions */
-    .sd-element:not(:last-child) {
-        border-bottom: 1px solid #f1f5f9 !important;
-        padding-bottom: 24px !important;
-        margin-bottom: 24px !important;
-    }
-
-    /* Section Titles (Page Titles) inside the card */
+    .sd-page { padding: 0 !important; }
     .sd-page__title {
-        font-size: 1.5rem !important;
+        font-family: var(--font-display) !important;
+        font-size: 1.45rem !important;
         font-weight: 800 !important;
-        color: #1e1b4b !important;
-        padding-top: 0 !important;
+        color: var(--text) !important;
+        letter-spacing: -0.02em;
+        padding: 0 !important;
         margin-bottom: 8px !important;
     }
     .sd-page__description {
-        font-size: 0.9375rem !important;
-        color: #64748b !important;
-        padding-top: 0 !important;
-        margin-bottom: 24px !important;
+        font-size: 0.9rem !important;
+        line-height: 1.65 !important;
+        color: var(--text-2) !important;
+        padding: 0 !important;
+        margin-bottom: 18px !important;
     }
 
-    /* Number circles */
-    .sd-question__number {
-        background-color: #3b82f6 !important;
-        color: #fff !important;
-        min-width: 28px !important;
-        height: 28px !important;
-        font-size: 0.875rem !important;
+    .sd-element, .sd-question, .sd-panel {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        margin: 0 0 4px !important;
+        color: var(--text) !important;
+    }
+    .sd-question { padding: 16px 0 !important; }
+    #surveyElement .sd-question:not(:last-child) {
+        border-bottom: 1px solid var(--border) !important;
+        padding-bottom: 24px !important;
+        margin-bottom: 6px !important;
     }
 
-    /* Text contrast for invisible elements */
-    .sd-question__title, .sd-title { color: #1e1b4b !important; }
-    .sd-description { color: #64748b !important; }
-    
-    /* Progress bar */
-    .sd-progress {
-        background-color: rgba(255, 255, 255, 0.2) !important;
-        height: 12px !important;
-        border-radius: 6px !important;
-        margin-bottom: 32px !important;
-    }
-    .sd-progress__bar {
-        background-color: #10b981 !important; /* Success Green */
-        border-radius: 6px !important;
-    }
-
-    /* Footer / Progress text */
-    .sd-body__progress-text {
-        color: white !important;
-        font-weight: 700 !important;
-        opacity: 0.9 !important;
-        text-align: right !important;
-    }
-
-    /* Inputs refined */
-    .sd-input, .sd-dropdown {
-        background-color: #f8fafc !important;
-        border: 1px solid #e2e8f0 !important;
-        border-radius: 10px !important;
-        padding: 14px 18px !important;
+    .sd-question__title, .sd-title, .sd-question__title .sd-title {
         font-size: 1rem !important;
-        color: #1e293b !important;
+        font-weight: 600 !important;
+        line-height: 1.55 !important;
+        color: var(--text) !important;
     }
-    .sd-input::placeholder { color: #94a3b8; }
-    
-    /* Navigation */
-    .sd-navigation {
-        display: flex !important;
-        padding: 20px 0 !important;
-    }
-    .sd-btn {
-        border-radius: 10px !important;
-        padding: 12px 28px !important;
-        font-weight: 700 !important;
-        font-family: inherit !important;
-        transition: all 0.2s !important;
-    }
-    .sd-btn--action {
-        background-color: #2563eb !important;
-        color: #fff !important;
-    }
-    .sd-btn--action:hover {
-        background-color: #1d4ed8 !important;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    .sd-question__title--answer { color: var(--text) !important; }
+    .sd-question__required-text { color: var(--danger) !important; }
+    .sd-description, .sd-question__description {
+        color: var(--text-2) !important;
+        font-size: 0.85rem !important;
+        line-height: 1.6 !important;
     }
 
-    /* Fixed header to avoid scrolling */
-    .navbar { box-shadow: none !important; }
-    
-    /* Hide SurveyJS Watermark */
+    /* Small, consistent question numbers */
+    .sd-question__number,
+    .sd-question__num,
+    .sd-element__num {
+        background: transparent !important;
+        color: var(--text-2) !important;
+        font-size: 0.82rem !important;
+        font-weight: 700 !important;
+        margin-right: 8px !important;
+    }
+
+    /* Survey header (title + description block) must follow the page surface */
+    .sd-container-modern__title,
+    .sd-header,
+    .sd-header__text {
+        background: transparent !important;
+        color: var(--text) !important;
+    }
+    .sd-container-modern__title { padding-left: 0 !important; }
+    .sd-title { color: var(--text) !important; }
+
+
+    /* Inputs */
+    .sd-input, .sd-dropdown, .sd-comment, .sd-textarea {
+        background: var(--surface-2) !important;
+        border: 1px solid var(--border-strong) !important;
+        border-radius: 10px !important;
+        padding: 12px 14px !important;
+        font-size: 0.925rem !important;
+        color: var(--text) !important;
+        transition: border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+    .sd-input:focus, .sd-comment:focus, .sd-textarea:focus {
+        border-color: var(--primary) !important;
+        box-shadow: 0 0 0 3px var(--primary-50) !important;
+        outline: none !important;
+    }
+    .sd-input::placeholder, .sd-comment::placeholder { color: var(--text-3) !important; }
+    .sd-dropdown { cursor: pointer; }
+    .sd-dropdown__value { color: var(--text) !important; }
+    .sd-dropdown__placeholder { color: var(--text-3) !important; }
+
+    /* Choice items */
+    .sd-item { border-radius: 9px !important; }
+    .sd-item:hover { background: var(--surface-2) !important; }
+    .sd-item__control-label, .sd-checkbox__control-label, .sd-radio__control-label, .sd-item__control-label span {
+        color: var(--text) !important;
+        font-size: 0.9rem !important;
+    }
+    .sd-item--checked .sd-item__control-label { color: var(--text) !important; font-weight: 600 !important; }
+    .sd-item__decorator, .sd-radio__control, .sd-checkbox__control {
+        border-color: var(--border-strong) !important;
+        background: var(--surface) !important;
+    }
+    .sd-item--checked .sd-radio__control, .sd-item--checked .sd-checkbox__control {
+        border-color: var(--primary) !important;
+        background: var(--primary) !important;
+    }
+    .sd-radio__control .sd-radio__svg use, .sd-checkbox__control .sd-checkbox__svg use { fill: #fff !important; }
+    .sd-item--allowhover .sd-item__decorator { background: var(--surface-2) !important; }
+
+    /* Rating, boolean, matrix */
+    .sd-rating__item-text, .sd-rating__item {
+        color: var(--text) !important;
+        border-color: var(--border-strong) !important;
+        background: var(--surface-2) !important;
+    }
+    .sd-rating__item--selected .sd-rating__item-text,
+    .sd-rating__item--selected { background: var(--primary) !important; color: #fff !important; }
+    .sd-boolean__label, .sd-matrix__cell, .sd-matrix__text, .sd-table__cell {
+        color: var(--text) !important;
+        border-color: var(--border) !important;
+    }
+    .sd-table { background: transparent !important; }
+    .sd-table__row:hover { background: var(--surface-2) !important; }
+
+    /* Progress */
+    .sd-body__progress, .sd-progress {
+        background: var(--primary-100) !important;
+        border-radius: 999px !important;
+        height: 8px !important;
+    }
+    .sd-progress { margin-bottom: 22px !important; }
+    .sd-progress__bar {
+        background: linear-gradient(90deg, var(--primary), var(--primary-600)) !important;
+        border-radius: 999px !important;
+    }
+    .sd-body__progress-text {
+        color: var(--text-3) !important;
+        font-size: 0.75rem !important;
+        font-weight: 600 !important;
+        text-align: right !important;
+        padding-bottom: 6px !important;
+    }
+    .sd-progress__text {
+        color: var(--text-3) !important;
+        font-size: 0.75rem !important;
+        font-weight: 600 !important;
+    }
+    .sd-progress-buttons__list { color: var(--text-3) !important; }
+
+    /* Navigation */
+    .sd-navigation, .sd-body__navigation, .sd-action-bar {
+        padding: 22px 0 10px !important;
+        margin-top: 8px !important;
+        border-top: 1px solid var(--border) !important;
+        background: transparent !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        flex-wrap: wrap !important;
+    }
+    .sd-btn, .sd-navigation__next-btn, .sd-navigation__prev-btn, .sd-navigation__complete-btn {
+        border-radius: 10px !important;
+        padding: 11px 24px !important;
+        font-family: var(--font-sans) !important;
+        font-size: 0.875rem !important;
+        font-weight: 700 !important;
+        transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease !important;
+    }
+    .sd-btn--action, .sd-navigation__next-btn, .sd-navigation__complete-btn {
+        background: linear-gradient(135deg, var(--primary), var(--primary-600)) !important;
+        color: #fff !important;
+        border: none !important;
+        box-shadow: 0 8px 20px -12px rgba(11, 107, 189, 0.9) !important;
+    }
+    [data-theme="dark"] .sd-btn--action,
+    [data-theme="dark"] .sd-navigation__next-btn,
+    [data-theme="dark"] .sd-navigation__complete-btn { color: #04121f !important; }
+    .sd-btn--action:hover, .sd-navigation__next-btn:hover, .sd-navigation__complete-btn:hover {
+        transform: translateY(-1px);
+    }
+    .sd-navigation__prev-btn, .sd-btn:not(.sd-btn--action) {
+        background: var(--surface-2) !important;
+        color: var(--text-2) !important;
+        border: 1px solid var(--border) !important;
+    }
+    .sd-navigation__prev-btn:hover, .sd-btn:not(.sd-btn--action):hover {
+        color: var(--text) !important;
+        border-color: var(--border-strong) !important;
+    }
+
+    /* Panels */
+    .sd-panel__title, .sd-panel__description { color: var(--text) !important; }
+    .sd-panel { border-radius: 12px !important; }
+    .sd-panel--withborder, .sd-panel--withbackground { border-color: var(--border) !important; background: var(--surface-2) !important; }
+
+    /* Errors */
+    .sd-question__errtooltip, .sd-question__error {
+        color: var(--danger) !important;
+        font-size: 0.8rem !important;
+    }
+    .sd-input--error, .sd-question--error .sd-input { border-color: var(--danger) !important; }
+
+    /* Popups & dropdown lists */
+    .sv-popup { z-index: 10000 !important; }
+    .sv-popup__container, .sv-popup__body-content {
+        background: var(--surface) !important;
+        color: var(--text) !important;
+        border-color: var(--border) !important;
+    }
+    .sv-list__item, .sv-list__item-body, .sv-list__item span { color: var(--text) !important; }
+    .sv-list__item:hover, .sv-list__item--focused { background: var(--surface-2) !important; }
+    .sv-list__filter, .sv-list__input {
+        background: var(--surface) !important;
+        color: var(--text) !important;
+        border-color: var(--border) !important;
+    }
+    .sv-list__input::placeholder { color: var(--text-3) !important; }
+
+    .survey-note {
+        margin-top: 18px;
+        text-align: center;
+        font-size: 0.76rem;
+        line-height: 1.6;
+        color: var(--text-3);
+    }
+
+    /* Hide SurveyJS watermark */
     .sv_watermark, .sv-logo, .sd-root-modern__watermark {
         display: none !important;
         visibility: hidden !important;
     }
 
-    /* === QUIZ RESULT MODAL === */
-    #quiz-result-modal {
-        display: none;
-        position: fixed;
-        inset: 0;
-        z-index: 9999;
-        background: rgba(15, 23, 42, 0.65);
-        backdrop-filter: blur(6px);
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-    }
-    #quiz-result-modal.show {
-        display: flex;
-        animation: modalFadeIn 0.3s ease;
-    }
-    @keyframes modalFadeIn {
-        from { opacity: 0; transform: scale(0.95); }
-        to { opacity: 1; transform: scale(1); }
-    }
-    .quiz-result-card {
-        background: #fff;
-        border-radius: 24px;
-        padding: 40px 36px;
-        max-width: 460px;
-        width: 100%;
-        text-align: center;
-        box-shadow: 0 25px 60px rgba(0,0,0,0.25);
-        position: relative;
-    }
-    .quiz-result-icon {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 20px;
-        font-size: 2.5rem;
-    }
-    .quiz-result-icon.passed {
-        background: linear-gradient(135deg, #d1fae5, #a7f3d0);
-    }
-    .quiz-result-icon.failed {
-        background: linear-gradient(135deg, #fee2e2, #fecaca);
-    }
-    .quiz-result-score {
-        font-size: 3.5rem;
-        font-weight: 900;
-        line-height: 1;
-        margin-bottom: 4px;
-    }
-    .quiz-result-score.passed { color: #059669; }
-    .quiz-result-score.failed { color: #dc2626; }
-    .quiz-result-label {
-        font-size: 1.25rem;
-        font-weight: 700;
-        margin-bottom: 8px;
-    }
-    .quiz-result-label.passed { color: #065f46; }
-    .quiz-result-label.failed { color: #991b1b; }
-    .quiz-result-passing {
-        font-size: 0.85rem;
-        color: #94a3b8;
-        margin-bottom: 28px;
-    }
-    .quiz-result-actions {
-        display: flex;
-        gap: 12px;
-        flex-direction: column;
-    }
-    .btn-retake {
-        display: block;
-        background: linear-gradient(135deg, #6366f1, #4f46e5);
-        color: white;
-        border: none;
-        border-radius: 12px;
-        padding: 14px 24px;
-        font-size: 1rem;
-        font-weight: 700;
-        cursor: pointer;
-        transition: all 0.2s;
-        text-decoration: none;
-    }
-    .btn-retake:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(99,102,241,0.35);
-        color: white;
-    }
-    .btn-back-list {
-        display: block;
-        background: #f1f5f9;
-        color: #475569;
-        border: none;
-        border-radius: 12px;
-        padding: 14px 24px;
-        font-size: 0.9rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s;
-        text-decoration: none;
-    }
-    .btn-back-list:hover {
-        background: #e2e8f0;
-        color: #334155;
-    }
+    /* Hide navbar when a dropdown popup is open */
+    body.sv-popup-open .navbar { display: none !important; }
 
-    /* === MOBILE DROPDOWN POPUP FIX === */
-    /* Force SurveyJS popup ABOVE the sticky navbar (z-index: 100) */
-    .sv-popup {
-        z-index: 10000 !important;
-    }
-
-    /* Hide navbar when dropdown popup is open (class toggled by JS) */
-    body.sv-popup-open .navbar {
-        display: none !important;
-    }
-
-    /* On mobile: make desktop-style dropdown popup fullscreen so it's not clipped */
     @media (max-width: 768px) {
-        /* The popup overlay background */
         .sv-popup {
             position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-            bottom: 0 !important;
+            inset: 0 !important;
             width: 100% !important;
             height: 100% !important;
             z-index: 10000 !important;
-            background: rgba(0, 0, 0, 0.5) !important;
+            background: rgba(8, 15, 28, 0.55) !important;
         }
-        /* The popup container (the white box with content) */
         .sv-popup__container {
             position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-            bottom: 0 !important;
+            inset: 0 !important;
             width: 100% !important;
             height: 100% !important;
             max-height: 100vh !important;
@@ -367,142 +540,311 @@
             display: flex !important;
             flex-direction: column !important;
         }
-        .sv-popup__scrolling-content {
-            flex: 1 !important;
-            overflow-y: auto !important;
-        }
-        /* Make the search/filter input prominent and always visible */
+        .sv-popup__scrolling-content { flex: 1 !important; overflow-y: auto !important; }
         .sv-list__filter {
-            padding: 12px 12px !important;
-            background: #fff !important;
-            border-bottom: 2px solid #e2e8f0 !important;
+            padding: 12px !important;
+            background: var(--surface) !important;
+            border-bottom: 1px solid var(--border) !important;
             flex-shrink: 0 !important;
             display: flex !important;
         }
-        .sv-list__filter input,
-        .sv-list__input {
-            font-size: 16px !important; /* Prevents iOS auto-zoom */
-            padding: 12px 16px !important;
-            border: 2px solid #6366f1 !important;
+        .sv-list__filter input, .sv-list__input {
+            font-size: 16px !important;
+            padding: 12px 14px !important;
+            border: 1px solid var(--primary) !important;
             border-radius: 10px !important;
-            background: #f8fafc !important;
+            background: var(--surface-2) !important;
             width: 100% !important;
             -webkit-appearance: none !important;
             appearance: none !important;
         }
-        .sv-list__filter input:focus,
-        .sv-list__input:focus {
-            outline: none !important;
-            border-color: #4f46e5 !important;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2) !important;
-        }
     }
 
+    /* --- Completion panels injected by JS --- */
+    .done-panel { text-align: center; padding: 32px 12px; }
+    .done-emoji { font-size: 2.6rem; line-height: 1; margin-bottom: 12px; }
+    .done-title {
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: var(--text);
+        margin-bottom: 8px;
+    }
+    .done-desc {
+        font-size: 0.9rem;
+        line-height: 1.65;
+        color: var(--text-2);
+        margin-bottom: 24px;
+    }
+    .done-actions {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    .done-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 11px 20px;
+        border-radius: 10px;
+        font-size: 0.86rem;
+        font-weight: 700;
+        text-decoration: none;
+        border: 1px solid transparent;
+        cursor: pointer;
+    }
+    .done-btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--primary-600));
+        color: #fff !important;
+    }
+    [data-theme="dark"] .done-btn-primary { color: #04121f !important; }
+    .done-btn-secondary {
+        background: var(--surface-2);
+        border-color: var(--border);
+        color: var(--text-2) !important;
+    }
+
+    /* --- Quiz result modal --- */
+    #quiz-result-modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: rgba(8, 15, 28, 0.55);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+    #quiz-result-modal.show { display: flex; animation: modalFadeIn 0.28s ease; }
+    @keyframes modalFadeIn {
+        from { opacity: 0; transform: scale(0.96); }
+        to { opacity: 1; transform: scale(1); }
+    }
+    .quiz-result-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        padding: 34px 32px;
+        max-width: 440px;
+        width: 100%;
+        text-align: center;
+        box-shadow: var(--shadow-lg);
+    }
+    .quiz-result-icon {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 18px;
+        font-size: 2.1rem;
+    }
+    .quiz-result-icon.passed { background: var(--success-50); }
+    .quiz-result-icon.failed { background: var(--danger-50); }
+    .quiz-result-score {
+        font-family: var(--font-display);
+        font-size: 3.2rem;
+        font-weight: 800;
+        line-height: 1;
+        letter-spacing: -0.03em;
+        margin-bottom: 6px;
+    }
+    .quiz-result-score.passed { color: var(--success); }
+    .quiz-result-score.failed { color: var(--danger); }
+    .quiz-result-label {
+        font-family: var(--font-display);
+        font-size: 1.15rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+    .quiz-result-label.passed { color: var(--text); }
+    .quiz-result-label.failed { color: var(--text); }
+    .quiz-result-passing {
+        font-size: 0.82rem;
+        color: var(--text-3);
+        margin-bottom: 26px;
+    }
+    .quiz-result-actions { display: flex; flex-direction: column; gap: 10px; }
+    .btn-receipt {
+        display: block;
+        text-align: center;
+        padding: 12px 20px;
+        background: var(--primary);
+        color: #fff !important;
+        border-radius: 10px;
+        font-size: 0.88rem;
+        font-weight: 700;
+        text-decoration: none;
+    }
+    [data-theme="dark"] .btn-receipt { color: #04121f !important; }
+    .btn-retake {
+        display: block;
+        background: linear-gradient(135deg, var(--primary), var(--primary-600));
+        color: #fff !important;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 20px;
+        font-size: 0.88rem;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+        transition: transform 0.18s ease;
+    }
+    [data-theme="dark"] .btn-retake { color: #04121f !important; }
+    .btn-retake:hover { transform: translateY(-1px); }
+    .btn-back-list {
+        display: block;
+        background: var(--surface-2);
+        color: var(--text-2) !important;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 12px 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: color 0.18s ease, border-color 0.18s ease;
+    }
+    .btn-back-list:hover { color: var(--text) !important; border-color: var(--border-strong); }
+
+    @media (max-width: 680px) {
+        .runner { padding: 18px 16px 56px; }
+        .head-card { padding: 24px 20px; }
+        #surveyElement { padding: 22px 18px 8px; }
+        .sd-question { padding: 12px 0 !important; }
+        #surveyElement .sd-question:not(:last-child) { padding-bottom: 18px !important; margin-bottom: 2px !important; }
+        .sd-question__content { margin-top: 10px !important; }
+        .head-meta { gap: 8px 14px; }
+        .quiz-result-card { padding: 28px 22px; }
+        .preview-banner { align-items: flex-start; }
+    }
 </style>
 @endsection
 
 @section('content')
-<div id="survey-runner-wrapper">
-    <div class="survey-centered-container">
-        
-        @if(!empty($isManager) || !empty($isPreview))
-            <div style="background: linear-gradient(135deg, rgba(2, 132, 199, 0.25) 0%, rgba(15, 23, 42, 0.75) 100%); border: 1px solid rgba(56, 189, 248, 0.45); backdrop-filter: blur(10px); border-radius: 12px; padding: 12px 16px; margin-bottom: 24px; color: #f0f9ff; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; font-size: 0.8125rem; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #38bdf8; box-shadow: 0 0 8px #38bdf8; flex-shrink: 0;"></span>
-                    <span><strong>Mode Pratinjau Pembuat Kuesioner</strong> &bull; Anda memiliki hak akses administrator untuk memeriksa kuesioner ini.</span>
-                </div>
-                <a href="{{ route('filament.admin.resources.survey.surveys.design', ['record' => $survey->id]) }}" style="display: inline-flex; align-items: center; gap: 4px; color: #38bdf8; text-decoration: none; font-weight: 600; font-size: 0.75rem; white-space: nowrap; padding: 5px 12px; background-color: rgba(2, 132, 199, 0.25); border-radius: 6px; border: 1px solid rgba(56, 189, 248, 0.35);">
-                    Kembali ke Desain &rarr;
-                </a>
+<div class="runner">
+    <div class="runner-bar">
+        <a href="{{ route('survey.index') }}" class="runner-back">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 7l-5 5 5 5"/></svg>
+            Daftar form
+        </a>
+        <span class="runner-secure">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9.5 12l1.8 1.8 3.4-3.4"/></svg>
+            Data terkirim dengan aman
+        </span>
+    </div>
+
+    @if(!empty($isManager) || !empty($isPreview))
+        <div class="preview-banner">
+            <div class="preview-banner__main">
+                <span class="pb-dot" aria-hidden="true"></span>
+                <p><strong>Mode Pratinjau Pembuat Kuesioner.</strong> Anda melihat form ini sebagai administrator. Jawaban Anda tidak dihitung sebagai responden.</p>
             </div>
+            <a href="{{ route('filament.admin.resources.survey.surveys.design', ['record' => $survey->id]) }}" class="preview-banner__link">
+                Kembali ke desain
+                <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 7l5 5-5 5"/></svg>
+            </a>
+        </div>
+    @endif
+
+    <header class="head-card">
+        <div class="head-chips">
+            <span class="chip chip-primary">{{ $survey->kategori?->nama ?? 'Umum' }}</span>
+            @if($survey->is_quiz)
+                <span class="chip chip-accent">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 01-10 0z"/><path d="M17 5h3v2a3 3 0 01-3 3M7 5H4v2a3 3 0 003 3"/></svg>
+                    Kuis
+                </span>
+            @endif
+            <span class="chip">{{ $modeLabel }}</span>
+        </div>
+
+        <h1>{{ $survey->title }}</h1>
+
+        @if($survey->description)
+            <p class="head-desc">{{ $survey->description }}</p>
         @endif
 
-        <!-- Simple Header -->
-        <div class="simple-header">
-            <h2>📋 Kuesioner Digital BPS</h2>
-            <p>Badan Pusat Statistik Kabupaten Demak</p>
-        </div>
-
-        <!-- Title Card -->
-        <div class="white-card title-card">
-            <h1>{{ $survey->title }}</h1>
-            <hr class="border-slate-100 my-6">
-            <div class="flex items-center justify-between">
-                <span class="badge-category">{{ $survey->kategori?->nama ?? 'Umum' }}</span>
-                <div class="meta-text flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    <span>Diterbitkan: {{ $survey->created_at?->format('d M Y') ?? date('d M Y') }}</span>
-                </div>
-            </div>
-            @if($survey->description)
-                <div class="mt-6 text-slate-500 text-[0.9375rem] leading-relaxed">
-                    {{ $survey->description }}
-                </div>
+        <div class="head-meta">
+            <span>
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></svg>
+                Diterbitkan {{ $survey->created_at?->translatedFormat('d M Y') ?? date('d M Y') }}
+            </span>
+            @if($questionCount > 0)
+                <span>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+                    {{ $questionCount }} pertanyaan
+                </span>
             @endif
+            <span>
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg>
+                @if($survey->ends_at)
+                    Batas waktu {{ $survey->ends_at->format('d M Y') }}
+                @else
+                    Tanpa batas waktu
+                @endif
+            </span>
         </div>
+    </header>
 
-        <!-- Status Area -->
-        <div id="status-card">
-            <div id="loading-box" class="py-10 text-center text-white">
-                <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-white/20 border-t-white mb-4"></div>
-                <p class="font-bold opacity-80">Menyiapkan kuesioner...</p>
-            </div>
-
-            <div id="error-box" class="hidden white-card text-center py-12">
-                <h2 class="text-red-600 font-bold text-xl mb-4">Akses Gagal</h2>
-                <p id="error-msg" class="text-slate-500 text-sm mb-6 font-mono"></p>
-                <button onclick="window.location.reload()" class="bg-indigo-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-indigo-700 transition">Coba Lagi</button>
-            </div>
+    <!-- Draft Recovery Alert -->
+    <div id="draft-recovery-alert" class="draft-alert hidden">
+        <span class="draft-icon" aria-hidden="true">💾</span>
+        <div class="draft-text">
+            <strong>Draf pengisian ditemukan</strong>
+            <span>Sistem mendeteksi jawaban yang tersimpan di perangkat ini. Pulihkan draf untuk melanjutkan.</span>
         </div>
-
-        <!-- Draft Recovery Alert -->
-        <div id="draft-recovery-alert" class="hidden white-card mb-4 border-l-4 border-amber-500 bg-amber-50/70 p-4 rounded-xl shadow-sm">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div class="flex items-center gap-3">
-                    <span class="text-2xl">💾</span>
-                    <div>
-                        <h3 class="font-bold text-slate-800 text-sm">Draf Pengisian Tersimpan Ditemukan</h3>
-                        <p class="text-xs text-slate-600 mt-0.5">Sistem mendeteksi jawaban yang tersimpan di perangkat ini. Ingin memulihkan draf?</p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-2 self-end sm:self-auto flex-shrink-0">
-                    <button id="btn-restore-draft" type="button" class="px-3.5 py-1.5 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-lg transition shadow-sm cursor-pointer">
-                        Pulihkan
-                    </button>
-                    <button id="btn-discard-draft" type="button" class="px-3.5 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-semibold rounded-lg transition cursor-pointer">
-                        Abaikan
-                    </button>
-                </div>
-            </div>
+        <div class="draft-actions">
+            <button id="btn-restore-draft" type="button" class="btn-mini btn-mini-primary">Pulihkan</button>
+            <button id="btn-discard-draft" type="button" class="btn-mini btn-mini-ghost">Abaikan</button>
         </div>
-
-        <!-- SurveyJS Area -->
-        <div id="surveyElement"></div>
-
     </div>
+
+    <!-- Status Area -->
+    <div id="status-card">
+        <div id="loading-box" class="state-panel">
+            <div class="spinner" aria-hidden="true"></div>
+            <p>Menyiapkan form...</p>
+        </div>
+
+        <div id="error-box" class="state-panel error hidden">
+            <h2>Akses gagal</h2>
+            <p id="error-msg"></p>
+            <button type="button" onclick="window.location.reload()" class="btn btn-primary">Coba lagi</button>
+        </div>
+    </div>
+
+    <!-- SurveyJS Area -->
+    <div id="surveyElement"></div>
+
+    <p class="survey-note">
+        Jawaban Anda hanya digunakan untuk keperluan BPS Kabupaten Demak.
+        Draf pengisian tersimpan sementara di perangkat ini.
+    </p>
 </div>
 
-<!-- Quiz Result Modal (outside wrapper for correct z-index) -->
-<div id="quiz-result-modal" role="dialog" aria-modal="true" aria-labelledby="quiz-result-title">
+<!-- Quiz Result Modal -->
+<div id="quiz-result-modal" role="dialog" aria-modal="true" aria-labelledby="quiz-result-label">
     <div class="quiz-result-card">
         <div class="quiz-result-icon" id="quiz-result-icon">🎉</div>
         <div class="quiz-result-score" id="quiz-result-score">0%</div>
-        <div class="quiz-result-label" id="quiz-result-label">Selamat, Anda Lulus!</div>
+        <div class="quiz-result-label" id="quiz-result-label">Selamat, Anda lulus!</div>
         <div class="quiz-result-passing" id="quiz-result-passing">Nilai standar kelulusan: 0%</div>
         <div class="quiz-result-actions">
-            <a id="btn-receipt" href="#" target="_blank" class="btn-receipt" style="display:none; text-align:center; padding:12px 20px; background:#0284c7; color:#fff; border-radius:10px; font-weight:bold; text-decoration:none; margin-bottom:8px;">
-                📄 Cetak / Unduh Bukti Pengisian
+            <a id="btn-receipt" href="#" target="_blank" class="btn-receipt" style="display:none;">
+                Cetak / unduh bukti pengisian
             </a>
             <a id="btn-retake" href="{{ route('survey.show', $survey) }}" class="btn-retake" style="display:none;">
-                🔄 Ulangi Kuis
+                Ulangi kuis
             </a>
             <a href="{{ route('survey.index') }}" class="btn-back-list">
-                ← Kembali ke Daftar Survei
+                Kembali ke daftar form
             </a>
         </div>
     </div>
 </div>
-
 @endsection
 
 @section('scripts')
@@ -541,7 +883,7 @@
 
         try {
             let rawData = {!! json_encode($survey->schema ?? [], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) !!};
-            
+
             if (!rawData || !rawData.pages || rawData.pages.length === 0) {
                 return fatal("Data pertanyaan kuesioner tidak ditemukan.");
             }
@@ -549,7 +891,6 @@
             if (typeof Survey === 'undefined') return fatal("Modul integrasi gagal dimuat.");
 
             // Force SurveyJS to use desktop-style dropdown popup (with search input)
-            // instead of the mobile overlay mode which hides the search field
             if (typeof Survey.IsTouch !== 'undefined') Survey.IsTouch = false;
             if (typeof Survey.IsMobile !== 'undefined') Survey.IsMobile = false;
             if (Survey.settings && Survey.settings.environment) {
@@ -583,13 +924,20 @@
                     }
                 });
             @endif
-            
-            // USE DEFAULT V2 THEME
-            model.applyTheme({
-                "themeName": "defaultV2",
-                "colorPalette": "light",
-                "isPanelless": false
-            });
+
+            // Theme follows the site theme (light by default, dark when toggled)
+            function currentPalette() {
+                return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+            }
+            function applySurveyTheme() {
+                model.applyTheme({
+                    "themeName": "defaultV2",
+                    "colorPalette": currentPalette(),
+                    "isPanelless": false
+                });
+            }
+            applySurveyTheme();
+            window.addEventListener('themechange', applySurveyTheme);
 
             @if(isset($existingSubmission) && $existingSubmission)
                 model.data = {!! json_encode($existingSubmission->payload ?? [], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) !!};
@@ -606,10 +954,11 @@
 
             @if($survey->mode === App\Enums\SurveyMode::Multi)
                 model.completedHtml = `
-                    <div style="text-align: center; padding: 40px;">
-                        <h3 style="color: #1e1b4b; font-weight: bold; margin-bottom: 20px;">Berhasil Disimpan!</h3>
-                        <p style="color: #64748b; margin-bottom: 30px;">Jawaban responden telah berhasil dikirim ke server.</p>
-                        <button onclick="window.resetSurveyRunner()" class="sd-btn sd-btn--action" style="background-color: #10b981 !important;">Isi Kuesioner Baru</button>
+                    <div class="done-panel">
+                        <div class="done-emoji">✅</div>
+                        <h3 class="done-title">Berhasil disimpan</h3>
+                        <p class="done-desc">Jawaban Anda telah berhasil dikirim ke server.</p>
+                        <button onclick="window.resetSurveyRunner()" class="done-btn done-btn-primary">Isi form baru</button>
                     </div>
                 `;
             @endif
@@ -679,7 +1028,7 @@
             model.onComplete.add(function(sender) {
                 loading.classList.remove('hidden');
                 loading.querySelector('p').innerText = 'Mengirim data...';
-                
+
                 fetch("{{ route('survey.submit', $survey) }}", {
                     method: "POST",
                     headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": "{{ csrf_token() }}", "Accept": "application/json" },
@@ -695,17 +1044,13 @@
                             showQuizResult(data.quiz, data.receipt_url);
                         } else if (data.receipt_url && @json($survey->mode !== App\Enums\SurveyMode::Multi)) {
                             model.completedHtml = `
-                                <div style="text-align: center; padding: 40px;">
-                                    <div style="font-size: 3rem; margin-bottom: 12px;">✅</div>
-                                    <h3 style="color: #1e1b4b; font-weight: bold; font-size: 1.5rem; margin-bottom: 8px;">Terima Kasih!</h3>
-                                    <p style="color: #64748b; margin-bottom: 24px;">Jawaban survei Anda telah berhasil dikirim dan dicatat oleh sistem.</p>
-                                    <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
-                                        <a href="${data.receipt_url}" target="_blank" class="sd-btn sd-btn--action" style="background: linear-gradient(135deg, #0284c7, #0369a1) !important; color: white !important; text-decoration: none; padding: 12px 24px; border-radius: 10px; font-weight: bold; display: inline-flex; align-items: center; gap: 8px;">
-                                            📄 Cetak / Unduh Bukti Pengisian
-                                        </a>
-                                        <a href="{{ route('survey.index') }}" class="sd-btn" style="background: #f1f5f9; color: #475569; text-decoration: none; padding: 12px 20px; border-radius: 10px; font-weight: 600;">
-                                            ← Kembali ke Daftar Survei
-                                        </a>
+                                <div class="done-panel">
+                                    <div class="done-emoji">✅</div>
+                                    <h3 class="done-title">Terima kasih!</h3>
+                                    <p class="done-desc">Jawaban Anda telah berhasil dikirim dan dicatat oleh sistem.</p>
+                                    <div class="done-actions">
+                                        <a href="${data.receipt_url}" target="_blank" class="done-btn done-btn-primary">Cetak / unduh bukti pengisian</a>
+                                        <a href="{{ route('survey.index') }}" class="done-btn done-btn-secondary">Kembali ke daftar form</a>
                                     </div>
                                 </div>
                             `;
@@ -738,9 +1083,9 @@
                 label.className    = 'quiz-result-label ' + (passed ? 'passed' : 'failed');
 
                 if (passed) {
-                    label.textContent = '🎊 Selamat, Anda Lulus!';
+                    label.textContent = 'Selamat, Anda lulus!';
                 } else {
-                    label.textContent = 'Belum Lulus — Coba Lagi!';
+                    label.textContent = 'Belum lulus — coba lagi';
                 }
 
                 if (quiz.passing_score > 0) {
@@ -756,13 +1101,10 @@
 
                 if (quiz.can_retake) {
                     btnRetake.style.display = 'block';
-                    // Adjust button text: if already passed, offer to improve score
                     if (passed) {
-                        btnRetake.innerHTML = '🚀 Coba Lagi (Tingkatkan Nilai)';
-                        btnRetake.style.background = 'linear-gradient(135deg, #0ea5e9, #0284c7)';
+                        btnRetake.innerHTML = 'Coba lagi untuk tingkatkan nilai';
                     } else {
-                        btnRetake.innerHTML = '🔄 Ulangi Kuis';
-                        btnRetake.style.background = 'linear-gradient(135deg, #6366f1, #4f46e5)';
+                        btnRetake.innerHTML = 'Ulangi kuis';
                     }
                 } else {
                     btnRetake.style.display = 'none';
@@ -786,7 +1128,7 @@
         }
 
         // === MOBILE POPUP FIX: HIDE NAVBAR + UNLOCK KEYBOARD ===
-        
+
         function unlockPopupInputs(root) {
             if (!root || !root.querySelectorAll) return;
             var inputs = root.querySelectorAll('input[type="text"], input:not([type])');
@@ -799,9 +1141,7 @@
         }
 
         function onPopupOpened(popupNode) {
-            // Hide navbar so popup search field is fully visible
             document.body.classList.add('sv-popup-open');
-            // Unlock inputs and auto-focus the search field
             unlockPopupInputs(popupNode);
             setTimeout(function() {
                 unlockPopupInputs(popupNode);
@@ -815,20 +1155,17 @@
         }
 
         function checkPopupsClosed() {
-            // If no visible popup exists, restore navbar
             var visiblePopup = document.querySelector('.sv-popup[style*="visibility: visible"], .sv-popup[style*="display: block"], .sv-popup:not([style*="display: none"]):not([style*="visibility: hidden"])');
             if (!visiblePopup) {
                 document.body.classList.remove('sv-popup-open');
             }
         }
 
-        // Watch for popup creation/removal and attribute changes
         var observer = new MutationObserver(function(mutations) {
             for (var i = 0; i < mutations.length; i++) {
                 var mutation = mutations[i];
 
                 if (mutation.type === 'childList') {
-                    // Popup added
                     mutation.addedNodes.forEach(function(node) {
                         if (node.nodeType !== 1) return;
                         if (node.classList && node.classList.contains('sv-popup')) {
@@ -839,7 +1176,6 @@
                             if (popup) onPopupOpened(popup);
                         }
                     });
-                    // Popup removed
                     mutation.removedNodes.forEach(function(node) {
                         if (node.nodeType !== 1) return;
                         if ((node.classList && node.classList.contains('sv-popup')) || (node.querySelector && node.querySelector('.sv-popup'))) {
@@ -848,10 +1184,8 @@
                     });
                 }
 
-                // Style/visibility change on popup (SurveyJS hides via style)
                 if (mutation.type === 'attributes') {
                     var target = mutation.target;
-                    // Check if popup visibility changed
                     if (target.classList && target.classList.contains('sv-popup')) {
                         var style = target.getAttribute('style') || '';
                         if (style.indexOf('visible') > -1 || style.indexOf('block') > -1) {
@@ -860,7 +1194,6 @@
                             setTimeout(checkPopupsClosed, 100);
                         }
                     }
-                    // Unlock readonly/inputmode on search inputs
                     if (target.tagName === 'INPUT' && target.closest('.sv-popup')) {
                         if (target.hasAttribute('readonly')) target.removeAttribute('readonly');
                         if (target.getAttribute('inputmode') === 'none') target.setAttribute('inputmode', 'text');
@@ -876,7 +1209,6 @@
             attributeFilter: ['readonly', 'inputmode', 'style', 'class']
         });
 
-        // Fallback: touch to unlock and focus
         document.addEventListener('touchstart', function(e) {
             var input = e.target;
             if (input.tagName === 'INPUT' && input.closest('.sv-popup')) {
@@ -886,7 +1218,6 @@
             }
         }, { passive: true });
 
-        // Fallback: periodic check for popup state
         setInterval(function() {
             var popup = document.querySelector('.sv-popup');
             if (popup) {
