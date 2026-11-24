@@ -399,6 +399,18 @@
 <div id="survey-runner-wrapper">
     <div class="survey-centered-container">
         
+        @if(!empty($isManager) || !empty($isPreview))
+            <div style="background: linear-gradient(135deg, rgba(2, 132, 199, 0.25) 0%, rgba(15, 23, 42, 0.7) 100%); border: 1px solid rgba(56, 189, 248, 0.45); backdrop-filter: blur(10px); border-radius: 12px; padding: 10px 16px; margin-bottom: 20px; color: #f0f9ff; display: flex; align-items: center; justify-content: space-between; font-size: 0.8125rem; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #38bdf8; box-shadow: 0 0 8px #38bdf8;"></span>
+                    <span><strong>Mode Pratinjau Pembuat Kuesioner</strong> &bull; Anda memiliki hak akses administrator untuk memeriksa kuesioner ini.</span>
+                </div>
+                <a href="{{ route('filament.admin.resources.survey.surveys.design', ['record' => $survey->id]) }}" style="display: inline-flex; align-items: center; gap: 4px; color: #38bdf8; text-decoration: none; font-weight: 600; font-size: 0.75rem; white-space: nowrap; padding: 4px 10px; background-color: rgba(2, 132, 199, 0.2); border-radius: 6px; border: 1px solid rgba(56, 189, 248, 0.3);">
+                    Kembali ke Desain &rarr;
+                </a>
+            </div>
+        @endif
+
         <!-- Simple Header -->
         <div class="simple-header">
             <h2>📋 Kuesioner Digital BPS</h2>

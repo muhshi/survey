@@ -9,12 +9,36 @@ use Carbon\Carbon;
 class SurveyAccessService
 {
     /**
+     * Determine if a user is an administrator or survey manager/creator.
+     */
+    public function isSurveyManager(?User $user): bool
+    {
+        if (! $user) {
+            return false;
+        }
+
+        return $user->hasRole('super_admin')
+            || $user->can('Update:Survey')
+            || $user->can('View:Survey')
+            || $user->can('Create:Survey');
+    }
+
+    /**
      * Check detailed access status for the user on a survey.
      *
      * @return array{allowed: bool, title: string, message: string}
      */
-    public function checkAccess(Survey $survey, ?User $user): array
+    public function checkAccess(Survey $survey, ?User $user, bool $isPreview = false): array
     {
+        // Pembuat kuesioner / administrator selalu diizinkan memeriksa dan melihat kuesioner
+        if ($this->isSurveyManager($user) || ($isPreview && $user)) {
+            return [
+                'allowed' => true,
+                'title' => '',
+                'message' => '',
+            ];
+        }
+
         if (! $survey->is_active) {
             return [
                 'allowed' => false,

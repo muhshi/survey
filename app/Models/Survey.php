@@ -106,6 +106,10 @@ class Survey extends Model
      */
     public function scopeAccessibleBy(Builder $query, ?User $user): void
     {
+        if ($user && ($user->hasRole('super_admin') || $user->can('View:Survey') || $user->can('Update:Survey') || $user->can('Create:Survey'))) {
+            return;
+        }
+
         $query->where(function (Builder $q) use ($user) {
             // Surveys without any groups — shown normally
             $q->whereDoesntHave('groups');

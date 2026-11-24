@@ -84,11 +84,15 @@ class SurveyController extends Controller
      */
     public function show(Survey $survey): View|RedirectResponse
     {
-        if ($survey->requiresAuth() && ! Auth::check()) {
+        $user = Auth::user();
+        $isManager = $this->accessService->isSurveyManager($user);
+        $isPreview = request()->boolean('preview') || $isManager;
+
+        if (! $isManager && $survey->requiresAuth() && ! Auth::check()) {
             return redirect()->guest(route('filament.admin.auth.login'));
         }
 
-        $access = $this->accessService->checkAccess($survey, Auth::user());
+        $access = $this->accessService->checkAccess($survey, $user, $isPreview);
         if (! $access['allowed']) {
             return view('survey.closed', [
                 'title' => $access['title'],
@@ -96,11 +100,11 @@ class SurveyController extends Controller
             ]);
         }
 
-        $eligibility = $this->submissionService->checkEligibility($survey, Auth::user());
+        $eligibility = $this->submissionService->checkEligibility($survey, $user);
         $alreadySubmitted = $eligibility['already_submitted'];
-        $existingSubmission = $this->submissionService->getExistingSubmission($survey, Auth::user());
+        $existingSubmission = $this->submissionService->getExistingSubmission($survey, $user);
 
-        return view('survey.show', compact('survey', 'alreadySubmitted', 'existingSubmission'));
+        return view('survey.show', compact('survey', 'alreadySubmitted', 'existingSubmission', 'isPreview', 'isManager'));
     }
 
     /**
@@ -108,11 +112,14 @@ class SurveyController extends Controller
      */
     public function submit(SubmitSurveyRequest $request, Survey $survey): JsonResponse
     {
-        if ($survey->requiresAuth() && ! Auth::check()) {
+        $user = Auth::user();
+        $isManager = $this->accessService->isSurveyManager($user);
+
+        if (! $isManager && $survey->requiresAuth() && ! Auth::check()) {
             return response()->json(['success' => false, 'message' => 'Harus login terlebih dahulu.'], 401);
         }
 
-        $access = $this->accessService->checkAccess($survey, Auth::user());
+        $access = $this->accessService->checkAccess($survey, $user);
         if (! $access['allowed']) {
             return response()->json(['success' => false, 'message' => $access['message']], 403);
         }

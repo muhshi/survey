@@ -1,6 +1,7 @@
 <?php
 
 use App\Filament\Resources\Survey\Pages\DesignSurvey;
+use App\Models\Group;
 use App\Models\Survey;
 use App\Models\User;
 use Livewire\Livewire;
@@ -64,4 +65,30 @@ test('design survey page can save schema updates', function () {
 
     $survey->refresh();
     expect($survey->schema)->toEqual($newSchema);
+});
+
+test('admin can preview questionnaire even if survey is restricted to groups or inactive', function () {
+    $admin = User::factory()->create(['is_active' => true]);
+    $admin->assignRole('super_admin');
+
+    $survey = Survey::factory()->create([
+        'title' => 'Survei Tertutup Khusus Grup',
+        'is_active' => false,
+    ]);
+    $group = Group::create(['name' => 'Kelompok Khusus']);
+    $survey->groups()->attach($group);
+
+    // Regular user is denied
+    $regularUser = User::factory()->create(['is_active' => true]);
+    $this->actingAs($regularUser)
+        ->get(route('survey.show', ['survey' => $survey->slug]))
+        ->assertOk()
+        ->assertSee('Survei Tidak Aktif');
+
+    // Admin can preview without access denied
+    $this->actingAs($admin)
+        ->get(route('survey.show', ['survey' => $survey->slug, 'preview' => 1]))
+        ->assertOk()
+        ->assertSee('Mode Pratinjau Pembuat Kuesioner')
+        ->assertSee($survey->title);
 });
