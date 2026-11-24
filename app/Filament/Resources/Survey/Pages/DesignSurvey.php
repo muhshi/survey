@@ -33,6 +33,11 @@ class DesignSurvey extends EditRecord
         return "{$survey->title} • {$mode} • {$status}";
     }
 
+    public function getRelationManagers(): array
+    {
+        return [];
+    }
+
     public function form(Schema $schema): Schema
     {
         return $schema
