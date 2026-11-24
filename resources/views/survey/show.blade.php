@@ -1127,6 +1127,16 @@
             fatal("Masalah Sistem: " + e.message);
         }
 
+        // SurveyJS 1.12 registers a window scroll handler that closes an open
+        // popup. Focusing the dropdown search field scrolls the page, so the
+        // popup closes the instant it opens. Keep that scroll from reaching it.
+        window.addEventListener('scroll', function (e) {
+            var popup = document.querySelector('.sv-popup');
+            if (popup && popup.style.display !== 'none') {
+                e.stopImmediatePropagation();
+            }
+        }, true);
+
         // === MOBILE POPUP FIX: HIDE NAVBAR + UNLOCK KEYBOARD ===
 
         function unlockPopupInputs(root) {
