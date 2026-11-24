@@ -203,15 +203,20 @@
         }
 
         .fsc-alert {
-            display: flex !important;
-            align-items: flex-start !important;
-            gap: 0.625rem !important;
-            padding: 0.75rem 1rem !important;
-            border-radius: 0.5rem !important;
-            font-size: 0.8125rem !important;
-            margin-bottom: 0.75rem !important;
-            width: 100% !important;
-            box-sizing: border-box !important;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.625rem;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.8125rem;
+            margin-bottom: 0.75rem;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .fsc-alert[style*="display: none"],
+        [x-cloak] {
+            display: none !important;
         }
 
         .fsc-alert-success {
@@ -420,7 +425,7 @@
                 <div class="fsc-editor-footer">
                     {{-- Error Notification Banner --}}
                     <div 
-                        x-show="jsonError" 
+                        x-show="Boolean(jsonError && jsonError.trim())" 
                         class="fsc-alert fsc-alert-error"
                         x-cloak
                     >
@@ -436,7 +441,7 @@
 
                     {{-- Success Notification Banner --}}
                     <div 
-                        x-show="showSuccess" 
+                        x-show="showSuccess && !(jsonError && jsonError.trim())" 
                         class="fsc-alert fsc-alert-success"
                         x-cloak
                     >
