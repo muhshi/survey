@@ -581,7 +581,8 @@
                     "nama": {!! json_encode(Auth::user()->name) !!},
                     "name": {!! json_encode(Auth::user()->name) !!},
                     "email_peserta": {!! json_encode(Auth::user()->email) !!},
-                    "email": {!! json_encode(Auth::user()->email) !!}
+                    "email": {!! json_encode(Auth::user()->email) !!},
+                    "kelas": {!! json_encode(Auth::user()->metadata['kelas'] ?? '') !!}
                 };
             @endif
 
@@ -646,7 +647,8 @@
                     "nama": {!! json_encode(Auth::user()->name) !!},
                     "name": {!! json_encode(Auth::user()->name) !!},
                     "email_peserta": {!! json_encode(Auth::user()->email) !!},
-                    "email": {!! json_encode(Auth::user()->email) !!}
+                    "email": {!! json_encode(Auth::user()->email) !!},
+                    "kelas": {!! json_encode(Auth::user()->metadata['kelas'] ?? '') !!}
                 };
                 @endif
                 model.render("surveyElement");
