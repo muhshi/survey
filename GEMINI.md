@@ -178,3 +178,22 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
    - DILARANG KERAS meletakkan atau men-generate file JSON skema langsung di root direktori proyek.
 </survey-quiz-rules>
 
+<anti-ai-slop-ui-rules>
+=== anti-ai-slop-ui rules ===
+
+# Aturan Wajib Desain UI & Frontend (Anti AI-Slop)
+
+1. **Aktivasi Skill**:
+   - Selalu aktifkan dan patuhi skill `anti-ai-slop-design` setiap kali menulis, memoles, atau merefaktor file Blade, CSS, Tailwind, JavaScript, form runner, maupun landing page.
+2. **Dilarang Menggunakan Trope AI Slop**:
+   - DILARANG menggunakan template dark mode crypto/SaaS membabi buta (latar hitam pekat `#0f172a` dengan radial glow ungu/cyan neon dan border kaca transparan yang murahan).
+   - DILARANG menaruh emoji di heading atau judul komponen (`📋 Kuesioner`, `🚀 Mulai`, dll.). Gunakan SVG icon minimalis atau status badge.
+   - DILARANG menggunakan hack `position: absolute; top: 0; left: 0; min-height: 100vh;` yang merusak alur dokumen dan menabrak navbar.
+3. **Standar Desain Otentik (Crafted UI)**:
+   - Gunakan **Light Mode Institusional** yang bersih dan berwibawa sebagai default untuk portal instansi pemerintah (BPS).
+   - Selalu gunakan **Design Tokens Semantik** (`--bg`, `--surface`, `--border`, `--text`, `--primary`, `--radius-*`) untuk seluruh styling.
+   - Terapkan skrip inline anti-flicker di `<head>` untuk halaman yang mendukung pergantian tema.
+   - Tampilkan **preview mockup produk interaktif** nyata pada section Hero, bukan kartu melayang generik.
+   - Gunakan micro-copy riil sesuai konteks organisasi (BPS: Rekrutmen mitra, kuis pelatihan, evaluasi, pendataan).
+</anti-ai-slop-ui-rules>
+
