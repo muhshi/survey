@@ -14,7 +14,9 @@ use App\Services\SurveyAccessService;
 use App\Services\SurveySubmissionService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Maatwebsite\Excel\Facades\Excel;
@@ -184,6 +186,9 @@ class SurveyController extends Controller
      */
     public function exportRecap(Survey $survey)
     {
+        ini_set('memory_limit', '512M');
+        set_time_limit(300);
+
         $fileName = ($survey->is_quiz ? 'Rekap_Kuis_' : 'Rekap_Survei_').Str::slug($survey->title).'_'.date('Y-m-d').'.xlsx';
 
         if ($survey->is_quiz) {
@@ -216,6 +221,60 @@ class SurveyController extends Controller
 
         return Excel::download(
             new JawabanRespondenExport([$survey->id], $fields),
+            $fileName
+        );
+    }
+
+    /**
+     * Export respondent submissions directly via HTTP GET (prevents Livewire AJAX download blocking).
+     */
+    public function exportJawabanResponden(Request $request)
+    {
+        ini_set('memory_limit', '512M');
+        set_time_limit(300);
+
+        $params = [];
+        if ($request->filled('token')) {
+            $params = Cache::pull('jawaban_export_'.$request->string('token')->toString()) ?? [];
+        }
+
+        $surveyIds = (array) ($params['survey_ids'] ?? $request->input('survey_ids', $request->input('survey_id', [])));
+        $fields = (array) ($params['fields'] ?? $request->input('fields', []));
+        $submittedFrom = $params['submitted_from'] ?? $request->input('submitted_from');
+        $submittedUntil = $params['submitted_until'] ?? $request->input('submitted_until');
+
+        if (empty($surveyIds)) {
+            abort(400, 'Survey belum dipilih untuk diekspor.');
+        }
+
+        $surveys = Survey::whereIn('id', $surveyIds)->get();
+        if ($surveys->isEmpty()) {
+            abort(404, 'Survey tidak ditemukan.');
+        }
+
+        if (empty($fields)) {
+            $fields = ['survey_title', 'nama_lengkap', 'email_peserta', 'waktu_submit'];
+            foreach ($surveys as $survey) {
+                if ($survey->is_quiz) {
+                    $fields[] = 'skor_kuis';
+                }
+                $parsed = $survey->getParsedSchema();
+                $fields = array_merge($fields, array_keys($parsed['fields'] ?? []));
+            }
+            $fields = array_values(array_unique($fields));
+        }
+
+        $fileName = count($surveyIds) === 1 && $surveys->first()
+            ? 'Jawaban_'.Str::slug($surveys->first()->title).'_'.date('Y-m-d').'.xlsx'
+            : 'Jawaban_Responden_'.date('Y-m-d').'.xlsx';
+
+        return Excel::download(
+            new JawabanRespondenExport(
+                $surveyIds,
+                $fields,
+                $submittedFrom,
+                $submittedUntil
+            ),
             $fileName
         );
     }

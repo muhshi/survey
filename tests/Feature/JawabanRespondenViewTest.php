@@ -36,3 +36,37 @@ test('admin can render list jawaban responden with survey selector and tabs', fu
         ->call('setTab', 'tabel')
         ->assertSet('currentTab', 'tabel');
 });
+
+test('admin can export jawaban responden to excel via direct redirect', function () {
+    $this->actingAs($this->admin);
+
+    $survey = Survey::where('slug', 'konfirmasi-pendataan-se2026')->first();
+
+    Livewire::test(ListJawabanResponden::class)
+        ->callAction('export', [
+            'survey_id' => [$survey->id],
+            'fields' => ['survey_title', 'waktu_submit'],
+        ])
+        ->assertRedirect();
+});
+
+test('admin can export with default form state when opening modal', function () {
+    $this->actingAs($this->admin);
+
+    Livewire::test(ListJawabanResponden::class)
+        ->mountAction('export')
+        ->callMountedAction()
+        ->assertRedirect();
+});
+
+test('direct jawaban responden export route downloads valid xlsx', function () {
+    $this->actingAs($this->admin);
+
+    $survey = Survey::where('slug', 'konfirmasi-pendataan-se2026')->first();
+
+    $response = $this->get(route('jawaban-responden.export', ['survey_id' => $survey->id]));
+
+    $response->assertOk();
+    $response->assertHeader('content-disposition');
+    expect($response->headers->get('content-disposition'))->toContain('.xlsx');
+});

@@ -35,6 +35,9 @@ class JawabanRespondenExport extends DefaultValueBinder implements FromQuery, Wi
 
     public function __construct(array $surveyIds, array $selectedFields, ?string $submittedFrom = null, ?string $submittedUntil = null)
     {
+        ini_set('memory_limit', '512M');
+        set_time_limit(300);
+
         $this->surveyIds = $surveyIds;
         $this->selectedFields = $selectedFields;
         $this->submittedFrom = $submittedFrom;
@@ -148,11 +151,20 @@ class JawabanRespondenExport extends DefaultValueBinder implements FromQuery, Wi
                     if (is_bool($val)) {
                         $row[] = $val ? 'Ya' : 'Tidak';
                     } elseif (is_array($val)) {
-                        // Map each item in the array if there are choices defined
-                        if (isset($choicesMap[$field])) {
+                        $isAssoc = $val !== [] && array_keys($val) !== range(0, count($val) - 1);
+                        if ($isAssoc) {
+                            $mappedAssoc = [];
+                            foreach ($val as $subKey => $subVal) {
+                                $subValStr = is_array($subVal) || is_object($subVal)
+                                    ? json_encode($subVal, JSON_UNESCAPED_UNICODE)
+                                    : (string) $subVal;
+                                $mappedAssoc[] = "{$subKey}: ".html_entity_decode($subValStr, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                            }
+                            $row[] = implode(' | ', $mappedAssoc);
+                        } elseif (isset($choicesMap[$field])) {
                             $mappedArray = array_map(function ($v) use ($choicesMap, $field) {
                                 if (is_array($v) || is_object($v)) {
-                                    return json_encode($v);
+                                    return json_encode($v, JSON_UNESCAPED_UNICODE);
                                 }
                                 $mapped = $choicesMap[$field][$v] ?? $v;
 
@@ -162,7 +174,7 @@ class JawabanRespondenExport extends DefaultValueBinder implements FromQuery, Wi
                         } else {
                             $row[] = implode(', ', array_map(function ($v) {
                                 if (is_array($v) || is_object($v)) {
-                                    return json_encode($v);
+                                    return json_encode($v, JSON_UNESCAPED_UNICODE);
                                 }
 
                                 return is_string($v) ? html_entity_decode($v, ENT_QUOTES | ENT_HTML5, 'UTF-8') : $v;

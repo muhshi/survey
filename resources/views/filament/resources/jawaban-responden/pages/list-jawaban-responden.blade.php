@@ -159,6 +159,43 @@
                 color: #38bdf8;
             }
 
+            /* Direct 1-click export button */
+            .srv-toolbar-actions {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 10px;
+            }
+            .srv-export-btn {
+                display: inline-flex;
+                align-items: center;
+                gap: 7px;
+                padding: 8px 14px;
+                border-radius: 10px;
+                font-size: 13px;
+                font-weight: 600;
+                background: #ecfdf5;
+                color: #065f46;
+                border: 1px solid #a7f3d0;
+                transition: all 0.16s ease;
+                text-decoration: none;
+                white-space: nowrap;
+            }
+            .srv-export-btn:hover {
+                background: #d1fae5;
+                border-color: #6ee7b7;
+                transform: translateY(-1px);
+            }
+            :is(.dark .srv-export-btn) {
+                background: rgba(6, 95, 70, 0.25);
+                color: #6ee7b7;
+                border-color: rgba(16, 185, 129, 0.35);
+            }
+            :is(.dark .srv-export-btn:hover) {
+                background: rgba(6, 95, 70, 0.4);
+                border-color: #34d399;
+            }
+
             /* Stat Cards Grid */
             .srv-stat-grid {
                 display: grid;
@@ -634,35 +671,48 @@
                 </select>
             </div>
 
-            {{-- Right: Modern Segmented Tabs (Grafik vs Tabel) --}}
-            <div class="srv-tabs">
-                <button 
-                    wire:click="setTab('grafik')" 
-                    type="button"
-                    class="srv-tab-btn {{ $currentTab === 'grafik' ? 'active' : '' }}"
-                >
-                    <x-filament::icon icon="heroicon-m-chart-pie" style="width: 16px; height: 16px;" />
-                    <span>Grafik Ringkasan</span>
-                    @if($this->currentSurvey)
-                        <span class="srv-tab-badge">
-                            {{ count($this->questionStats['questions'] ?? []) }}
-                        </span>
-                    @endif
-                </button>
+            {{-- Right: Modern Segmented Tabs + Direct Export --}}
+            <div class="srv-toolbar-actions">
+                <div class="srv-tabs">
+                    <button 
+                        wire:click="setTab('grafik')" 
+                        type="button"
+                        class="srv-tab-btn {{ $currentTab === 'grafik' ? 'active' : '' }}"
+                    >
+                        <x-filament::icon icon="heroicon-m-chart-pie" style="width: 16px; height: 16px;" />
+                        <span>Grafik Ringkasan</span>
+                        @if($this->currentSurvey)
+                            <span class="srv-tab-badge">
+                                {{ count($this->questionStats['questions'] ?? []) }}
+                            </span>
+                        @endif
+                    </button>
 
-                <button 
-                    wire:click="setTab('tabel')" 
-                    type="button"
-                    class="srv-tab-btn {{ $currentTab === 'tabel' ? 'active' : '' }}"
-                >
-                    <x-filament::icon icon="heroicon-m-table-cells" style="width: 16px; height: 16px;" />
-                    <span>Tabel Response</span>
-                    @if($this->currentSurvey)
-                        <span class="srv-tab-badge">
-                            {{ number_format($this->questionStats['total_responses'] ?? 0) }}
-                        </span>
-                    @endif
-                </button>
+                    <button 
+                        wire:click="setTab('tabel')" 
+                        type="button"
+                        class="srv-tab-btn {{ $currentTab === 'tabel' ? 'active' : '' }}"
+                    >
+                        <x-filament::icon icon="heroicon-m-table-cells" style="width: 16px; height: 16px;" />
+                        <span>Tabel Response</span>
+                        @if($this->currentSurvey)
+                            <span class="srv-tab-badge">
+                                {{ number_format($this->questionStats['total_responses'] ?? 0) }}
+                            </span>
+                        @endif
+                    </button>
+                </div>
+
+                @if($this->currentSurvey)
+                    <a 
+                        href="{{ route('jawaban-responden.export', ['survey_id' => $this->currentSurvey->id]) }}" 
+                        class="srv-export-btn"
+                        title="Unduh seluruh data jawaban survei ini ke file Excel"
+                    >
+                        <x-filament::icon icon="heroicon-o-document-arrow-down" style="width: 16px; height: 16px;" />
+                        <span>Unduh Excel</span>
+                    </a>
+                @endif
             </div>
 
         </div>

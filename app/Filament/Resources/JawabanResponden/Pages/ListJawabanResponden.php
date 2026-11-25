@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\JawabanResponden\Pages;
 
-use App\Exports\JawabanRespondenExport;
 use App\Filament\Resources\JawabanResponden\JawabanRespondenResource;
 use App\Models\JawabanResponden;
 use App\Models\Survey;
@@ -13,8 +12,9 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Url;
-use Maatwebsite\Excel\Facades\Excel;
 
 class ListJawabanResponden extends ListRecords
 {
@@ -351,21 +351,18 @@ class ListJawabanResponden extends ListRecords
                         ->visible(fn (Get $get) => filled($get('survey_id'))),
                 ])
                 ->action(function (array $data) {
-                    $fileName = 'Jawaban_Responden_'.date('Y-m-d').'.xlsx';
-
-                    // Get active table filter state
                     $submittedFrom = $this->getTableFilterState('submitted_at')['submitted_from'] ?? null;
                     $submittedUntil = $this->getTableFilterState('submitted_at')['submitted_until'] ?? null;
 
-                    return Excel::download(
-                        new JawabanRespondenExport(
-                            (array) $data['survey_id'],
-                            $data['fields'],
-                            $submittedFrom,
-                            $submittedUntil
-                        ),
-                        $fileName
-                    );
+                    $token = Str::random(32);
+                    Cache::put('jawaban_export_'.$token, [
+                        'survey_ids' => (array) $data['survey_id'],
+                        'fields' => $data['fields'],
+                        'submitted_from' => $submittedFrom,
+                        'submitted_until' => $submittedUntil,
+                    ], now()->addMinutes(5));
+
+                    return $this->redirect(route('jawaban-responden.export', ['token' => $token]));
                 }),
         ];
     }

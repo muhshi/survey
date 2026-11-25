@@ -43,3 +43,8 @@ Route::get('/survey-groups/template-import-user', function () {
 Route::get('/admin/surveys/{survey}/export-recap', [SurveyController::class, 'exportRecap'])
     ->middleware(['auth'])
     ->name('survey.export-recap');
+
+// Direct Jawaban Responden Export Route
+Route::get('/admin/jawaban-respondens/export', [SurveyController::class, 'exportJawabanResponden'])
+    ->middleware(['auth'])
+    ->name('jawaban-responden.export');

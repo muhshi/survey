@@ -143,7 +143,25 @@ class ViewSubmissions extends Page implements HasSchemas, HasTable
                                 KeyValueEntry::make('payload')
                                     ->label('Jawaban yang Dikirimkan')
                                     ->keyLabel('Pertanyaan / Field')
-                                    ->valueLabel('Jawaban'),
+                                    ->valueLabel('Jawaban')
+                                    ->getStateUsing(function ($record) {
+                                        return collect($record->payload ?? [])->map(function ($value) {
+                                            if (is_array($value)) {
+                                                if ($value !== [] && array_keys($value) !== range(0, count($value) - 1)) {
+                                                    return collect($value)
+                                                        ->map(fn ($v, $k) => "{$k}: ".(is_array($v) ? json_encode($v, JSON_UNESCAPED_UNICODE) : (string) $v))
+                                                        ->implode(' | ');
+                                                }
+
+                                                return implode(', ', array_map(fn ($v) => is_array($v) ? json_encode($v, JSON_UNESCAPED_UNICODE) : (string) $v, $value));
+                                            }
+                                            if (is_bool($value)) {
+                                                return $value ? 'Ya' : 'Tidak';
+                                            }
+
+                                            return (string) $value;
+                                        })->toArray();
+                                    }),
                             ]),
                     ]),
             ]);
