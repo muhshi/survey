@@ -23,6 +23,9 @@ class ListJawabanResponden extends ListRecords
     #[Url(as: 'view')]
     public string $currentTab = 'grafik';
 
+    #[Url(as: 'exclude_pegawai')]
+    public bool $excludePegawai = false;
+
     public function mount(): void
     {
         parent::mount();
@@ -51,6 +54,11 @@ class ListJawabanResponden extends ListRecords
         $this->resetTable();
     }
 
+    public function updatedExcludePegawai(): void
+    {
+        unset($this->questionStats, $this->quizLeaderboard);
+    }
+
     public function getExportUrl(): string
     {
         $submittedFrom = $this->getTableFilterState('submitted_at')['submitted_from'] ?? null;
@@ -65,6 +73,7 @@ class ListJawabanResponden extends ListRecords
             'survey_ids' => $surveyIds,
             'submitted_from' => $submittedFrom,
             'submitted_until' => $submittedUntil,
+            'exclude_pegawai' => $this->excludePegawai ? 1 : null,
         ]));
     }
 
@@ -109,7 +118,13 @@ class ListJawabanResponden extends ListRecords
             return [];
         }
 
-        return app(QuizRecapService::class)->getTopPerformersByClass($survey, 3);
+        return app(QuizRecapService::class)->getTopPerformersByClass(
+            $survey,
+            3,
+            null,
+            null,
+            $this->excludePegawai,
+        );
     }
 
     public function getQuestionStatsProperty(): array
@@ -129,7 +144,13 @@ class ListJawabanResponden extends ListRecords
 
         // For quiz surveys, summarize using 1 best attempt per participant (highest score, fastest time on tie)
         $submissions = $survey->is_quiz
-            ? app(QuizRecapService::class)->getBestParticipantAttempts($survey)->pluck('best_attempt')
+            ? app(QuizRecapService::class)->getBestParticipantAttempts(
+                $survey,
+                null,
+                null,
+                null,
+                $this->excludePegawai,
+            )->pluck('best_attempt')
             : JawabanResponden::where('survey_id', $this->selectedSurveyId)->get();
 
         $totalResponses = $submissions->count();

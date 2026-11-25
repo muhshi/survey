@@ -31,6 +31,8 @@ class QuizRecapExport extends DefaultValueBinder implements FromCollection, With
 
     protected ?string $submittedUntil = null;
 
+    protected bool $excludePegawai = false;
+
     protected float $passingScore;
 
     public function __construct(
@@ -39,6 +41,7 @@ class QuizRecapExport extends DefaultValueBinder implements FromCollection, With
         ?string $statusFilter = null,
         ?string $submittedFrom = null,
         ?string $submittedUntil = null,
+        bool $excludePegawai = false,
     ) {
         ini_set('memory_limit', '512M');
         set_time_limit(300);
@@ -48,6 +51,7 @@ class QuizRecapExport extends DefaultValueBinder implements FromCollection, With
         $this->statusFilter = $statusFilter;
         $this->submittedFrom = $submittedFrom;
         $this->submittedUntil = $submittedUntil;
+        $this->excludePegawai = $excludePegawai;
         $this->passingScore = (float) ($survey->settings['passing_score'] ?? 0);
     }
 
@@ -58,6 +62,7 @@ class QuizRecapExport extends DefaultValueBinder implements FromCollection, With
             $this->submittedFrom,
             $this->submittedUntil,
             $this->statusFilter,
+            $this->excludePegawai,
         );
     }
 
@@ -70,6 +75,7 @@ class QuizRecapExport extends DefaultValueBinder implements FromCollection, With
             $overrides = [
                 'nama_peserta' => 'Peserta',
                 'email_peserta' => 'Email',
+                'tipe_peserta' => 'Kategori Peserta',
                 'kelas' => 'Kelas',
                 'peringkat_kelas' => 'Peringkat Kelas',
                 'attempts_count' => 'Total Percobaan',
@@ -102,6 +108,9 @@ class QuizRecapExport extends DefaultValueBinder implements FromCollection, With
                     break;
                 case 'email_peserta':
                     $row[] = $entry['email'];
+                    break;
+                case 'tipe_peserta':
+                    $row[] = $entry['is_pegawai'] ? 'Pegawai' : 'Mitra';
                     break;
                 case 'kelas':
                     $row[] = $entry['kelas_label'];

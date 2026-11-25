@@ -230,6 +230,7 @@ class SurveyController extends Controller
         $fields = (array) ($params['fields'] ?? $request->input('fields', []));
         $submittedFrom = $params['submitted_from'] ?? $request->input('submitted_from');
         $submittedUntil = $params['submitted_until'] ?? $request->input('submitted_until');
+        $excludePegawai = (bool) ($params['exclude_pegawai'] ?? $request->boolean('exclude_pegawai'));
 
         if (empty($surveyIds)) {
             abort(400, 'Survey belum dipilih untuk diekspor.');
@@ -243,11 +244,12 @@ class SurveyController extends Controller
         // For a single quiz survey, export deduplicated best attempt per participant (with class ranking)
         if ($surveys->count() === 1 && $surveys->first()->is_quiz) {
             $quiz = $surveys->first();
-            $fileName = 'Rekap_Kuis_'.Str::slug($quiz->title).'_'.date('Y-m-d').'.xlsx';
+            $suffix = $excludePegawai ? '_Mitra' : '';
+            $fileName = 'Rekap_Kuis_'.Str::slug($quiz->title).$suffix.'_'.date('Y-m-d').'.xlsx';
             $quizFields = ! empty($fields) ? $fields : $this->defaultQuizExportFields($quiz);
 
             return Excel::download(
-                new QuizRecapExport($quiz, $quizFields, null, $submittedFrom, $submittedUntil),
+                new QuizRecapExport($quiz, $quizFields, null, $submittedFrom, $submittedUntil, $excludePegawai),
                 $fileName
             );
         }
@@ -293,6 +295,7 @@ class SurveyController extends Controller
         return array_values(array_unique(array_merge([
             'nama_peserta',
             'email_peserta',
+            'tipe_peserta',
             'kelas',
             'peringkat_kelas',
             'attempts_count',

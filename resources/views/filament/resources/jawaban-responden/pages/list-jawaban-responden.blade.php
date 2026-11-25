@@ -390,6 +390,76 @@
             :is(.dark .srv-lb-time) {
                 color: #94a3b8;
             }
+            .srv-lb-controls {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 12px;
+            }
+            .srv-toggle-pill {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 6px 12px;
+                border-radius: 999px;
+                background: #ffffff;
+                border: 1px solid #cbd5e1;
+                font-size: 12px;
+                font-weight: 600;
+                color: #334155;
+                cursor: pointer;
+                user-select: none;
+                transition: all 0.15s ease;
+            }
+            .srv-toggle-pill:hover {
+                border-color: #0284c7;
+                color: #0369a1;
+            }
+            .srv-toggle-pill.active {
+                background: #e0f2fe;
+                border-color: #0284c7;
+                color: #0369a1;
+            }
+            :is(.dark .srv-toggle-pill) {
+                background: #0f172a;
+                border-color: #334155;
+                color: #cbd5e1;
+            }
+            :is(.dark .srv-toggle-pill.active) {
+                background: rgba(2, 132, 199, 0.22);
+                border-color: #38bdf8;
+                color: #7dd3fc;
+            }
+            .srv-toggle-pill input {
+                accent-color: #0284c7;
+                width: 14px;
+                height: 14px;
+                margin: 0;
+                cursor: pointer;
+            }
+            .srv-role-tag {
+                display: inline-block;
+                font-size: 10px;
+                font-weight: 700;
+                padding: 1px 6px;
+                border-radius: 4px;
+                margin-left: 5px;
+                vertical-align: middle;
+                background: #f1f5f9;
+                color: #475569;
+            }
+            .srv-role-tag-pegawai {
+                background: #ede9fe;
+                color: #5b21b6;
+            }
+            :is(.dark .srv-role-tag) {
+                background: #1e293b;
+                color: #94a3b8;
+            }
+            :is(.dark .srv-role-tag-pegawai) {
+                background: rgba(139, 92, 246, 0.25);
+                color: #c4b5fd;
+            }
 
             /* Stat Cards Grid */
             .srv-stat-grid {
@@ -988,56 +1058,78 @@
                 </div>
 
                 {{-- Top 3 Juara Per Kelas (Untuk Kuis) --}}
-                @if($currentSurvey->is_quiz && !empty($this->quizLeaderboard))
+                @if($currentSurvey->is_quiz)
                     <div class="srv-lb-section">
                         <div class="srv-lb-header">
-                            <h3 class="srv-lb-title">
-                                <x-filament::icon icon="heroicon-o-trophy" style="width: 18px; height: 18px; color: #d97706;" />
-                                <span>Peringkat 3 Terbaik Per Kelas</span>
-                            </h3>
-                            <span class="srv-lb-note">
-                                Peringkat berdasarkan skor tertinggi; jika nilai sama, dipilih waktu submit tercepat.
-                            </span>
+                            <div>
+                                <h3 class="srv-lb-title">
+                                    <x-filament::icon icon="heroicon-o-trophy" style="width: 18px; height: 18px; color: #d97706;" />
+                                    <span>Peringkat 3 Terbaik Per Kelas</span>
+                                </h3>
+                                <div class="srv-lb-note" style="margin-top: 2px;">
+                                    Peringkat berdasarkan skor tertinggi; jika nilai sama, dipilih waktu submit tercepat.
+                                </div>
+                            </div>
+
+                            <div class="srv-lb-controls">
+                                <label class="srv-toggle-pill {{ $excludePegawai ? 'active' : '' }}">
+                                    <input type="checkbox" wire:model.live="excludePegawai">
+                                    <span>Hanya Mitra (Kecualikan Pegawai)</span>
+                                </label>
+                            </div>
                         </div>
 
-                        <div class="srv-lb-grid">
-                            @foreach($this->quizLeaderboard as $classGroup)
-                                <div class="srv-lb-card">
-                                    <div class="srv-lb-card-head">
-                                        <div>
-                                            <div class="srv-lb-class">{{ $classGroup['kelas'] }}</div>
-                                            @if(!empty($classGroup['subtitle']))
-                                                <div class="srv-lb-sub">{{ $classGroup['subtitle'] }}</div>
-                                            @endif
+                        @if(!empty($this->quizLeaderboard))
+                            <div class="srv-lb-grid">
+                                @foreach($this->quizLeaderboard as $classGroup)
+                                    <div class="srv-lb-card">
+                                        <div class="srv-lb-card-head">
+                                            <div>
+                                                <div class="srv-lb-class">{{ $classGroup['kelas'] }}</div>
+                                                @if(!empty($classGroup['subtitle']))
+                                                    <div class="srv-lb-sub">{{ $classGroup['subtitle'] }}</div>
+                                                @endif
+                                            </div>
+                                            <span class="srv-lb-count">{{ $classGroup['total_participants'] }} {{ $excludePegawai ? 'mitra' : 'peserta' }}</span>
                                         </div>
-                                        <span class="srv-lb-count">{{ $classGroup['total_participants'] }} peserta</span>
-                                    </div>
-                                    <div class="srv-lb-list">
-                                        @foreach($classGroup['winners'] as $winner)
-                                            <div class="srv-lb-row">
-                                                <div class="srv-lb-left">
-                                                    <span class="srv-lb-rank srv-lb-rank-{{ $winner['class_rank'] }}">
-                                                        {{ $winner['class_rank'] }}
-                                                    </span>
-                                                    <div style="min-width: 0;">
-                                                        <div class="srv-lb-name" title="{{ $winner['name'] }}">{{ $winner['name'] }}</div>
-                                                        <div class="srv-lb-meta">
-                                                            {{ $winner['attempts_count'] > 1 ? $winner['attempts_count'].'x percobaan' : '1x percobaan' }}
+                                        <div class="srv-lb-list">
+                                            @foreach($classGroup['winners'] as $winner)
+                                                <div class="srv-lb-row">
+                                                    <div class="srv-lb-left">
+                                                        <span class="srv-lb-rank srv-lb-rank-{{ $winner['class_rank'] }}">
+                                                            {{ $winner['class_rank'] }}
+                                                        </span>
+                                                        <div style="min-width: 0;">
+                                                            <div class="srv-lb-name" title="{{ $winner['name'] }}">
+                                                                {{ $winner['name'] }}
+                                                                @if(!$excludePegawai && $winner['is_pegawai'])
+                                                                    <span class="srv-role-tag srv-role-tag-pegawai">Pegawai</span>
+                                                                @endif
+                                                            </div>
+                                                            <div class="srv-lb-meta">
+                                                                {{ $winner['attempts_count'] > 1 ? $winner['attempts_count'].'x percobaan' : '1x percobaan' }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="srv-lb-score">
+                                                        <div class="srv-lb-score-val">{{ number_format((float) $winner['best_score'], 1) }}%</div>
+                                                        <div class="srv-lb-time">
+                                                            {{ $winner['best_submitted_at'] ? $winner['best_submitted_at']->format('d M, H:i:s') : '-' }}
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="srv-lb-score">
-                                                    <div class="srv-lb-score-val">{{ number_format((float) $winner['best_score'], 1) }}%</div>
-                                                    <div class="srv-lb-time">
-                                                        {{ $winner['best_submitted_at'] ? $winner['best_submitted_at']->format('d M, H:i:s') : '-' }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endforeach
+                                            @endforeach
+                                        </div>
                                     </div>
-                                </div>
-                            @endforeach
-                        </div>
+                                @endforeach
+                            </div>
+                        @else
+                            <div class="srv-empty-box" style="padding: 24px;">
+                                <p style="font-size: 13px; color: #64748b; margin: 0;">
+                                    {{ $excludePegawai ? 'Belum ada peserta Mitra yang mengerjakan kuis ini.' : 'Belum ada data peserta kuis.' }}
+                                </p>
+                            </div>
+                        @endif
                     </div>
                 @endif
 

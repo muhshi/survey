@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\JawabanResponden;
 use App\Models\Survey;
+use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
@@ -26,6 +27,7 @@ class QuizRecapService
      *     latest_submission: ?Carbon,
      *     attempts_count: int,
      *     passed: bool,
+     *     is_pegawai: bool,
      *     class_rank: int
      * }>
      */
@@ -34,6 +36,7 @@ class QuizRecapService
         ?string $submittedFrom = null,
         ?string $submittedUntil = null,
         ?string $statusFilter = null,
+        bool $excludePegawai = false,
     ): Collection {
         $passingScore = (float) ($survey->settings['passing_score'] ?? 0);
         $parsed = $survey->getParsedSchema();
@@ -111,9 +114,14 @@ class QuizRecapService
                 'latest_submission' => $latestSubmission,
                 'attempts_count' => $attempts->count(),
                 'passed' => $bestScore >= $passingScore,
+                'is_pegawai' => $this->isPegawai($user, $payload),
                 'class_rank' => 0,
             ];
         })->values();
+
+        if ($excludePegawai) {
+            $participants = $participants->reject(fn (array $row) => $row['is_pegawai'])->values();
+        }
 
         if ($statusFilter === 'passed') {
             $participants = $participants->filter(fn (array $row) => $row['passed'])->values();
@@ -151,8 +159,9 @@ class QuizRecapService
         int $limit = 3,
         ?string $submittedFrom = null,
         ?string $submittedUntil = null,
+        bool $excludePegawai = false,
     ): array {
-        $ranked = $this->getBestParticipantAttempts($survey, $submittedFrom, $submittedUntil);
+        $ranked = $this->getBestParticipantAttempts($survey, $submittedFrom, $submittedUntil, null, $excludePegawai);
         if ($ranked->isEmpty()) {
             return [];
         }
@@ -169,6 +178,32 @@ class QuizRecapService
         }
 
         return $result;
+    }
+
+    /**
+     * Determine whether a respondent belongs to BPS internal staff (Pegawai).
+     *
+     * @param  array<string, mixed>  $payload
+     */
+    public function isPegawai(?User $user, array $payload = []): bool
+    {
+        if ($user) {
+            if ($user->identity_type === 'pegawai') {
+                return true;
+            }
+
+            if (str_ends_with(strtolower((string) $user->email), '@bps.go.id')) {
+                return true;
+            }
+
+            if (! empty($user->metadata['nip']) || ! empty($user->metadata['nip_baru'])) {
+                return true;
+            }
+        }
+
+        $email = strtolower(trim((string) ($payload['email_peserta'] ?? $payload['email'] ?? '')));
+
+        return $email !== '' && str_ends_with($email, '@bps.go.id');
     }
 
     /**

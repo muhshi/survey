@@ -2,6 +2,8 @@
 
 use App\Exports\QuizRecapExport;
 use App\Filament\Resources\JawabanResponden\Pages\ListJawabanResponden;
+use App\Filament\Resources\Survey\Tables\SurveyTable;
+use App\Models\Group;
 use App\Models\JawabanResponden;
 use App\Models\Kategori;
 use App\Models\Survey;
@@ -197,4 +199,100 @@ test('quiz recap deduplicates multiple attempts per user taking highest score an
     $response = $this->get(route('jawaban-responden.export', ['survey_ids' => [$quiz->id]]));
     $response->assertOk();
     expect($response->headers->get('content-disposition'))->toContain('Rekap_Kuis_');
+});
+
+test('excludePegawai toggle filters out BPS pegawai from leaderboard, stats, and export url', function () {
+    $this->actingAs($this->admin);
+
+    $quiz = Survey::create([
+        'kategori_id' => 1,
+        'title' => 'Kuis Exclude Pegawai Test',
+        'slug' => 'kuis-exclude-pegawai-test',
+        'is_quiz' => true,
+        'is_active' => true,
+        'mode' => 'single',
+        'schema' => [
+            'pages' => [[
+                'name' => 'p1',
+                'elements' => [
+                    ['type' => 'dropdown', 'name' => 'kelas', 'title' => 'Kelas', 'choices' => ['Kelas A']],
+                    ['type' => 'radiogroup', 'name' => 'soal_1', 'title' => 'Soal 1', 'choices' => ['a', 'b']],
+                ],
+            ]],
+        ],
+    ]);
+
+    $pegawai = User::factory()->create([
+        'name' => 'Budi Pegawai BPS',
+        'email' => 'budi.pegawai@bps.go.id',
+        'identity_type' => 'pegawai',
+    ]);
+    $mitra = User::factory()->create([
+        'name' => 'Siti Mitra Lapangan',
+        'email' => 'siti.mitra@gmail.com',
+        'identity_type' => 'mitra',
+    ]);
+
+    JawabanResponden::create([
+        'survey_id' => $quiz->id,
+        'user_id' => $pegawai->id,
+        'score' => 100,
+        'payload' => ['kelas' => 'Kelas A', 'soal_1' => 'a'],
+        'submitted_at' => now()->subMinutes(10),
+    ]);
+    JawabanResponden::create([
+        'survey_id' => $quiz->id,
+        'user_id' => $mitra->id,
+        'score' => 85,
+        'payload' => ['kelas' => 'Kelas A', 'soal_1' => 'b'],
+        'submitted_at' => now()->subMinutes(5),
+    ]);
+
+    $component = Livewire::test(ListJawabanResponden::class, ['selectedSurveyId' => $quiz->id])
+        ->assertOk()
+        ->assertSee('Budi Pegawai BPS')
+        ->assertSee('Siti Mitra Lapangan')
+        ->set('excludePegawai', true)
+        ->assertSet('excludePegawai', true);
+
+    $leaderboard = $component->instance()->quizLeaderboard;
+    expect($leaderboard)->toHaveCount(1)
+        ->and($leaderboard[0]['total_participants'])->toBe(1)
+        ->and($leaderboard[0]['winners'][0]['name'])->toBe('Siti Mitra Lapangan')
+        ->and($leaderboard[0]['winners'][0]['class_rank'])->toBe(1)
+        ->and($component->instance()->getExportUrl())->toContain('exclude_pegawai=1');
+});
+
+test('respondents status modal renders both belum and sudah mengisi lists when non-empty', function () {
+    $survey = Survey::create([
+        'kategori_id' => 1,
+        'title' => 'Survei Status Responden Test',
+        'slug' => 'survei-status-responden-test',
+        'schema' => ['pages' => []],
+        'is_active' => true,
+        'mode' => 'single',
+    ]);
+    $group = Group::create(['name' => 'Kelompok Test Status', 'is_active' => true]);
+    $userSudah = User::factory()->create(['name' => 'Peserta Sudah Mengisi']);
+    $userBelum = User::factory()->create(['name' => 'Peserta Belum Mengisi']);
+    $group->users()->attach([$userSudah->id, $userBelum->id]);
+    $survey->groups()->attach($group->id);
+
+    JawabanResponden::create([
+        'survey_id' => $survey->id,
+        'user_id' => $userSudah->id,
+        'payload' => ['nama_lengkap' => 'Peserta Sudah Mengisi'],
+        'submitted_at' => now(),
+    ]);
+
+    $data = SurveyTable::getRespondentsStatusData($survey);
+
+    $html = view('filament.resources.survey.modals.respondents-status', [
+        'record' => $survey,
+        'data' => $data,
+    ])->render();
+
+    expect($html)->toContain('Peserta Belum Mengisi')
+        ->and($html)->toContain('Peserta Sudah Mengisi')
+        ->and($html)->toContain('Export Excel (1)');
 });

@@ -759,6 +759,7 @@
                 <div style="font-size: 14px; font-weight: 700; color: #0f172a;">Belum Ada Jawaban Masuk</div>
                 <div class="resp-subtext" style="margin-top: 4px;">Belum ada peserta yang menyelesaikan pengisian kuis/survei ini.</div>
             </div>
+        @else
             {{-- Search & Export Toolbar --}}
             <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 12px;">
                 <div class="resp-search-wrap" style="flex: 1; margin-bottom: 0;">
