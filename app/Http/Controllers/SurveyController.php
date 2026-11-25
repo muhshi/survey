@@ -192,20 +192,8 @@ class SurveyController extends Controller
         $fileName = ($survey->is_quiz ? 'Rekap_Kuis_' : 'Rekap_Survei_').Str::slug($survey->title).'_'.date('Y-m-d').'.xlsx';
 
         if ($survey->is_quiz) {
-            $parsed = $survey->getParsedSchema();
-            $schemaFields = $parsed['fields'] ?? [];
-
-            $fields = array_unique(array_merge([
-                'nama_peserta',
-                'email_peserta',
-                'attempts_count',
-                'best_score',
-                'status_lulus',
-                'latest_submission',
-            ], array_keys($schemaFields)));
-
             return Excel::download(
-                new QuizRecapExport($survey, $fields),
+                new QuizRecapExport($survey, $this->defaultQuizExportFields($survey)),
                 $fileName
             );
         }
@@ -252,6 +240,18 @@ class SurveyController extends Controller
             abort(404, 'Survey tidak ditemukan.');
         }
 
+        // For a single quiz survey, export deduplicated best attempt per participant (with class ranking)
+        if ($surveys->count() === 1 && $surveys->first()->is_quiz) {
+            $quiz = $surveys->first();
+            $fileName = 'Rekap_Kuis_'.Str::slug($quiz->title).'_'.date('Y-m-d').'.xlsx';
+            $quizFields = ! empty($fields) ? $fields : $this->defaultQuizExportFields($quiz);
+
+            return Excel::download(
+                new QuizRecapExport($quiz, $quizFields, null, $submittedFrom, $submittedUntil),
+                $fileName
+            );
+        }
+
         if (empty($fields)) {
             $fields = ['survey_title', 'nama_lengkap', 'email_peserta', 'waktu_submit'];
             foreach ($surveys as $survey) {
@@ -277,5 +277,29 @@ class SurveyController extends Controller
             ),
             $fileName
         );
+    }
+
+    /**
+     * Build the standard column list for quiz recap exports without duplicate identity columns.
+     *
+     * @return array<int, string>
+     */
+    private function defaultQuizExportFields(Survey $survey): array
+    {
+        $parsed = $survey->getParsedSchema();
+        $schemaFields = array_keys($parsed['fields'] ?? []);
+        $remainingFields = array_diff($schemaFields, ['nama_lengkap', 'email_peserta', 'kelas']);
+
+        return array_values(array_unique(array_merge([
+            'nama_peserta',
+            'email_peserta',
+            'kelas',
+            'peringkat_kelas',
+            'attempts_count',
+            'best_score',
+            'status_lulus',
+            'waktu_tercepat',
+            'latest_submission',
+        ], $remainingFields)));
     }
 }

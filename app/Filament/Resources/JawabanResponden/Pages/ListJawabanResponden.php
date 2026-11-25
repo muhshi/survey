@@ -5,15 +5,10 @@ namespace App\Filament\Resources\JawabanResponden\Pages;
 use App\Filament\Resources\JawabanResponden\JawabanRespondenResource;
 use App\Models\JawabanResponden;
 use App\Models\Survey;
+use App\Services\QuizRecapService;
 use Filament\Actions\Action;
-use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\Select;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Str;
 use Livewire\Attributes\Url;
 
 class ListJawabanResponden extends ListRecords
@@ -52,7 +47,7 @@ class ListJawabanResponden extends ListRecords
 
     public function updatedSelectedSurveyId(): void
     {
-        unset($this->currentSurvey, $this->questionStats);
+        unset($this->currentSurvey, $this->questionStats, $this->quizLeaderboard);
         $this->resetTable();
     }
 
@@ -102,6 +97,21 @@ class ListJawabanResponden extends ListRecords
         return Survey::find($this->selectedSurveyId);
     }
 
+    /**
+     * Top 3 participants per class (highest score, fastest submission tie-breaker) for quiz surveys.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function getQuizLeaderboardProperty(): array
+    {
+        $survey = $this->currentSurvey;
+        if (! $survey || ! $survey->is_quiz) {
+            return [];
+        }
+
+        return app(QuizRecapService::class)->getTopPerformersByClass($survey, 3);
+    }
+
     public function getQuestionStatsProperty(): array
     {
         if (! $this->selectedSurveyId) {
@@ -117,7 +127,11 @@ class ListJawabanResponden extends ListRecords
         $fields = $parsed['fields'];
         $choicesMap = $parsed['choices'];
 
-        $submissions = JawabanResponden::where('survey_id', $this->selectedSurveyId)->get();
+        // For quiz surveys, summarize using 1 best attempt per participant (highest score, fastest time on tie)
+        $submissions = $survey->is_quiz
+            ? app(QuizRecapService::class)->getBestParticipantAttempts($survey)->pluck('best_attempt')
+            : JawabanResponden::where('survey_id', $this->selectedSurveyId)->get();
+
         $totalResponses = $submissions->count();
 
         $stats = [];
@@ -180,216 +194,6 @@ class ListJawabanResponden extends ListRecords
                 ->icon('heroicon-o-arrow-path')
                 ->color('gray')
                 ->action(fn () => $this->resetTable()),
-            Action::make('export')
-                ->label('Export Excel')
-                ->icon('heroicon-o-document-arrow-down')
-                ->color('success')
-                ->form([
-                    Select::make('survey_id')
-                        ->label('Pilih Survey')
-                        ->multiple()
-                        ->options(Survey::pluck('title', 'id'))
-                        ->default(function () {
-                            $tableSurveyIds = $this->getTableFilterState('survey_id')['values'] ?? [];
-                            if (! empty($tableSurveyIds)) {
-                                return $tableSurveyIds;
-                            }
-
-                            return $this->selectedSurveyId ? [$this->selectedSurveyId] : null;
-                        })
-                        ->required()
-                        ->live()
-                        ->afterStateUpdated(function (Set $set, $state) {
-                            if (empty($state)) {
-                                $set('fields', []);
-
-                                return;
-                            }
-
-                            $surveys = Survey::whereIn('id', (array) $state)->get();
-                            $schemaFields = [];
-                            $hasQuiz = false;
-                            $hasNonQuiz = false;
-                            $hasInterview = false;
-
-                            foreach ($surveys as $survey) {
-                                if ($survey->is_quiz) {
-                                    $hasQuiz = true;
-                                } else {
-                                    $hasNonQuiz = true;
-                                    if ($survey->id == 3) {
-                                        $hasInterview = true;
-                                    }
-
-                                    $parsed = $survey->getParsedSchema();
-                                    $surveySchemaFields = array_keys($parsed['fields']);
-
-                                    // If schema is empty, fallback to payload keys
-                                    if (empty($surveySchemaFields)) {
-                                        $surveySchemaFields = JawabanResponden::where('survey_id', $survey->id)
-                                            ->get()
-                                            ->flatMap(fn ($j) => array_keys($j->payload ?? []))
-                                            ->unique()
-                                            ->values()
-                                            ->toArray();
-                                    }
-                                    $schemaFields = array_merge($schemaFields, $surveySchemaFields);
-                                }
-                            }
-                            $schemaFields = array_unique($schemaFields);
-
-                            $defaultFields = ['survey_title'];
-                            if ($hasInterview) {
-                                $defaultFields = array_merge($defaultFields, ['nama_pewawancara', 'nama_peserta', 'email_peserta']);
-                            } else {
-                                $defaultFields = array_merge($defaultFields, ['nama_lengkap', 'email_peserta']);
-                            }
-                            if ($hasQuiz) {
-                                $defaultFields[] = 'skor_kuis';
-                            }
-                            $defaultFields[] = 'waktu_submit';
-
-                            $set('fields', array_values(array_unique(array_merge($defaultFields, $schemaFields))));
-                        }),
-                    CheckboxList::make('fields')
-                        ->label('Kolom yang Diekspor')
-                        ->bulkToggleable()
-                        ->options(function (Get $get) {
-                            $surveyIds = $get('survey_id');
-                            if (empty($surveyIds)) {
-                                return [];
-                            }
-
-                            $surveys = Survey::whereIn('id', (array) $surveyIds)->get();
-                            if ($surveys->isEmpty()) {
-                                return [];
-                            }
-
-                            $hasQuiz = false;
-                            $hasInterview = false;
-                            foreach ($surveys as $survey) {
-                                if ($survey->is_quiz) {
-                                    $hasQuiz = true;
-                                }
-                                if ($survey->id == 3) {
-                                    $hasInterview = true;
-                                }
-                            }
-
-                            $options = [
-                                'survey_title' => 'Judul Survey',
-                                'waktu_submit' => 'Waktu Submit',
-                            ];
-
-                            if ($hasQuiz) {
-                                $options['skor_kuis'] = 'Skor Kuis';
-                            }
-
-                            if ($hasInterview) {
-                                $options['nama_pewawancara'] = 'Nama Pewawancara';
-                                $options['nama_peserta'] = 'Nama Peserta';
-                                $options['email_peserta'] = 'Email Peserta';
-                            } else {
-                                $options['nama_lengkap'] = 'Nama Lengkap';
-                                $options['email_peserta'] = 'Email Peserta';
-                            }
-
-                            foreach ($surveys as $survey) {
-                                $parsed = $survey->getParsedSchema();
-                                $schemaFields = $parsed['fields'];
-
-                                // Add parsed schema fields
-                                foreach ($schemaFields as $key => $title) {
-                                    $options[$key] = $title;
-                                }
-
-                                // If there are keys in payload that aren't in schema, add them
-                                $payloadKeys = JawabanResponden::where('survey_id', $survey->id)
-                                    ->get()
-                                    ->flatMap(fn ($j) => array_keys($j->payload ?? []))
-                                    ->unique()
-                                    ->values()
-                                    ->toArray();
-
-                                foreach ($payloadKeys as $key) {
-                                    if (! isset($options[$key])) {
-                                        $options[$key] = ucwords(str_replace('_', ' ', $key));
-                                    }
-                                }
-                            }
-
-                            return $options;
-                        })
-                        ->default(function (Get $get) {
-                            $surveyIds = $get('survey_id');
-                            if (empty($surveyIds)) {
-                                return [];
-                            }
-
-                            $surveys = Survey::whereIn('id', (array) $surveyIds)->get();
-                            if ($surveys->isEmpty()) {
-                                return [];
-                            }
-
-                            $schemaFields = [];
-                            $hasQuiz = false;
-                            $hasInterview = false;
-
-                            foreach ($surveys as $survey) {
-                                if ($survey->is_quiz) {
-                                    $hasQuiz = true;
-                                } else {
-                                    if ($survey->id == 3) {
-                                        $hasInterview = true;
-                                    }
-
-                                    $parsed = $survey->getParsedSchema();
-                                    $surveySchemaFields = array_keys($parsed['fields']);
-
-                                    if (empty($surveySchemaFields)) {
-                                        $surveySchemaFields = JawabanResponden::where('survey_id', $survey->id)
-                                            ->get()
-                                            ->flatMap(fn ($j) => array_keys($j->payload ?? []))
-                                            ->unique()
-                                            ->values()
-                                            ->toArray();
-                                    }
-                                    $schemaFields = array_merge($schemaFields, $surveySchemaFields);
-                                }
-                            }
-                            $schemaFields = array_unique($schemaFields);
-
-                            $defaultFields = ['survey_title'];
-                            if ($hasInterview) {
-                                $defaultFields = array_merge($defaultFields, ['nama_pewawancara', 'nama_peserta', 'email_peserta']);
-                            } else {
-                                $defaultFields = array_merge($defaultFields, ['nama_lengkap', 'email_peserta']);
-                            }
-                            if ($hasQuiz) {
-                                $defaultFields[] = 'skor_kuis';
-                            }
-                            $defaultFields[] = 'waktu_submit';
-
-                            return array_values(array_unique(array_merge($defaultFields, $schemaFields)));
-                        })
-                        ->columns(3)
-                        ->required()
-                        ->visible(fn (Get $get) => filled($get('survey_id'))),
-                ])
-                ->action(function (array $data) {
-                    $submittedFrom = $this->getTableFilterState('submitted_at')['submitted_from'] ?? null;
-                    $submittedUntil = $this->getTableFilterState('submitted_at')['submitted_until'] ?? null;
-
-                    $token = Str::random(32);
-                    Cache::put('jawaban_export_'.$token, [
-                        'survey_ids' => (array) $data['survey_id'],
-                        'fields' => $data['fields'],
-                        'submitted_from' => $submittedFrom,
-                        'submitted_until' => $submittedUntil,
-                    ], now()->addMinutes(5));
-
-                    return $this->redirect(route('jawaban-responden.export', ['token' => $token]));
-                }),
         ];
     }
 }

@@ -2,13 +2,11 @@
 
 namespace App\Exports;
 
-use App\Models\JawabanResponden;
 use App\Models\Survey;
-use App\Models\User;
+use App\Services\QuizRecapService;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\DB;
-use Maatwebsite\Excel\Concerns\FromQuery;
+use Illuminate\Support\Collection;
+use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use Maatwebsite\Excel\Concerns\WithCustomValueBinder;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -21,7 +19,7 @@ use PhpOffice\PhpSpreadsheet\Cell\DefaultValueBinder;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class QuizRecapExport extends DefaultValueBinder implements FromQuery, WithColumnFormatting, WithCustomValueBinder, WithHeadings, WithMapping, WithStyles
+class QuizRecapExport extends DefaultValueBinder implements FromCollection, WithColumnFormatting, WithCustomValueBinder, WithHeadings, WithMapping, WithStyles
 {
     protected Survey $survey;
 
@@ -29,51 +27,38 @@ class QuizRecapExport extends DefaultValueBinder implements FromQuery, WithColum
 
     protected ?string $statusFilter = null;
 
+    protected ?string $submittedFrom = null;
+
+    protected ?string $submittedUntil = null;
+
     protected float $passingScore;
 
-    public function __construct(Survey $survey, array $selectedFields, ?string $statusFilter = null)
-    {
+    public function __construct(
+        Survey $survey,
+        array $selectedFields,
+        ?string $statusFilter = null,
+        ?string $submittedFrom = null,
+        ?string $submittedUntil = null,
+    ) {
+        ini_set('memory_limit', '512M');
+        set_time_limit(300);
+
         $this->survey = $survey;
         $this->selectedFields = $selectedFields;
         $this->statusFilter = $statusFilter;
-        $this->passingScore = floatval($survey->settings['passing_score'] ?? 0);
+        $this->submittedFrom = $submittedFrom;
+        $this->submittedUntil = $submittedUntil;
+        $this->passingScore = (float) ($survey->settings['passing_score'] ?? 0);
     }
 
-    public function query()
+    public function collection(): Collection
     {
-        $query = User::query()
-            ->with(['jawaban_responden' => function ($q) {
-                $q->where('survey_id', $this->survey->id);
-            }])
-            ->whereHas('jawaban_responden', function (Builder $q) {
-                $q->where('survey_id', $this->survey->id);
-            })
-            ->addSelect([
-                'best_score' => JawabanResponden::select(DB::raw('MAX(score)'))
-                    ->whereColumn('user_id', 'users.id')
-                    ->where('survey_id', $this->survey->id),
-                'attempts_count' => JawabanResponden::select(DB::raw('COUNT(*)'))
-                    ->whereColumn('user_id', 'users.id')
-                    ->where('survey_id', $this->survey->id),
-                'latest_submission' => JawabanResponden::select(DB::raw('MAX(submitted_at)'))
-                    ->whereColumn('user_id', 'users.id')
-                    ->where('survey_id', $this->survey->id),
-            ])
-            ->orderBy('best_score', 'asc');
-
-        if ($this->statusFilter === 'passed') {
-            $query->whereHas('jawaban_responden', function (Builder $q) {
-                $q->where('survey_id', $this->survey->id)
-                    ->where('score', '>=', $this->passingScore);
-            });
-        } elseif ($this->statusFilter === 'failed') {
-            $query->whereDoesntHave('jawaban_responden', function (Builder $q) {
-                $q->where('survey_id', $this->survey->id)
-                    ->where('score', '>=', $this->passingScore);
-            });
-        }
-
-        return $query;
+        return app(QuizRecapService::class)->getBestParticipantAttempts(
+            $this->survey,
+            $this->submittedFrom,
+            $this->submittedUntil,
+            $this->statusFilter,
+        );
     }
 
     public function headings(): array
@@ -85,9 +70,12 @@ class QuizRecapExport extends DefaultValueBinder implements FromQuery, WithColum
             $overrides = [
                 'nama_peserta' => 'Peserta',
                 'email_peserta' => 'Email',
+                'kelas' => 'Kelas',
+                'peringkat_kelas' => 'Peringkat Kelas',
                 'attempts_count' => 'Total Percobaan',
                 'best_score' => 'Skor Terbaik',
                 'status_lulus' => 'Status Lulus',
+                'waktu_tercepat' => 'Waktu Skor Terbaik',
                 'latest_submission' => 'Submit Terakhir',
             ];
 
@@ -99,15 +87,10 @@ class QuizRecapExport extends DefaultValueBinder implements FromQuery, WithColum
         }, $this->selectedFields);
     }
 
-    public function map($user): array
+    public function map($entry): array
     {
         $row = [];
-
-        // Dapatkan jawaban terbaik (berdasarkan skor tertinggi, jika sama ambil terbaru)
-        $bestAttempt = $user->jawaban_responden->sortByDesc(function ($j) {
-            return $j->score.'_'.$j->submitted_at->timestamp;
-        })->first();
-
+        $bestAttempt = $entry['best_attempt'];
         $payload = $bestAttempt ? ($bestAttempt->payload ?? []) : [];
         $parsed = $this->survey->getParsedSchema();
         $choicesMap = $parsed['choices'] ?? [];
@@ -115,65 +98,92 @@ class QuizRecapExport extends DefaultValueBinder implements FromQuery, WithColum
         foreach ($this->selectedFields as $field) {
             switch ($field) {
                 case 'nama_peserta':
-                    $row[] = html_entity_decode($user->name, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                    $row[] = $entry['name'];
                     break;
                 case 'email_peserta':
-                    $row[] = $user->email ?? '-';
+                    $row[] = $entry['email'];
+                    break;
+                case 'kelas':
+                    $row[] = $entry['kelas_label'];
+                    break;
+                case 'peringkat_kelas':
+                    $row[] = $entry['class_rank'];
                     break;
                 case 'attempts_count':
-                    $row[] = $user->attempts_count ?? 0;
+                    $row[] = $entry['attempts_count'];
                     break;
                 case 'best_score':
-                    $row[] = $user->best_score !== null ? number_format((float) $user->best_score, 1).'%' : '-';
+                    $row[] = number_format((float) $entry['best_score'], 1).'%';
                     break;
                 case 'status_lulus':
-                    $row[] = $user->best_score >= $this->passingScore ? 'Lulus' : 'Belum Lulus';
+                    $row[] = $entry['passed'] ? 'Lulus' : 'Belum Lulus';
+                    break;
+                case 'waktu_tercepat':
+                    $row[] = $entry['best_submitted_at']
+                        ? Carbon::parse($entry['best_submitted_at'])->format('Y-m-d H:i:s')
+                        : '-';
                     break;
                 case 'latest_submission':
-                    $row[] = $user->latest_submission ? Carbon::parse($user->latest_submission)->format('Y-m-d H:i:s') : '-';
+                    $row[] = $entry['latest_submission']
+                        ? Carbon::parse($entry['latest_submission'])->format('Y-m-d H:i:s')
+                        : '-';
                     break;
                 default:
                     $val = $payload[$field] ?? null;
-
-                    if (is_bool($val)) {
-                        $row[] = $val ? 'Ya' : 'Tidak';
-                    } elseif (is_array($val)) {
-                        if (isset($choicesMap[$field])) {
-                            $mappedArray = array_map(function ($v) use ($choicesMap, $field) {
-                                if (is_array($v) || is_object($v)) {
-                                    return json_encode($v);
-                                }
-                                $mapped = $choicesMap[$field][$v] ?? $v;
-
-                                return is_string($mapped) ? html_entity_decode($mapped, ENT_QUOTES | ENT_HTML5, 'UTF-8') : $mapped;
-                            }, $val);
-                            $row[] = implode(', ', $mappedArray);
-                        } else {
-                            $row[] = implode(', ', array_map(function ($v) {
-                                if (is_array($v) || is_object($v)) {
-                                    return json_encode($v);
-                                }
-
-                                return is_string($v) ? html_entity_decode($v, ENT_QUOTES | ENT_HTML5, 'UTF-8') : $v;
-                            }, $val));
-                        }
-                    } else {
-                        if (is_scalar($val) && isset($choicesMap[$field][$val])) {
-                            $mapped = $choicesMap[$field][$val];
-                            $row[] = is_string($mapped) ? html_entity_decode($mapped, ENT_QUOTES | ENT_HTML5, 'UTF-8') : $mapped;
-                        } else {
-                            if (is_array($val) || is_object($val)) {
-                                $row[] = json_encode($val);
-                            } else {
-                                $row[] = is_string($val) ? html_entity_decode($val, ENT_QUOTES | ENT_HTML5, 'UTF-8') : $val;
-                            }
-                        }
-                    }
+                    $row[] = $this->formatFieldValue($val, $choicesMap[$field] ?? []);
                     break;
             }
         }
 
         return $row;
+    }
+
+    /**
+     * Format a single payload field value cleanly for Excel output.
+     *
+     * @param  array<string, string>  $fieldChoices
+     */
+    private function formatFieldValue(mixed $val, array $fieldChoices): mixed
+    {
+        if (is_bool($val)) {
+            return $val ? 'Ya' : 'Tidak';
+        }
+
+        if (is_array($val)) {
+            $isAssoc = $val !== [] && array_keys($val) !== range(0, count($val) - 1);
+            if ($isAssoc) {
+                $mappedAssoc = [];
+                foreach ($val as $subKey => $subVal) {
+                    $subValStr = is_array($subVal) || is_object($subVal)
+                        ? json_encode($subVal, JSON_UNESCAPED_UNICODE)
+                        : (string) $subVal;
+                    $mappedAssoc[] = "{$subKey}: ".html_entity_decode($subValStr, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                }
+
+                return implode(' | ', $mappedAssoc);
+            }
+
+            return implode(', ', array_map(function ($v) use ($fieldChoices) {
+                if (is_array($v) || is_object($v)) {
+                    return json_encode($v, JSON_UNESCAPED_UNICODE);
+                }
+                $mapped = $fieldChoices[$v] ?? $v;
+
+                return is_string($mapped) ? html_entity_decode($mapped, ENT_QUOTES | ENT_HTML5, 'UTF-8') : $mapped;
+            }, $val));
+        }
+
+        if (is_scalar($val) && isset($fieldChoices[$val])) {
+            $mapped = $fieldChoices[$val];
+
+            return is_string($mapped) ? html_entity_decode($mapped, ENT_QUOTES | ENT_HTML5, 'UTF-8') : $mapped;
+        }
+
+        if (is_object($val)) {
+            return json_encode($val, JSON_UNESCAPED_UNICODE);
+        }
+
+        return is_string($val) ? html_entity_decode($val, ENT_QUOTES | ENT_HTML5, 'UTF-8') : $val;
     }
 
     public function bindValue(Cell $cell, $value)

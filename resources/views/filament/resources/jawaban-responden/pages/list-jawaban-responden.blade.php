@@ -196,6 +196,201 @@
                 border-color: #34d399;
             }
 
+            /* Quiz Leaderboard (Top 3 Per Class) */
+            .srv-lb-section {
+                margin-bottom: 24px;
+            }
+            .srv-lb-header {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                justify-content: space-between;
+                gap: 8px;
+                margin-bottom: 12px;
+            }
+            .srv-lb-title {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 15px;
+                font-weight: 700;
+                color: #0f172a;
+                margin: 0;
+            }
+            :is(.dark .srv-lb-title) {
+                color: #f8fafc;
+            }
+            .srv-lb-note {
+                font-size: 12px;
+                color: #64748b;
+            }
+            :is(.dark .srv-lb-note) {
+                color: #94a3b8;
+            }
+            .srv-lb-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 14px;
+            }
+            .srv-lb-card {
+                background: #ffffff;
+                border: 1px solid #e2e8f0;
+                border-radius: 14px;
+                overflow: hidden;
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+            }
+            :is(.dark .srv-lb-card) {
+                background: #0f172a;
+                border-color: #1e293b;
+            }
+            .srv-lb-card-head {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 10px;
+                padding: 12px 16px;
+                background: #f8fafc;
+                border-bottom: 1px solid #e2e8f0;
+            }
+            :is(.dark .srv-lb-card-head) {
+                background: #1e293b;
+                border-bottom-color: #334155;
+            }
+            .srv-lb-class {
+                font-size: 14px;
+                font-weight: 700;
+                color: #0f172a;
+            }
+            :is(.dark .srv-lb-class) {
+                color: #f8fafc;
+            }
+            .srv-lb-sub {
+                font-size: 11px;
+                color: #64748b;
+                margin-top: 1px;
+            }
+            :is(.dark .srv-lb-sub) {
+                color: #94a3b8;
+            }
+            .srv-lb-count {
+                font-size: 11px;
+                font-weight: 700;
+                padding: 3px 9px;
+                border-radius: 999px;
+                background: #e0f2fe;
+                color: #0369a1;
+                white-space: nowrap;
+            }
+            :is(.dark .srv-lb-count) {
+                background: rgba(2, 132, 199, 0.25);
+                color: #7dd3fc;
+            }
+            .srv-lb-list {
+                padding: 8px 14px;
+            }
+            .srv-lb-row {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 10px;
+                padding: 9px 2px;
+                border-bottom: 1px solid #f1f5f9;
+            }
+            .srv-lb-row:last-child {
+                border-bottom: none;
+            }
+            :is(.dark .srv-lb-row) {
+                border-bottom-color: #1e293b;
+            }
+            .srv-lb-left {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                min-width: 0;
+            }
+            .srv-lb-rank {
+                width: 24px;
+                height: 24px;
+                border-radius: 7px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 12px;
+                font-weight: 800;
+                flex-shrink: 0;
+                font-variant-numeric: tabular-nums;
+            }
+            .srv-lb-rank-1 {
+                background: #fef3c7;
+                color: #92400e;
+                border: 1px solid #fcd34d;
+            }
+            .srv-lb-rank-2 {
+                background: #f1f5f9;
+                color: #334155;
+                border: 1px solid #cbd5e1;
+            }
+            .srv-lb-rank-3 {
+                background: #ffedd5;
+                color: #9a3412;
+                border: 1px solid #fdba74;
+            }
+            :is(.dark .srv-lb-rank-1) {
+                background: rgba(245, 158, 11, 0.22);
+                color: #fcd34d;
+                border-color: rgba(245, 158, 11, 0.45);
+            }
+            :is(.dark .srv-lb-rank-2) {
+                background: rgba(148, 163, 184, 0.18);
+                color: #e2e8f0;
+                border-color: rgba(148, 163, 184, 0.35);
+            }
+            :is(.dark .srv-lb-rank-3) {
+                background: rgba(234, 88, 12, 0.2);
+                color: #fdba74;
+                border-color: rgba(234, 88, 12, 0.4);
+            }
+            .srv-lb-name {
+                font-size: 13px;
+                font-weight: 600;
+                color: #0f172a;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            :is(.dark .srv-lb-name) {
+                color: #f1f5f9;
+            }
+            .srv-lb-meta {
+                font-size: 11px;
+                color: #64748b;
+                font-variant-numeric: tabular-nums;
+            }
+            :is(.dark .srv-lb-meta) {
+                color: #94a3b8;
+            }
+            .srv-lb-score {
+                text-align: right;
+                flex-shrink: 0;
+                font-variant-numeric: tabular-nums;
+            }
+            .srv-lb-score-val {
+                font-size: 13px;
+                font-weight: 800;
+                color: #047857;
+            }
+            :is(.dark .srv-lb-score-val) {
+                color: #34d399;
+            }
+            .srv-lb-time {
+                font-size: 11px;
+                color: #64748b;
+                font-variant-numeric: tabular-nums;
+            }
+            :is(.dark .srv-lb-time) {
+                color: #94a3b8;
+            }
+
             /* Stat Cards Grid */
             .srv-stat-grid {
                 display: grid;
@@ -733,9 +928,9 @@
                     {{-- 1. Total Responden --}}
                     <div class="srv-stat-card srv-stat-primary">
                         <div>
-                            <p class="srv-stat-label">Total Tanggapan</p>
+                            <p class="srv-stat-label">{{ $currentSurvey->is_quiz ? 'Peserta Unik' : 'Total Tanggapan' }}</p>
                             <h3 class="srv-stat-val">{{ number_format($totalResponses) }}</h3>
-                            <p class="srv-stat-sub">Responden telah mengisi</p>
+                            <p class="srv-stat-sub">{{ $currentSurvey->is_quiz ? 'Diambil nilai tertinggi per peserta' : 'Responden telah mengisi' }}</p>
                         </div>
                         <div class="srv-icon-box srv-icon-box-primary">
                             <x-filament::icon icon="heroicon-o-user-group" style="width: 24px; height: 24px;" />
@@ -791,6 +986,60 @@
                     </div>
 
                 </div>
+
+                {{-- Top 3 Juara Per Kelas (Untuk Kuis) --}}
+                @if($currentSurvey->is_quiz && !empty($this->quizLeaderboard))
+                    <div class="srv-lb-section">
+                        <div class="srv-lb-header">
+                            <h3 class="srv-lb-title">
+                                <x-filament::icon icon="heroicon-o-trophy" style="width: 18px; height: 18px; color: #d97706;" />
+                                <span>Peringkat 3 Terbaik Per Kelas</span>
+                            </h3>
+                            <span class="srv-lb-note">
+                                Peringkat berdasarkan skor tertinggi; jika nilai sama, dipilih waktu submit tercepat.
+                            </span>
+                        </div>
+
+                        <div class="srv-lb-grid">
+                            @foreach($this->quizLeaderboard as $classGroup)
+                                <div class="srv-lb-card">
+                                    <div class="srv-lb-card-head">
+                                        <div>
+                                            <div class="srv-lb-class">{{ $classGroup['kelas'] }}</div>
+                                            @if(!empty($classGroup['subtitle']))
+                                                <div class="srv-lb-sub">{{ $classGroup['subtitle'] }}</div>
+                                            @endif
+                                        </div>
+                                        <span class="srv-lb-count">{{ $classGroup['total_participants'] }} peserta</span>
+                                    </div>
+                                    <div class="srv-lb-list">
+                                        @foreach($classGroup['winners'] as $winner)
+                                            <div class="srv-lb-row">
+                                                <div class="srv-lb-left">
+                                                    <span class="srv-lb-rank srv-lb-rank-{{ $winner['class_rank'] }}">
+                                                        {{ $winner['class_rank'] }}
+                                                    </span>
+                                                    <div style="min-width: 0;">
+                                                        <div class="srv-lb-name" title="{{ $winner['name'] }}">{{ $winner['name'] }}</div>
+                                                        <div class="srv-lb-meta">
+                                                            {{ $winner['attempts_count'] > 1 ? $winner['attempts_count'].'x percobaan' : '1x percobaan' }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="srv-lb-score">
+                                                    <div class="srv-lb-score-val">{{ number_format((float) $winner['best_score'], 1) }}%</div>
+                                                    <div class="srv-lb-time">
+                                                        {{ $winner['best_submitted_at'] ? $winner['best_submitted_at']->format('d M, H:i:s') : '-' }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
 
                 {{-- Question Cards (Google Forms Style) --}}
                 <div>
