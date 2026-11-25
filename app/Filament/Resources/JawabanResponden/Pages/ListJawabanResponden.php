@@ -52,14 +52,33 @@ class ListJawabanResponden extends ListRecords
 
     public function updatedSelectedSurveyId(): void
     {
+        unset($this->currentSurvey, $this->questionStats);
         $this->resetTable();
+    }
+
+    public function getExportUrl(): string
+    {
+        $submittedFrom = $this->getTableFilterState('submitted_at')['submitted_from'] ?? null;
+        $submittedUntil = $this->getTableFilterState('submitted_at')['submitted_until'] ?? null;
+        $tableSurveyIds = $this->getTableFilterState('survey_id')['values'] ?? [];
+
+        $surveyIds = ! empty($tableSurveyIds)
+            ? $tableSurveyIds
+            : ($this->selectedSurveyId ? [$this->selectedSurveyId] : []);
+
+        return route('jawaban-responden.export', array_filter([
+            'survey_ids' => $surveyIds,
+            'submitted_from' => $submittedFrom,
+            'submitted_until' => $submittedUntil,
+        ]));
     }
 
     protected function getTableQuery(): ?Builder
     {
         $query = parent::getTableQuery()?->with(['survey.kategori', 'user']);
+        $tableSurveyFilter = $this->getTableFilterState('survey_id')['values'] ?? [];
 
-        if ($this->selectedSurveyId && $query) {
+        if (empty($tableSurveyFilter) && $this->selectedSurveyId && $query) {
             $query->where('survey_id', $this->selectedSurveyId);
         }
 
@@ -170,7 +189,14 @@ class ListJawabanResponden extends ListRecords
                         ->label('Pilih Survey')
                         ->multiple()
                         ->options(Survey::pluck('title', 'id'))
-                        ->default(fn () => $this->selectedSurveyId ? [$this->selectedSurveyId] : ($this->getTableFilterState('survey_id')['values'] ?? null))
+                        ->default(function () {
+                            $tableSurveyIds = $this->getTableFilterState('survey_id')['values'] ?? [];
+                            if (! empty($tableSurveyIds)) {
+                                return $tableSurveyIds;
+                            }
+
+                            return $this->selectedSurveyId ? [$this->selectedSurveyId] : null;
+                        })
                         ->required()
                         ->live()
                         ->afterStateUpdated(function (Set $set, $state) {

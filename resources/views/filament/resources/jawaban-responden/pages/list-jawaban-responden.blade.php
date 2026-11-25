@@ -703,11 +703,11 @@
                     </button>
                 </div>
 
-                @if($this->currentSurvey)
+                @if($this->selectedSurveyId)
                     <a 
-                        href="{{ route('jawaban-responden.export', ['survey_id' => $this->currentSurvey->id]) }}" 
+                        href="{{ $this->getExportUrl() }}" 
                         class="srv-export-btn"
-                        title="Unduh seluruh data jawaban survei ini ke file Excel"
+                        title="Unduh data jawaban sesuai survei dan filter yang sedang tampil"
                     >
                         <x-filament::icon icon="heroicon-o-document-arrow-down" style="width: 16px; height: 16px;" />
                         <span>Unduh Excel</span>

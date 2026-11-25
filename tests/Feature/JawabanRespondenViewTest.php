@@ -1,6 +1,7 @@
 <?php
 
 use App\Filament\Resources\JawabanResponden\Pages\ListJawabanResponden;
+use App\Models\JawabanResponden;
 use App\Models\Kategori;
 use App\Models\Survey;
 use App\Models\User;
@@ -69,4 +70,35 @@ test('direct jawaban responden export route downloads valid xlsx', function () {
     $response->assertOk();
     $response->assertHeader('content-disposition');
     expect($response->headers->get('content-disposition'))->toContain('.xlsx');
+});
+
+test('export url updates when changing selectedSurveyId filter', function () {
+    $this->actingAs($this->admin);
+
+    $survey1 = Survey::where('slug', 'konfirmasi-pendataan-se2026')->first();
+    $survey2 = Survey::create([
+        'kategori_id' => 1,
+        'title' => 'Survei Kedua Untuk Filter Test',
+        'slug' => 'survei-kedua-filter-test',
+        'schema' => ['pages' => []],
+        'is_active' => true,
+        'mode' => 'multi',
+    ]);
+    $survey2->forceFill(['created_at' => now()->addMinute()])->save();
+
+    JawabanResponden::create([
+        'survey_id' => $survey2->id,
+        'user_id' => $this->admin->id,
+        'payload' => ['nama_lengkap' => 'Test User'],
+        'submitted_at' => now(),
+    ]);
+
+    $component = Livewire::test(ListJawabanResponden::class)
+        ->assertSet('selectedSurveyId', $survey2->id)
+        ->set('selectedSurveyId', $survey1->id)
+        ->assertSet('selectedSurveyId', $survey1->id);
+
+    $expectedUrl = route('jawaban-responden.export', ['survey_ids' => [$survey1->id]]);
+    expect($component->instance()->currentSurvey?->id)->toBe($survey1->id)
+        ->and($component->instance()->getExportUrl())->toBe($expectedUrl);
 });
