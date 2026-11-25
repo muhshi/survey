@@ -367,24 +367,158 @@
     .sd-dropdown__value { color: var(--text) !important; }
     .sd-dropdown__placeholder { color: var(--text-3) !important; }
 
-    /* Choice items */
-    .sd-item { border-radius: 9px !important; }
-    .sd-item:hover { background: var(--surface-2) !important; }
-    .sd-item__control-label, .sd-checkbox__control-label, .sd-radio__control-label, .sd-item__control-label span {
+    /* Choice items (Radio & Checkbox) */
+    .sd-item {
+        border-radius: 10px !important;
+        padding: 8px 12px !important;
+        margin-bottom: 4px !important;
+        border: 1.5px solid transparent !important;
+        transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease !important;
+        cursor: pointer !important;
+    }
+    .sd-item:hover {
+        background: var(--surface-2) !important;
+    }
+    
+    /* Highlight the chosen answer row clearly */
+    .sd-item.sd-item--checked,
+    .sd-item.sd-radio--checked,
+    .sd-item.sd-checkbox--checked {
+        background: var(--primary-50) !important;
+        border-color: var(--primary-100) !important;
+    }
+
+    /* Option Label text */
+    .sd-item__control-label,
+    .sd-checkbox__control-label,
+    .sd-radio__control-label,
+    .sd-item__control-label span {
         color: var(--text) !important;
-        font-size: 0.9rem !important;
+        font-size: 0.925rem !important;
+        line-height: 1.5 !important;
     }
-    .sd-item--checked .sd-item__control-label { color: var(--text) !important; font-weight: 600 !important; }
-    .sd-item__decorator, .sd-radio__control, .sd-checkbox__control {
-        border-color: var(--border-strong) !important;
-        background: var(--surface) !important;
+    .sd-item--checked .sd-item__control-label,
+    .sd-item--checked .sd-radio__control-label,
+    .sd-item--checked .sd-checkbox__control-label {
+        color: var(--text) !important;
+        font-weight: 600 !important;
     }
-    .sd-item--checked .sd-radio__control, .sd-item--checked .sd-checkbox__control {
+
+    /* Base Decorator (Outer circle for radio, square for checkbox) */
+    .sd-item__decorator,
+    .sd-radio__decorator,
+    .sd-checkbox__decorator {
+        width: 22px !important;
+        height: 22px !important;
+        min-width: 22px !important;
+        min-height: 22px !important;
+        border: 2px solid var(--border-strong) !important;
+        background-color: var(--surface) !important;
+        box-shadow: var(--shadow-sm) !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        box-sizing: border-box !important;
+        transition: all 0.15s ease !important;
+        flex-shrink: 0 !important;
+    }
+    .sd-radio__decorator {
+        border-radius: 50% !important;
+    }
+    .sd-checkbox__decorator {
+        border-radius: 6px !important;
+    }
+
+    .sd-item:hover .sd-item__decorator,
+    .sd-item:hover .sd-radio__decorator,
+    .sd-item:hover .sd-checkbox__decorator {
         border-color: var(--primary) !important;
-        background: var(--primary) !important;
     }
-    .sd-radio__control .sd-radio__svg use, .sd-checkbox__control .sd-checkbox__svg use { fill: #fff !important; }
-    .sd-item--allowhover .sd-item__decorator { background: var(--surface-2) !important; }
+
+    /* Checked State: Outer Decorator filled with Primary */
+    .sd-item--checked .sd-item__decorator,
+    .sd-item--checked .sd-radio__decorator,
+    .sd-item--checked .sd-checkbox__decorator,
+    .sd-radio--checked .sd-radio__decorator,
+    .sd-checkbox--checked .sd-checkbox__decorator {
+        background-color: var(--primary) !important;
+        border-color: var(--primary) !important;
+        box-shadow: 0 0 0 3px var(--primary-50) !important;
+    }
+
+    /* Checked Radio: Inner Dot (:after) - ALWAYS visible (focused AND blur/unfocused) */
+    .sd-radio--checked .sd-radio__decorator:after,
+    .sd-radio--checked .sd-item__decorator:after,
+    .sd-item--checked .sd-radio__decorator:after,
+    .sd-item--checked .sd-item__decorator:after,
+    .sd-radio--checked .sd-radio__control:focus + .sd-radio__decorator:after,
+    .sd-radio--checked .sd-item__control:focus + .sd-item__decorator:after {
+        content: " " !important;
+        display: block !important;
+        width: 8px !important;
+        height: 8px !important;
+        border-radius: 50% !important;
+        background-color: #ffffff !important;
+        position: static !important;
+        margin: auto !important;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+    }
+
+    /* In dark mode: inner dot on primary */
+    [data-theme="dark"] .sd-radio--checked .sd-radio__decorator:after,
+    [data-theme="dark"] .sd-radio--checked .sd-item__decorator:after,
+    [data-theme="dark"] .sd-item--checked .sd-radio__decorator:after,
+    [data-theme="dark"] .sd-item--checked .sd-item__decorator:after,
+    [data-theme="dark"] .sd-radio--checked .sd-radio__control:focus + .sd-radio__decorator:after,
+    [data-theme="dark"] .sd-radio--checked .sd-item__control:focus + .sd-item__decorator:after {
+        background-color: #080f1c !important;
+        box-shadow: none !important;
+    }
+
+    /* Radio SVG (in preview/readonly mode if used) */
+    .sd-radio--checked .sd-radio__decorator .sd-radio__svg,
+    .sd-radio--checked .sd-radio__decorator .sd-radio__svg use {
+        fill: #ffffff !important;
+    }
+    [data-theme="dark"] .sd-radio--checked .sd-radio__decorator .sd-radio__svg,
+    [data-theme="dark"] .sd-radio--checked .sd-radio__decorator .sd-radio__svg use {
+        fill: #080f1c !important;
+    }
+
+    /* Checked Checkbox: Checkmark SVG - ALWAYS visible */
+    .sd-checkbox--checked .sd-checkbox__svg,
+    .sd-checkbox--checked .sd-checkbox__svg use,
+    .sd-checkbox--checked .sd-checkbox__decorator .sd-checkbox__svg,
+    .sd-checkbox--checked .sd-checkbox__decorator .sd-checkbox__svg use,
+    .sd-checkbox--checked .sd-checkbox__control:focus + .sd-checkbox__decorator .sd-checkbox__svg use {
+        fill: #ffffff !important;
+        stroke: #ffffff !important;
+    }
+    [data-theme="dark"] .sd-checkbox--checked .sd-checkbox__svg,
+    [data-theme="dark"] .sd-checkbox--checked .sd-checkbox__svg use,
+    [data-theme="dark"] .sd-checkbox--checked .sd-checkbox__decorator .sd-checkbox__svg,
+    [data-theme="dark"] .sd-checkbox--checked .sd-checkbox__decorator .sd-checkbox__svg use,
+    [data-theme="dark"] .sd-checkbox--checked .sd-checkbox__control:focus + .sd-checkbox__decorator .sd-checkbox__svg use {
+        fill: #080f1c !important;
+        stroke: #080f1c !important;
+    }
+
+    /* Focus ring for keyboard accessibility */
+    .sd-item__control:focus + .sd-item__decorator,
+    .sd-radio__control:focus + .sd-radio__decorator,
+    .sd-checkbox__control:focus + .sd-checkbox__decorator {
+        outline: none !important;
+        border-color: var(--primary) !important;
+        box-shadow: 0 0 0 3px var(--primary-100) !important;
+    }
+
+    /* Table / Matrix item reset */
+    .sd-table__cell--item .sd-item {
+        padding: 4px !important;
+        margin-bottom: 0 !important;
+        background: transparent !important;
+        border: none !important;
+    }
 
     /* Rating, boolean, matrix */
     .sd-rating__item-text, .sd-rating__item {
@@ -948,7 +1082,9 @@
                     "name": {!! json_encode(Auth::user()->name) !!},
                     "email_peserta": {!! json_encode(Auth::user()->email) !!},
                     "email": {!! json_encode(Auth::user()->email) !!},
-                    "kelas": {!! json_encode(Auth::user()->metadata['kelas'] ?? '') !!}
+                    "kelas": {!! json_encode(Auth::user()->metadata['kelas'] ?? '') !!},
+                    "jabatan": {!! json_encode(Auth::user()->metadata['bertugas_sebagai'] ?? Auth::user()->metadata['jabatan'] ?? '') !!},
+                    "bertugas_sebagai": {!! json_encode(Auth::user()->metadata['bertugas_sebagai'] ?? Auth::user()->metadata['jabatan'] ?? '') !!}
                 };
             @endif
 
@@ -1015,7 +1151,9 @@
                     "name": {!! json_encode(Auth::user()->name) !!},
                     "email_peserta": {!! json_encode(Auth::user()->email) !!},
                     "email": {!! json_encode(Auth::user()->email) !!},
-                    "kelas": {!! json_encode(Auth::user()->metadata['kelas'] ?? '') !!}
+                    "kelas": {!! json_encode(Auth::user()->metadata['kelas'] ?? '') !!},
+                    "jabatan": {!! json_encode(Auth::user()->metadata['bertugas_sebagai'] ?? Auth::user()->metadata['jabatan'] ?? '') !!},
+                    "bertugas_sebagai": {!! json_encode(Auth::user()->metadata['bertugas_sebagai'] ?? Auth::user()->metadata['jabatan'] ?? '') !!}
                 };
                 @endif
                 model.render("surveyElement");

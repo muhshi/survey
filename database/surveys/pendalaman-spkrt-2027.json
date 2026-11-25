@@ -1,0 +1,341 @@
+{
+  "title": "Kuis Pendalaman Pelatihan SPKRT 2027",
+  "description": "Kuis pendalaman materi Survei Pola Konsumsi Rumah Tangga (SPKRT) 2027: mencakup konsep konsumsi vs bukan konsumsi, instrumen VPKRT27-BL/BLp/HR/HRp/LK/S, aturan pencatatan barang dan jasa, serta SOP lapangan.",
+  "logoPosition": "right",
+  "completedHtml": "<div style=\"text-align:center; padding: 20px;\"><h3 style=\"color: #1e1b4b; font-weight: bold;\">Terima kasih telah menyelesaikan Kuis Pendalaman SPKRT 2027!</h3><p style=\"color: #64748b;\">Jawaban Anda telah berhasil disimpan dan dinilai oleh sistem.</p></div>",
+  "progressBarType": "questions",
+  "showProgressBar": "top",
+  "goNextPageAutomatic": false,
+  "questionsOnPageMode": "standard",
+  "showQuestionNumbers": "on",
+  "pages": [
+    {
+      "name": "page_identitas",
+      "title": "Identitas Peserta",
+      "description": "Identitas peserta otomatis dimuat dari akun login sistem.",
+      "elements": [
+        {
+          "type": "text",
+          "name": "nama_lengkap",
+          "title": "Nama Lengkap",
+          "readOnly": true,
+          "isRequired": true
+        },
+        {
+          "type": "text",
+          "name": "email_peserta",
+          "title": "Email Peserta",
+          "readOnly": true,
+          "inputType": "email",
+          "isRequired": true
+        },
+        {
+          "type": "dropdown",
+          "name": "kelas",
+          "title": "Kelas Pelatihan",
+          "isRequired": true,
+          "placeholder": "Pilih Kelas Pelatihan...",
+          "choices": [
+            { "value": "Kelas A", "text": "Kelas A (Inda: Muna)" },
+            { "value": "Kelas B", "text": "Kelas B (Inda: Musyafa'ah)" },
+            { "value": "Kelas C", "text": "Kelas C (Inda: Yudia Pratidina Hasibuan)" },
+            { "value": "Kelas D", "text": "Kelas D (Inda: Nur Kurniawati)" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "page_soal",
+      "title": "Lembar Soal Kuis Pendalaman SPKRT 2027",
+      "description": "Pilihlah salah satu jawaban yang paling tepat pada setiap butir soal.",
+      "elements": [
+        {
+          "name": "soal_1",
+          "type": "radiogroup",
+          "title": "Batas usia minimum bagi Anggota Rumah Tangga Ekonomi (ARTE) untuk diberikan kuesioner mandiri VPKRT27-BLp guna mencatat pengeluaran pribadinya di luar rumah adalah...",
+          "choices": [
+            { "value": "a", "text": "13 tahun" },
+            { "value": "b", "text": "10 tahun" },
+            { "value": "c", "text": "12 tahun" },
+            { "value": "d", "text": "15 tahun" },
+            { "value": "e", "text": "17 tahun" }
+          ],
+          "isRequired": true,
+          "score": 5,
+          "correctAnswer": "a"
+        },
+        {
+          "name": "soal_2",
+          "type": "radiogroup",
+          "title": "Dalam satu triwulan pelaksanaan SPKRT 2027, berapa kali petugas pencacah (PCL) melakukan kunjungan ke rumah tangga sampel untuk kegiatan pencacahan kuesioner VPKRT27-BL dan VPKRT27-BLp?",
+          "choices": [
+            { "value": "a", "text": "6 kali" },
+            { "value": "b", "text": "3 kali" },
+            { "value": "c", "text": "4 kali" },
+            { "value": "d", "text": "7 kali" },
+            { "value": "e", "text": "12 kali" }
+          ],
+          "isRequired": true,
+          "score": 5,
+          "correctAnswer": "a"
+        },
+        {
+          "name": "soal_3",
+          "type": "radiogroup",
+          "title": "Apabila ditemukan pengeluaran konsumsi makanan jadi atau minuman (misalnya es kopi susu atau boba) pada Kuesioner VPKRT27-BLp pada pencacahan Bulan ke-1 atau Bulan ke-2, perlakuan yang benar oleh pemeriksa/pencacah adalah...",
+          "choices": [
+            { "value": "a", "text": "Isian dicoret pada kuesioner VPKRT27-BLp dan diberi catatan bahwa isian tersebut merupakan makanan" },
+            { "value": "b", "text": "Tetap disalin ke dalam Kuesioner VPKRT27-BL pada kelompok makanan" },
+            { "value": "c", "text": "Dihapus dan responden diminta mengulang pengisian lembar kuesioner baru" },
+            { "value": "d", "text": "Langsung disalin ke Kuesioner VPKRT27-HR bulan berjalan" }
+          ],
+          "isRequired": true,
+          "score": 5,
+          "correctAnswer": "a"
+        },
+        {
+          "name": "soal_4",
+          "type": "radiogroup",
+          "title": "Seorang anak berusia 16 tahun bersekolah di jenjang SMA dengan sistem asrama penuh (boarding school) di luar kabupaten/kota tempat tinggal orang tuanya. Bagaimana status pencatatan anak tersebut dalam SPKRT 2027?",
+          "choices": [
+            { "value": "a", "text": "Dicatat sebagai Anggota Rumah Tangga Biasa di rumah tangga orang tua" },
+            { "value": "b", "text": "Dicatat sebagai Anggota Rumah Tangga Lainnya (ARTL) di rumah tangga orang tua" },
+            { "value": "c", "text": "Dicatat sebagai Bukan Anggota Rumah Tangga di rumah tangga orang tua" },
+            { "value": "d", "text": "Tidak dicatat di rumah tangga orang tua karena tinggal di luar SLS lebih dari 6 bulan" },
+            { "value": "e", "text": "Dicatat sebagai unit rumah tangga khusus tersendiri di lokasi asrama" }
+          ],
+          "isRequired": true,
+          "score": 5,
+          "correctAnswer": "a"
+        },
+        {
+          "name": "soal_5",
+          "type": "radiogroup",
+          "title": "Pada bulan Januari 2027, Pak Budi membeli sebuah mesin cuci seharga Rp3.600.000 secara kredit dengan rincian: membayar uang muka (down payment) sebesar Rp1.000.000 pada saat transaksi, dan mengangsur cicilan sebesar Rp520.000 per bulan selama 6 bulan mulai Februari 2027. Bagaimana pencatatan transaksi pembelian dan uang muka tersebut pada Kuesioner VPKRT27-BL bulan Januari 2027?",
+          "choices": [
+            { "value": "a", "text": "Pengeluaran konsumsi dicatat sebesar Rp3.600.000, dan uang muka Rp1.000.000 dicatat sebagai pengeluaran bukan konsumsi" },
+            { "value": "b", "text": "Pengeluaran konsumsi dicatat sebesar Rp1.000.000, dan pengeluaran bukan konsumsi dicatat Rp2.600.000" },
+            { "value": "c", "text": "Pengeluaran konsumsi dicatat sebesar Rp3.600.000 dengan cara perolehan berkode 1 (Lunas)" },
+            { "value": "d", "text": "Pengeluaran konsumsi dicatat sebesar Rp1.000.000 dengan cara perolehan berkode 2 (Kredit)" }
+          ],
+          "isRequired": true,
+          "score": 5,
+          "correctAnswer": "a"
+        },
+        {
+          "name": "soal_6",
+          "type": "radiogroup",
+          "title": "Pada 10 Februari 2027, Ibu Ratna membeli gaun pesta di department store Centro, memesan jasa servis AC melalui telepon ke teknisi langganan yang datang ke rumah, serta membayar iuran bulanan pengelolaan lingkungan kepada Ketua RT secara tunai. Pengkategorian Jenis Pasar pada Kolom (9) untuk ketiga transaksi tersebut secara berurutan adalah...",
+          "choices": [
+            { "value": "a", "text": "Outlet/Toko Khusus; Outlet/Toko Khusus; Outlet/Toko Khusus" },
+            { "value": "b", "text": "Pasar Modern; Outlet/Toko Khusus; Pasar Tradisional" },
+            { "value": "c", "text": "Pasar Modern; Pasar Tradisional; Pasar Tradisional" },
+            { "value": "d", "text": "Outlet/Toko Khusus; Pasar Tradisional; Pasar Modern" }
+          ],
+          "isRequired": true,
+          "score": 5,
+          "correctAnswer": "a"
+        },
+        {
+          "name": "soal_7",
+          "type": "radiogroup",
+          "title": "Pada tanggal 20 Januari 2027, seorang responden membeli tiket pesawat penerbangan Jakarta–Surabaya untuk keberangkatan liburan tanggal 15 April 2027 seharga Rp1.200.000. Pada hari yang sama, ia menggunakan kamar hotel di Yogyakarta seharga Rp600.000 per malam yang pemesanannya telah dibayar lunas pada promo akhir tahun Desember 2026. Bagaimana perlakuan pencatatan kedua transaksi jasa tersebut pada Kuesioner VPKRT27-BL bulan Januari 2027?",
+          "choices": [
+            { "value": "a", "text": "Tiket pesawat tidak dicatat konsumsi pada Januari; sewa hotel dicatat konsumsi sebesar Rp600.000 pada Januari" },
+            { "value": "b", "text": "Tiket pesawat dicatat konsumsi Rp1.200.000; sewa hotel tidak dicatat karena dibayar pada tahun 2026" },
+            { "value": "c", "text": "Kedua transaksi sama-sama dicatat sebagai pengeluaran konsumsi di bulan Januari 2027" },
+            { "value": "d", "text": "Kedua transaksi sama-sama tidak dicatat karena keduanya memiliki selisih waktu antara transaksi bayar dan pemakaian" }
+          ],
+          "isRequired": true,
+          "score": 5,
+          "correctAnswer": "a"
+        },
+        {
+          "name": "soal_8",
+          "type": "radiogroup",
+          "title": "Pada bulan terakhir di setiap triwulan pelaksanaan SPKRT 2027, kuesioner apa sajakah yang dicacahkan oleh petugas pendataan lapangan ke rumah tangga sampel?",
+          "choices": [
+            { "value": "a", "text": "Kuesioner VPKRT27-BL, VPKRT27-BLp, VPKRT27-HR dan VPKRT27-HRp" },
+            { "value": "b", "text": "Kuesioner VPKRT27-BL dan VPKRT27-BLp saja" },
+            { "value": "c", "text": "Kuesioner VPKRT27-HR dan VPKRT27-HRp saja" },
+            { "value": "d", "text": "Kuesioner VPKRT27-BL dan VPKRT27-HR" },
+            { "value": "e", "text": "Kuesioner VPKRT27-LK dan VPKRT27-S" }
+          ],
+          "isRequired": true,
+          "score": 5,
+          "correctAnswer": "a"
+        },
+        {
+          "name": "soal_9",
+          "type": "radiogroup",
+          "title": "Rumah tangga terpilih sebagai sampel SPKRT 2027 akan menjalani proses pendataan dan pencatatan pengeluaran selama…",
+          "choices": [
+            { "value": "a", "text": "Tiga bulan" },
+            { "value": "b", "text": "Satu bulan" },
+            { "value": "c", "text": "Satu semester" },
+            { "value": "d", "text": "Satu tahun" }
+          ],
+          "isRequired": true,
+          "score": 5,
+          "correctAnswer": "a"
+        },
+        {
+          "name": "soal_10",
+          "type": "radiogroup",
+          "title": "Pilihlah pernyataan yang kurang tepat dalam prosedur pemeriksaan dan pengisian dokumen VPKRT27-BL:",
+          "choices": [
+            { "value": "a", "text": "Jika Blok V Kolom (8) terisi kode 5 (diberikan kepada pihak lain), komoditas tersebut dicatat sebagai pengeluaran konsumsi rumah tangga." },
+            { "value": "b", "text": "Jika pada Subblok IV.1 Kolom (4) berkode 2 (perempuan) dan Kolom (5) terisi 13 tahun atau lebih, pencacah/pengawas perlu mencermati kelengkapan isian kebutuhan khusus wanita dewasa pada Blok V." },
+            { "value": "c", "text": "Jika pada Subblok IV.1 Kolom (7) berkode 2 (masih bersekolah), pencacah/pengawas harus memastikan adanya pencatatan pengeluaran terkait pendidikan pada Blok V." },
+            { "value": "d", "text": "Isian nilai rupiah pada Blok V Kolom (7) tidak selalu merupakan hasil perkalian langsung antara Kolom (5) dan Kolom (6)." }
+          ],
+          "isRequired": true,
+          "score": 5,
+          "correctAnswer": "a"
+        },
+        {
+          "name": "soal_11",
+          "type": "radiogroup",
+          "title": "Winar merupakan salah satu anggota rumah tangga sampel SPKRT 2027. Selama periode referensi survei, ia membeli dua belas bungkus rokok kretek filter, satu buah baju kaus oblong (t-shirt), satu unit telepon seluler, serta membeli dua pasang sandal jepit karet yang langsung disumbangkan untuk tempat wudhu di mushala lingkungan. Pernyataan pencatatan yang benar pada dokumen rumah tangga Winar adalah…",
+          "choices": [
+            { "value": "a", "text": "Rokok kretek filter tidak dicatat pada Kuesioner VPKRT27-BL, sedangkan baju kaus, telepon seluler, dan sandal untuk musala tetap dicatat pada Kuesioner VPKRT27-BL" },
+            { "value": "b", "text": "Seluruh transaksi tersebut dicatat pada Kuesioner VPKRT27-BL milik rumah tangga Winar" },
+            { "value": "c", "text": "Seluruh transaksi dicatat pada Kuesioner VPKRT27-BL, kecuali sandal jepit untuk musala" },
+            { "value": "d", "text": "Sandal untuk musala dan rokok kretek filter sama-sama tidak boleh dicatat pada Kuesioner VPKRT27-BL" }
+          ],
+          "isRequired": true,
+          "score": 5,
+          "correctAnswer": "a"
+        },
+        {
+          "name": "soal_12",
+          "type": "radiogroup",
+          "title": "Sebelum periode pencacahan SPKRT 2027 berlangsung, rumah tangga Andi membeli satu unit sepeda motor secara kredit seharga Rp27.000.000 dengan membayar uang muka sebesar Rp7.000.000. Pada saat rumah tangga tersebut aktif menjadi sampel SPKRT 2027, mereka masih membayar angsuran rutin sebesar Rp1.500.000 setiap bulannya. Dari informasi tersebut, bagaimana pencatatan pada Kuesioner VPKRT27-BL selama tiga bulan pencacahan?",
+          "choices": [
+            { "value": "a", "text": "Cicilan Rp1.500.000 dicatat setiap bulan sebagai pengeluaran bukan konsumsi, sedangkan uang muka dan harga total motor tidak dicatat pada kuesioner VPKRT27-BL" },
+            { "value": "b", "text": "Harga total motor dicatat pada bulan pertama sebagai konsumsi, dan cicilan bulanan dicatat sebagai bukan konsumsi" },
+            { "value": "c", "text": "Uang muka dan harga motor dicatat pada bulan pertama, sedangkan cicilan bulanan tidak dicatat" },
+            { "value": "d", "text": "Selisih harga motor dengan uang muka dicatat sebagai pendapatan, sedangkan cicilan dicatat sebagai konsumsi" }
+          ],
+          "isRequired": true,
+          "score": 5,
+          "correctAnswer": "a"
+        },
+        {
+          "name": "soal_13",
+          "type": "radiogroup",
+          "title": "Rumah tangga Gusti terpilih sebagai sampel SPKRT 2027. Dari catatan pengeluaran, diketahui bahwa rumah tangga tersebut membeli sebuah rumah tempat tinggal yang mereka tempati sendiri secara lunas pada bulan Maret 2027. Perlakuan pencatatan transaksi pembelian rumah tersebut dalam instrumen survei adalah…",
+          "choices": [
+            { "value": "a", "text": "Dicatat sebagai pengeluaran bukan konsumsi bukan untuk usaha pada Kuesioner VPKRT27-S Blok VII.1" },
+            { "value": "b", "text": "Tidak dicatat di kuesioner mana pun karena bukan pengeluaran rutin" },
+            { "value": "c", "text": "Dicatat sebagai pengeluaran konsumsi perumahan pada Kuesioner VPKRT27-S Blok VI" },
+            { "value": "d", "text": "Dicatat sebagai pengeluaran bukan konsumsi untuk usaha pada Kuesioner VPKRT27-S Blok VII.2" },
+            { "value": "e", "text": "Dicatat sebagai pengeluaran konsumsi perumahan pada Kuesioner VPKRT27-BL Blok V" }
+          ],
+          "isRequired": true,
+          "score": 5,
+          "correctAnswer": "a"
+        },
+        {
+          "name": "soal_14",
+          "type": "radiogroup",
+          "title": "Konsep pencatatan pengeluaran konsumsi rumah tangga yang digunakan pada Survei Pola Konsumsi Rumah Tangga (SPKRT) 2027 dibedakan atas…",
+          "choices": [
+            { "value": "a", "text": "Pernyataan (1) dan (2) benar (Konsep pemakaian untuk bahan makanan, makanan jadi, minuman, rokok, dan tembakau; serta konsep akuisisi untuk konsumsi bukan makanan)" },
+            { "value": "b", "text": "Konsep pemakaian untuk bahan makanan, makanan jadi, minuman, rokok, dan tembakau saja" },
+            { "value": "c", "text": "Konsep akuisisi untuk konsumsi bukan makanan saja" },
+            { "value": "d", "text": "Konsep pembayaran tunai untuk seluruh kelompok pengeluaran" },
+            { "value": "e", "text": "Seluruh pernyataan (1, 2, dan 3) benar" }
+          ],
+          "isRequired": true,
+          "score": 5,
+          "correctAnswer": "a"
+        },
+        {
+          "name": "soal_15",
+          "type": "radiogroup",
+          "title": "Dokumen yang digunakan untuk mencatat pengeluaran konsumsi dan bukan konsumsi selain bahan makanan, makanan jadi, minuman, rokok dan tembakau secara bulanan adalah:",
+          "choices": [
+            { "value": "a", "text": "Kuesioner VPKRT27-BL dan VPKRT27-BLp" },
+            { "value": "b", "text": "Kuesioner VPKRT27-HR dan VPKRT27-HRp" },
+            { "value": "c", "text": "Kuesioner VPKRT27-LK" },
+            { "value": "d", "text": "Kuesioner VPKRT27-S" }
+          ],
+          "isRequired": true,
+          "score": 5,
+          "correctAnswer": "a"
+        },
+        {
+          "name": "soal_16",
+          "type": "radiogroup",
+          "title": "Pernyataan berikut yang paling tepat terkait dokumen VPKRT27-LK adalah:",
+          "choices": [
+            { "value": "a", "text": "Kuesioner VPKRT27-LK adalah rekapitulasi pengeluaran rumah tangga mengenai konsumsi bahan makanan, makanan jadi, minuman, rokok dan tembakau selama seminggu" },
+            { "value": "b", "text": "Kuesioner VPKRT27-LK adalah rekapitulasi pengeluaran rumah tangga mengenai konsumsi bahan makanan, makanan jadi, minuman, rokok dan tembakau selama 1 bulan" },
+            { "value": "c", "text": "Kuesioner VPKRT27-LK digunakan untuk mencatat pengeluaran konsumsi dan bukan konsumsi selain bahan makanan, makanan jadi, minuman, rokok dan tembakau secara bulanan" },
+            { "value": "d", "text": "Kuesioner VPKRT27-LK rekapitulasi pengeluaran rumah tangga mengenai konsumsi bahan makanan, makanan jadi, minuman, rokok dan tembakau 1 bulan dan pelaksanaan rekapitulasinya dilaksanakan oleh Pengawas" }
+          ],
+          "isRequired": true,
+          "score": 5,
+          "correctAnswer": "a"
+        },
+        {
+          "name": "soal_17",
+          "type": "radiogroup",
+          "title": "Pernyataan berikut yang paling tepat terkait dokumen VPKRT27-S adalah:",
+          "choices": [
+            { "value": "a", "text": "Kuesioner VPKRT27-S digunakan untuk mencatat pengeluaran konsumsi selain bahan makanan, makanan jadi, minuman, rokok dan tembakau, pengeluaran bukan konsumsi, dan pendapatan/penerimaan rumah tangga yang belum tercakup dalam VPKRT27-BL" },
+            { "value": "b", "text": "Kuesioner VPKRT27-S digunakan untuk mencatat pengeluaran konsumsi dan bukan konsumsi selain bahan makanan, makanan jadi, minuman, rokok dan tembakau secara bulanan" },
+            { "value": "c", "text": "Kuesioner VPKRT27-S digunakan untuk mencatat pengeluaran konsumsi dan bukan konsumsi oleh anggota rumah tangga dewasa secara bulanan yang dilakukan di luar rumah tangga" },
+            { "value": "d", "text": "Kuesioner VPKRT27-S digunakan untuk merekap pengeluaran konsumsi bahan makanan, makanan jadi, minuman, rokok, dan tembakau selama seminggu" }
+          ],
+          "isRequired": true,
+          "score": 5,
+          "correctAnswer": "a"
+        },
+        {
+          "name": "soal_18",
+          "type": "radiogroup",
+          "title": "Berikut ini merupakan tugas dari Pencacah SPKRT 2027, kecuali:",
+          "choices": [
+            { "value": "a", "text": "Memberikan kode komoditas pada dokumen VPKRT27-BL dengan berpedoman pada buku Master Kode Jenis Barang dan Jasa" },
+            { "value": "b", "text": "Melakukan pemutakhiran rumah tangga di SLS yang menjadi tanggung jawabnya dengan menggunakan CAPI." },
+            { "value": "c", "text": "Memberikan tanda checklist (√) pada Kuesioner VPKRT27-S Blok VI (pengeluaran konsumsi bukan makanan) dan Blok VII (pengeluaran bukan konsumsi) berdasarkan Tabel Rekapituasi pengolahan VPKRT27-BL1 dan VPKRT27-BL2" },
+            { "value": "d", "text": "Menyalin isian dokumen VPKRT27-BLp ke dalam dokumen VPKRT27-BL untuk setiap rumah tangga sampel" }
+          ],
+          "isRequired": true,
+          "score": 5,
+          "correctAnswer": "a"
+        },
+        {
+          "name": "soal_19",
+          "type": "radiogroup",
+          "title": "Penulisan Kualitas/Merek pada kolom (3) yang benar pada Kuesioner VPKRT27-LK jika responden mengkonsumsi beberapa merek untuk satu komoditas adalah:",
+          "choices": [
+            { "value": "a", "text": "Tuliskan semua merek tersebut" },
+            { "value": "b", "text": "Tuliskan merek yang paling banyak dikonsumsi menurut kuantitasnya" },
+            { "value": "c", "text": "Tuliskan merek yang paling banyak terdapat di wilayah setempat" },
+            { "value": "d", "text": "Kolom (3) dikosongkan saja" }
+          ],
+          "isRequired": true,
+          "score": 5,
+          "correctAnswer": "a"
+        },
+        {
+          "name": "soal_20",
+          "type": "radiogroup",
+          "title": "Pada tanggal 22 Maret 2027, rumah tangga Dini mengonsumsi beras Rojolele sebanyak 3 kg dari persediaan yang dibeli 15 kg seharga Rp270.000,- di warung tetangga. Rumah tangga Dini juga menggunakan garam Dolphin sebanyak 10 sendok teh. Garam tersebut dibeli di Alfamart seharga Rp6.000,-/bungkus (250 gram). Perkiraan berat garam 1 sendok teh merujuk pada Kuesioner VPKRT27-KK adalah seberat 10 gram. Pada hari yang sama, Dini juga membeli masker kesehatan merk Sensi Mask, 1 pack (isi 50) yang ditawarkan temannya via Facebook, seharga Rp100.000,- dan baru digunakan 3 buah untuk Dini dan 2 orang anaknya.\n\nPengisian yang paling tepat pada Kuesioner VPKRT27-HR untuk pengeluaran pada tanggal 22 Maret 2027 adalah...",
+          "choices": [
+            { "value": "a", "text": "1. Beras Rojolele: Jumlah 3 kg, Nilai Rp54.000, Cara Perolehan: 1, Jenis Pasar: 1 | 2. Garam Dolphin: Jumlah 10 sdt, Nilai Rp2.400, Cara Perolehan: 1, Jenis Pasar: 4 (Masker tidak dicatat di VPKRT27-HR)" },
+            { "value": "b", "text": "1. Beras Rojolele: Jumlah 3 kg, Nilai Rp54.000, Cara Perolehan: 1, Jenis Pasar: 1 | 2. Garam Dolphin: Jumlah 10 sdt, Nilai Rp2.400, Cara Perolehan: 1, Jenis Pasar: 1 (Jenis pasar garam keliru pasar tradisional)" },
+            { "value": "c", "text": "1. Beras Rojolele: Jumlah 15 kg, Nilai Rp270.000, Cara Perolehan: 1, Jenis Pasar: 1 | 2. Garam Dolphin: Jumlah 250 gram, Nilai Rp6.000, Cara Perolehan: 1, Jenis Pasar: 4 (Keliru mencatat jumlah pembelian bukan konsumsi)" },
+            { "value": "d", "text": "1. Beras Rojolele: Jumlah 3 kg, Nilai Rp54.000, Cara Perolehan: 1, Jenis Pasar: 1 | 2. Garam Dolphin: Jumlah 10 sdt, Nilai Rp2.400, Cara Perolehan: 1, Jenis Pasar: 4 | 3. Masker Sensi Mask: Jumlah 3 buah, Nilai Rp2.400, Cara Perolehan: 1, Jenis Pasar: 5 (Keliru mencatat masker di kuesioner makanan)" }
+          ],
+          "isRequired": true,
+          "score": 5,
+          "correctAnswer": "a"
+        }
+      ]
+    }
+  ]
+}

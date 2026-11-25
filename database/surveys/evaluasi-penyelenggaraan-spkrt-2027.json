@@ -1,0 +1,169 @@
+{
+  "title": "Evaluasi Penyelenggaraan Pelatihan Petugas SPKRT 2027 BPS Kabupaten Demak",
+  "description": "Evaluasi ini bertujuan untuk memperoleh masukan dan penilaian peserta terhadap pengajar (INDA), waktu pelatihan, sarana ruang kelas, fasilitas kamar/akomodasi, serta penyelenggaraan Pelatihan Petugas SPKRT 2027 BPS Kabupaten Demak.",
+  "logoPosition": "right",
+  "completedHtml": "<div style=\"text-align:center; padding: 20px;\"><h3 style=\"color: #1e1b4b; font-weight: bold;\">Terima kasih atas partisipasi dan evaluasi Anda!</h3><p style=\"color: #64748b;\">Masukan dan saran yang Anda berikan sangat berharga bagi peningkatan mutu penyelenggaraan pelatihan berikutnya.</p></div>",
+  "progressBarType": "questions",
+  "showProgressBar": "top",
+  "goNextPageAutomatic": false,
+  "questionsOnPageMode": "standard",
+  "showQuestionNumbers": "on",
+  "pages": [
+    {
+      "name": "page_identitas",
+      "title": "Identitas Peserta",
+      "description": "Identitas peserta otomatis dimuat dari akun login sistem.",
+      "elements": [
+        {
+          "type": "text",
+          "name": "nama_lengkap",
+          "title": "Nama Lengkap",
+          "readOnly": true,
+          "isRequired": true
+        },
+        {
+          "type": "text",
+          "name": "email_peserta",
+          "title": "Email Peserta",
+          "readOnly": true,
+          "inputType": "email",
+          "isRequired": true
+        },
+        {
+          "type": "dropdown",
+          "name": "kelas",
+          "title": "Kelas Pelatihan",
+          "isRequired": true,
+          "placeholder": "Pilih Kelas Pelatihan...",
+          "choices": [
+            { "value": "Kelas A", "text": "Kelas A (Inda: Muna)" },
+            { "value": "Kelas B", "text": "Kelas B (Inda: Musyafa'ah)" },
+            { "value": "Kelas C", "text": "Kelas C (Inda: Yudia Pratidina Hasibuan)" },
+            { "value": "Kelas D", "text": "Kelas D (Inda: Nur Kurniawati)" }
+          ]
+        },
+        {
+          "type": "radiogroup",
+          "name": "jabatan",
+          "title": "Jabatan Petugas",
+          "isRequired": true,
+          "colCount": 2,
+          "choices": [
+            { "value": "PPL", "text": "PPL (Petugas Pencacah Lapangan)" },
+            { "value": "PML", "text": "PML (Petugas Pengawas Lapangan)" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "page_evaluasi",
+      "title": "Pelatihan Klasikal/Tatap muka",
+      "description": "Berikan penilaian dan evaluasi Anda secara objektif terhadap aspek-aspek berikut.",
+      "elements": [
+        {
+          "type": "matrix",
+          "name": "pengajar_inda",
+          "title": "Pengajar/INDA",
+          "isRequired": true,
+          "isAllRowRequired": true,
+          "columns": [
+            { "value": "Sangat Baik", "text": "Sangat Baik" },
+            { "value": "Baik", "text": "Baik" },
+            { "value": "Cukup Baik", "text": "Cukup Baik" },
+            { "value": "Kurang Baik", "text": "Kurang Baik" }
+          ],
+          "rows": [
+            { "value": "Penyampaian materi", "text": "Penyampaian materi" },
+            { "value": "Penguasaan materi", "text": "Penguasaan materi" },
+            { "value": "Kemampuan menjawab pertanyaan", "text": "Kemampuan menjawab pertanyaan" }
+          ]
+        },
+        {
+          "type": "matrix",
+          "name": "waktu_pelatihan_klasikal",
+          "title": "Waktu Pelatihan Klasikal",
+          "isRequired": true,
+          "isAllRowRequired": true,
+          "columns": [
+            { "value": "Sangat Baik", "text": "Sangat Baik" },
+            { "value": "Baik", "text": "Baik" },
+            { "value": "Cukup Baik", "text": "Cukup Baik" },
+            { "value": "Kurang Baik", "text": "Kurang Baik" }
+          ],
+          "rows": [
+            { "value": "Keefektifan Jam Belajar", "text": "Keefektifan Jam Belajar" },
+            { "value": "Jadwal Pelatihan", "text": "Jadwal Pelatihan" }
+          ]
+        },
+        {
+          "type": "matrix",
+          "name": "ruang_kelas",
+          "title": "Ruang Kelas",
+          "isRequired": true,
+          "isAllRowRequired": true,
+          "columns": [
+            { "value": "Sangat Baik", "text": "Sangat Baik" },
+            { "value": "Baik", "text": "Baik" },
+            { "value": "Cukup Baik", "text": "Cukup Baik" },
+            { "value": "Kurang Baik", "text": "Kurang Baik" }
+          ],
+          "rows": [
+            { "value": "Pencahayaan", "text": "Pencahayaan" },
+            { "value": "Sound system", "text": "Sound system" },
+            { "value": "Kelengkapan (Meja, Kursi, Viewer, Papan tulis, dll)", "text": "Kelengkapan (Meja, Kursi, Viewer, Papan tulis, dll)" },
+            { "value": "Kebersihan Ruang Kelas", "text": "Kebersihan Ruang Kelas" }
+          ]
+        },
+        {
+          "type": "matrix",
+          "name": "fasilitas_kamar",
+          "title": "Fasilitas Kamar",
+          "isRequired": true,
+          "isAllRowRequired": true,
+          "columns": [
+            { "value": "Sangat Puas", "text": "Sangat Puas" },
+            { "value": "Puas", "text": "Puas" },
+            { "value": "Cukup Puas", "text": "Cukup Puas" },
+            { "value": "Kurang Puas", "text": "Kurang Puas" },
+            { "value": "Tidak Puas", "text": "Tidak Puas" }
+          ],
+          "rows": [
+            { "value": "Fasilitas Kamar (Tv, Wifi, Air Panas)", "text": "Fasilitas Kamar (Tv, Wifi, Air Panas)" },
+            { "value": "Pelayanan Kamar", "text": "Pelayanan Kamar" },
+            { "value": "Kelengkapan (Meja, Kursi, Air Minum, Teh/kopi, Teko)", "text": "Kelengkapan (Meja, Kursi, Air Minum, Teh/kopi, Teko)" },
+            { "value": "Kebersihan Kamar", "text": "Kebersihan Kamar" }
+          ]
+        },
+        {
+          "type": "matrix",
+          "name": "penyelenggaraan_pelatihan",
+          "title": "Penyelenggaraan Pelatihan",
+          "isRequired": true,
+          "isAllRowRequired": true,
+          "columns": [
+            { "value": "Sangat Baik", "text": "Sangat Baik" },
+            { "value": "Baik", "text": "Baik" },
+            { "value": "Cukup Baik", "text": "Cukup Baik" },
+            { "value": "Kurang Baik", "text": "Kurang Baik" }
+          ],
+          "rows": [
+            { "value": "Snack", "text": "Snack" },
+            { "value": "Menu Makan Siang", "text": "Menu Makan Siang" },
+            { "value": "Kebersihan Ruang Kelas", "text": "Kebersihan Ruang Kelas" },
+            { "value": "Kesiagaan Panitia", "text": "Kesiagaan Panitia" },
+            { "value": "Menu Makan Malam", "text": "Menu Makan Malam" },
+            { "value": "Penanggungjawab Panitia", "text": "Penanggungjawab Panitia" }
+          ]
+        },
+        {
+          "type": "comment",
+          "name": "komentar_saran_masukan",
+          "title": "Komentar /Saran dan Masukan",
+          "isRequired": true,
+          "placeholder": "Tuliskan komentar, saran, dan masukan Anda terkait pelaksanaan pelatihan...",
+          "rows": 4
+        }
+      ]
+    }
+  ]
+}
